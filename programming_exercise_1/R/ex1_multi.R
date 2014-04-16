@@ -53,7 +53,7 @@ computeCostMulti <- function(X,y,theta){
 gradientDescentMulti <- function(X,y,theta,alpha,numiters){
   numTrainEx = dim(y)[1]
   numFeatures = dim(X)[2]
-  jThetaArray = t(t(rep(0,numTrainEx)))
+  jThetaArray = t(t(rep(0,numiters)))
   if (numTrainEx > 0) {
     if (numFeatures >= 2) {
       if (numiters >= 1) {

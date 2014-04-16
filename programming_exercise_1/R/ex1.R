@@ -18,7 +18,7 @@ computeCost <- function(X,y,theta){
 # Run gradient descent
 gradientDescent <- function(X,y,theta,alpha,numiters){
   numTrainEx = dim(y)[1]
-  jThetaArray = t(t(rep(0,numTrainEx)))
+  jThetaArray = t(t(rep(numiters)))
   if (numTrainEx > 0) {
     if (numiters >= 1) {
       for(thetaIndex in 1:numiters) {
