@@ -93,6 +93,7 @@ print(sprintf("For population = 70,000, we predict a profit of %.6f",predProfit2
 returnCode <- readKey()
 
 # Surface plot
+print("Visualizing J(theta_0, theta_1) ...")
 theta0Vals = seq(-10,10,20/99)
 theta1Vals = seq(-1,4,5/99)
 J_vals = mat.or.vec(dim(cbind(theta0Vals))[1],dim(cbind(theta1Vals))[1])
