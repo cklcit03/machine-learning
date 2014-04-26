@@ -120,9 +120,7 @@ thetaFinal = gradientDescentMultiList$theta
 jHistory = gradientDescentMultiList$jHistory
 plot(1:iterations,jHistory,type="l",col="blue",lwd=2,xlab="Number of iterations",ylab="Cost J")
 print(sprintf("Theta computed from gradient descent: "))
-print(sprintf("%.6f",thetaFinal[1,1]))
-print(sprintf("%.6f",thetaFinal[2,1]))
-print(sprintf("%.6f",thetaFinal[3,1]))
+cat(format(round(thetaFinal,6),nsmall=6),sep="\n")
 
 # Predict price for a 1650 square-foot house with 3 bedrooms
 xMatNormalized1 = (matrix(c(1650,3),nrow=1,ncol=2)-muVec)/sigmaVec
@@ -136,9 +134,7 @@ returnCode <- readKey()
 print("Solving with normal equations...")
 thetaNormal <- normalEqn(xMatAug,yVec)
 print(sprintf("Theta computed from the normal equations: "))
-print(sprintf("%.6f",thetaNormal[1,1]))
-print(sprintf("%.6f",thetaNormal[2,1]))
-print(sprintf("%.6f",thetaNormal[3,1]))
+cat(format(round(thetaNormal,6),nsmall=6),sep="\n")
 
 # Use normal equations to predict price for a 1650 square-foot house with 3 bedrooms
 xMat2 = matrix(c(1,1650,3),nrow=1,ncol=3)
