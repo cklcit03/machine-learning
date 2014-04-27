@@ -4,6 +4,7 @@
 # Linear regression with one variable
 
 # Load packages
+library(fields)
 library(pracma)
 
 # Plot data
@@ -103,8 +104,14 @@ for(index0 in 1:dim(cbind(theta0Vals))[1]) {
     J_vals[index0,index1] <- computeCost(xMat,yVec,t)
   }
 }
-persp(theta0Vals,theta1Vals,J_vals,xlab=expression(theta[0]),ylab=expression(theta[1]))
+# persp(theta0Vals,theta1Vals,J_vals,col=topo.colors(100),xlab=expression(theta[0]),ylab=expression(theta[1]))
+drape.plot(theta0Vals,theta1Vals,J_vals,xlab=expression(theta[0]),ylab=expression(theta[1]),zlab=expression(J_vals),horizontal=FALSE)
+# nbcol = 100
+# color = rev(rainbow(nbcol,start=0/6,end=4/6))
+# zcol = cut(J_vals,nbcol)
+# persp(theta0Vals,theta1Vals,J_vals,col = color[zcol],xlab=expression(theta[0]),ylab=expression(theta[1]))
+# persp(theta0Vals,theta1Vals,J_vals,xlab=expression(theta[0]),ylab=expression(theta[1]))
 
 # Contour plot
-contour(x=theta0Vals,y=theta1Vals,J_vals,levels=logspace(-2,3,20),drawlabels=FALSE,plot.title = title(xlab=expression(theta[0]),ylab=expression(theta[1])))
-points(x=thetaFinal[1,1],y=thetaFinal[2,1],col="red",cex=1.75,pch="x")
+# contour(x=theta0Vals,y=theta1Vals,J_vals,levels=logspace(-2,3,20),drawlabels=FALSE,plot.title = title(xlab=expression(theta[0]),ylab=expression(theta[1])))
+# points(x=thetaFinal[1,1],y=thetaFinal[2,1],col="red",cex=1.75,pch="x")
