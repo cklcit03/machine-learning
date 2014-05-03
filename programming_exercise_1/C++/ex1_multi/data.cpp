@@ -38,11 +38,11 @@ int DataNormalized::FeatureNormalize() {
     arma::zeros<arma::mat>(kNumTrainEx,kNumFeatures);
   for(int row_index=0; row_index<kNumTrainEx;row_index++) {
     kTrainingFeaturesNoDummyNormalized.row(row_index) = \
-	  (kTrainingFeaturesNoDummy.row(row_index)-mu_vec.t())/sigma_vec.t();
+      (kTrainingFeaturesNoDummy.row(row_index)-mu_vec.t())/sigma_vec.t();
   }
   const arma::mat kTrainingFeaturesNormalized = \
     arma::join_horiz(arma::ones<arma::vec>(kNumTrainEx),\
-	kTrainingFeaturesNoDummyNormalized);
+      kTrainingFeaturesNoDummyNormalized);
   set_training_features_normalized(kTrainingFeaturesNormalized);
 
   return 0;
