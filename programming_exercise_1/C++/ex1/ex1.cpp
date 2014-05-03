@@ -27,7 +27,7 @@ int main(void) {
   arma::vec theta_vec = arma::randu<arma::vec>(2,1);
   theta_vec.zeros(2,1);
   GradientDescent grad_des(kAlpha,kIterations,theta_vec);
-  const std::string kDataFileName = "../foodTruckData.txt";
+  const std::string kDataFileName = "../../foodTruckData.txt";
   Data food_truck_data(kDataFileName);
 
   // Compute squared error given initial weights in theta_vec.
