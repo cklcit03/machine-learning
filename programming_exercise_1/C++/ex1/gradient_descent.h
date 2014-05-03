@@ -36,8 +36,8 @@ class GradientDescent
   // Sets default values for algorithm parameters.
   GradientDescent() {
     alpha_ = 1.0;
-	num_iters_ = 1;
-	theta_.zeros(2,1);
+    num_iters_ = 1;
+    theta_.zeros(2,1);
   }
 
   // Sets values for algorithm parameters.
