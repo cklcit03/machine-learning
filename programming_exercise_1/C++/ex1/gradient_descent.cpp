@@ -53,13 +53,13 @@ int GradientDescent::RunGradientDescent(const Data &data) {
   for(int theta_index=0; theta_index<num_iters_; theta_index++)
   {
     const arma::vec kDiffVec = kTrainingFeatures*theta_-kTrainingLabels;
-	const arma::mat kDiffVecTimesTrainFeat = \
+    const arma::mat kDiffVecTimesTrainFeat = \
       join_rows(kDiffVec % kTrainingFeatures.col(0),\
-	  kDiffVec % kTrainingFeatures.col(1));
-	const arma::vec kThetaNew = theta_-alpha_*(1/(float)kNumTrainEx)*\
+      kDiffVec % kTrainingFeatures.col(1));
+    const arma::vec kThetaNew = theta_-alpha_*(1/(float)kNumTrainEx)*\
       (sum(kDiffVecTimesTrainFeat)).t();
-	j_theta_array[theta_index] = ComputeCost(data);
-	set_theta(kThetaNew);
+    j_theta_array[theta_index] = ComputeCost(data);
+    set_theta(kThetaNew);
   }
 
   delete [] j_theta_array;
