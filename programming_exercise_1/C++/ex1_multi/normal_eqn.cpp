@@ -27,7 +27,7 @@ arma::vec NormalEqn(const DataNormalized &data) {
   const arma::vec kTrainingLabels = data.training_labels();
   const arma::vec thetaNormal = \
     pinv(kTrainingFeatures.t()*kTrainingFeatures)*\
-	kTrainingFeatures.t()*kTrainingLabels;
+    kTrainingFeatures.t()*kTrainingLabels;
 
   return thetaNormal;
 }
