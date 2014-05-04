@@ -62,17 +62,17 @@ int GradientDescent::RunGradientDescent(const DataNormalized &data) {
   {
     const arma::vec kDiffVec = \
       kTrainingFeaturesNormalized*theta_-kTrainingLabels;
-	arma::mat kDiffVecTimesTrainFeat = \
+    arma::mat kDiffVecTimesTrainFeat = \
       kDiffVec % kTrainingFeaturesNormalized.col(0);
-	for(int feature_index=1; feature_index<=kNumFeatures; feature_index++)
-	{
+    for(int feature_index=1; feature_index<=kNumFeatures; feature_index++)
+    {
       kDiffVecTimesTrainFeat = join_rows(kDiffVecTimesTrainFeat,\
-	    kDiffVec % kTrainingFeaturesNormalized.col(feature_index));
-	}
-	const arma::vec kThetaNew = theta_-alpha_*(1/(float)kNumTrainEx)*\
+        kDiffVec % kTrainingFeaturesNormalized.col(feature_index));
+    }
+    const arma::vec kThetaNew = theta_-alpha_*(1/(float)kNumTrainEx)*\
       (sum(kDiffVecTimesTrainFeat)).t();
-	j_theta_array[theta_index] = ComputeCost(data);
-	set_theta(kThetaNew);
+    j_theta_array[theta_index] = ComputeCost(data);
+    set_theta(kThetaNew);
   }
 
   delete [] j_theta_array;
