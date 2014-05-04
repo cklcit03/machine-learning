@@ -36,9 +36,9 @@ class Data
   // Sets default values for training data.
   Data() {
     num_train_ex_ = 1;
-	num_features_ = 2;
-	training_features_.ones(1,3);
-	training_labels_.ones(1,1);
+    num_features_ = 2;
+    training_features_.ones(1,3);
+    training_labels_.ones(1,1);
   }
 
   // Reads CSV file "file_name_arg".
@@ -50,14 +50,14 @@ class Data
   // unity) for each training example.
   explicit Data(std::string file_name_arg) {
     arma::mat training_data;
-	training_data.load(file_name_arg,arma::csv_ascii);
-	num_train_ex_ = training_data.n_rows;
-	num_features_ = training_data.n_cols-1;
-	training_features_ = \
-		arma::join_horiz(arma::ones<arma::vec>(num_train_ex_),\
-		training_data.cols(0,num_features_-1));
+    training_data.load(file_name_arg,arma::csv_ascii);
+    num_train_ex_ = training_data.n_rows;
+    num_features_ = training_data.n_cols-1;
+    training_features_ = \
+      arma::join_horiz(arma::ones<arma::vec>(num_train_ex_),\
+      training_data.cols(0,num_features_-1));
 	training_labels_ = training_data.col(num_features_);
-	}
+  }
 
   ~Data() {}
 
@@ -95,9 +95,9 @@ class DataNormalized: public Data
  public:
   // Sets default values for normalized training data.
   DataNormalized() : Data() {
-	training_features_normalized_.ones(1,3);
-	mu_vec_.ones(1,2);
-	sigma_vec_.ones(1,2);
+    training_features_normalized_.ones(1,3);
+    mu_vec_.ones(1,2);
+    sigma_vec_.ones(1,2);
   }
 
   // Reads CSV file "file_name_arg".
@@ -127,19 +127,19 @@ class DataNormalized: public Data
   inline int set_training_features_normalized(arma::mat training_features_normalized_arg) {
     training_features_normalized_ = training_features_normalized_arg;
 
-	return 0;
+    return 0;
   }
 
   inline int set_mu_vec(arma::vec mu_vec_arg) {
     mu_vec_ = mu_vec_arg;
 
-	return 0;
+    return 0;
   }
 
   inline int set_sigma_vec(arma::vec sigma_vec_arg) {
     sigma_vec_ = sigma_vec_arg;
 
-	return 0;
+    return 0;
   }
 
  private:
