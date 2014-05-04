@@ -31,11 +31,13 @@ int main(void) {
   const std::string kDataFileName = "../../housingData.txt";
   DataNormalized housing_data(kDataFileName);
   printf("First 10 examples from the dataset: \n");
-	for(int example_idx=0; example_idx<10; example_idx++)
-		printf("x = [%.0f %.0f], y = %.0f\n",\
-		housing_data.training_features()(example_idx,1),\
-		housing_data.training_features()(example_idx,2),\
-		housing_data.training_labels()(example_idx));
+  for(int example_idx=0; example_idx<10; example_idx++)
+  {
+    printf("x = [%.0f %.0f], y = %.0f\n",\
+      housing_data.training_features()(example_idx,1),\
+      housing_data.training_features()(example_idx,2),\
+      housing_data.training_labels()(example_idx));
+  }
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
@@ -60,7 +62,7 @@ int main(void) {
   const arma::rowvec kHouseVec1Normalized = \
     (house_vec_1-housing_data.mu_vec().t())/housing_data.sigma_vec().t();
   const arma::rowvec kHouseVec1NormalizedAug = \
-	arma::join_horiz(arma::ones<arma::vec>(1),kHouseVec1Normalized);
+    arma::join_horiz(arma::ones<arma::vec>(1),kHouseVec1Normalized);
   const double kPredPrice1 = \
     arma::as_scalar(kHouseVec1NormalizedAug*kThetaFinal);
   printf("Predicted price of a 1650 sq-ft, 3 br house (using gradient descent):\n $%f\n",kPredPrice1);
