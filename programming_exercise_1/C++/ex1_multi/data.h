@@ -56,7 +56,7 @@ class Data
     training_features_ = \
       arma::join_horiz(arma::ones<arma::vec>(num_train_ex_),\
       training_data.cols(0,num_features_-1));
-	training_labels_ = training_data.col(num_features_);
+    training_labels_ = training_data.col(num_features_);
   }
 
   ~Data() {}
