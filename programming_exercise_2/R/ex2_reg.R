@@ -79,7 +79,7 @@ computeCost <- function(theta,X,y,numTrainEx,lambda){
   return(jThetaReg)
 }
 
-# Compute gradient of cost function J(\theta)
+# Compute gradient of regularized cost function J(\theta)
 computeGradient <- function(theta,X,y,numTrainEx,lambda){
   numFeatures = dim(X)[2]
   hTheta <- computeSigmoid(X%*%theta)
@@ -114,8 +114,8 @@ computeCostGradList <- function(X,y,theta,lambda){
 
 # Perform label prediction on training data
 labelPrediction <- function(X,theta){
-  sigmoid_arr <- computeSigmoid(X%*%theta)
-  p = (sigmoid_arr >= 0.5)
+  sigmoidArr <- computeSigmoid(X%*%theta)
+  p = (sigmoidArr >= 0.5)
   return(p)
 }
 

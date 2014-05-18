@@ -89,8 +89,8 @@ computeCostGradList <- function(X,y,theta){
 
 # Perform label prediction on training data
 labelPrediction <- function(X,theta){
-  sigmoid_arr <- computeSigmoid(X%*%theta)
-  p = (sigmoid_arr >= 0.5)
+  sigmoidArr <- computeSigmoid(X%*%theta)
+  p = (sigmoidArr >= 0.5)
   return(p)
 }
 
