@@ -21,16 +21,18 @@
 #include "logistic_regression.h"
 
 int main(void) {
-  const int kNumIterations = 400;
-  arma::vec theta_vec = arma::randu<arma::vec>(3,1);
-  theta_vec.zeros(3,1);
-  arma::vec gradient_vec = arma::randu<arma::vec>(3,1);
-  gradient_vec.zeros(3,1);
-  arma::vec predictions_vec = arma::randu<arma::vec>(100,1);
-  LogisticRegression log_res(kNumIterations,theta_vec,gradient_vec,\
-    predictions_vec);
   const std::string kDataFileName = "../../applicantData.txt";
   Data applicant_data(kDataFileName);
+  const int kNumFeatures = applicant_data.num_features();
+  arma::vec theta_vec = arma::randu<arma::vec>(kNumFeatures+1,1);
+  theta_vec.zeros(kNumFeatures+1,1);
+  arma::vec gradient_vec = arma::randu<arma::vec>(kNumFeatures+1,1);
+  gradient_vec.zeros(kNumFeatures+1,1);
+  const int kNumTrainEx = applicant_data.num_train_ex();
+  arma::vec predictions_vec = arma::randu<arma::vec>(kNumTrainEx,1);
+  const int kNumIterations = 400;
+  LogisticRegression log_res(kNumIterations,theta_vec,gradient_vec,\
+    predictions_vec);
 
   // Compute initial cost and gradient.
   const std::vector<double> kTheta(3,0.0);
@@ -57,7 +59,6 @@ int main(void) {
   std::vector<double> nlopt_theta(3,0.0);
   double min_cost = 0.0;
   nlopt::result nlopt_result = opt.optimize(nlopt_theta,min_cost);
-  const int kNumFeatures = applicant_data.num_features();
   for(int feature_index=0; feature_index<(kNumFeatures+1); feature_index++)
   {
     theta_vec(feature_index) = nlopt_theta[feature_index];
@@ -83,7 +84,6 @@ int main(void) {
 
   // Compute accuracy on training set.
   const int kReturnCode2 = log_res.LabelPrediction(applicant_data);
-  const int kNumTrainEx = applicant_data.num_train_ex();
   const arma::vec trainingPredict = log_res.predictions();
   const arma::vec trainingLabels = applicant_data.training_labels();
   int num_train_match = 0;
