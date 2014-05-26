@@ -30,7 +30,7 @@
 // Implements key functions for logistic regression and stores relevant 
 // parameters.
 // Sample usage:
-// LogisticRegression log_reg(kIterations,theta_vec);
+// LogisticRegression log_reg(kIterations,theta_vec,grad_vec,pred_vec);
 // const double kInitReturnCode = log_reg.ComputeGradient(application_data);
 class LogisticRegression
 {
