@@ -33,9 +33,9 @@ class Data
   // Sets default values for training data.
   Data() {
     num_train_ex_ = 1;
-	num_features_ = 1;
-	training_features_.ones(1,2);
-	training_labels_.ones(1,1);
+    num_features_ = 1;
+    training_features_.ones(1,2);
+    training_labels_.ones(1,1);
   }
 
   // Reads CSV file "file_name_arg".
@@ -47,13 +47,13 @@ class Data
   // unity) for each training example.
   explicit Data(std::string file_name_arg) {
     arma::mat training_data;
-	training_data.load(file_name_arg,arma::csv_ascii);
-	num_train_ex_ = training_data.n_rows;
-	num_features_ = training_data.n_cols-1;
-	training_features_ = \
+    training_data.load(file_name_arg,arma::csv_ascii);
+    num_train_ex_ = training_data.n_rows;
+    num_features_ = training_data.n_cols-1;
+    training_features_ = \
       arma::join_horiz(arma::ones<arma::vec>(num_train_ex_),\
 	  training_data.cols(0,num_features_-1));
-	training_labels_ = training_data.col(num_features_);
+    training_labels_ = training_data.col(num_features_);
   }
 
   ~Data() {}

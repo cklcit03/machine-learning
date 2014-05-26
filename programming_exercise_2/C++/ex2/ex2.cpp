@@ -90,9 +90,9 @@ int main(void) {
   for(int example_index=0; example_index<kNumTrainEx; example_index++)
   {
     if (trainingPredict(example_index) == trainingLabels(example_index))
-	{
-	  num_train_match++;
-	}
+    {
+      num_train_match++;
+    }
   }
   printf("Train Accuracy: %.6f\n",(100.0*num_train_match/kNumTrainEx));
   printf("\n");

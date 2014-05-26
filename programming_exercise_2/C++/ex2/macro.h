@@ -19,8 +19,8 @@
 #ifndef MACRO_H_
 #define MACRO_H_
 
-#define DISALLOW_COPY_AND_ASSIGN(TypeName)	\
-  TypeName(const TypeName &);				\
+#define DISALLOW_COPY_AND_ASSIGN(TypeName)  \
+  TypeName(const TypeName &);               \
   void operator=(const TypeName &)
 
 #endif  // MACRO_H_

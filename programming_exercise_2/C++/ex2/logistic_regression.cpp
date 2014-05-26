@@ -29,7 +29,7 @@ arma::vec LogisticRegression::ComputeSigmoid(const arma::vec sigmoid_arg) {
 // "theta" corresponds to the optimization parameters.
 // "grad" corresponds to the gradient.
 double LogisticRegression::ComputeCost(const std::vector<double> &theta,
-	std::vector<double> &grad,const Data &data) {
+    std::vector<double> &grad,const Data &data) {
   const int kNumFeatures = data.num_features();
   arma::vec nlopt_theta = arma::randu<arma::vec>(kNumFeatures+1,1);
 
@@ -53,7 +53,7 @@ double LogisticRegression::ComputeCost(const std::vector<double> &theta,
   const int kReturnCode = this->ComputeGradient(data);
   for(int feature_index=0; feature_index<(kNumFeatures+1); feature_index++)
   {
-	grad[feature_index] = gradient_(feature_index);
+    grad[feature_index] = gradient_(feature_index);
   }
 
   return kJTheta;
@@ -75,9 +75,9 @@ int LogisticRegression::ComputeGradient(const Data &data) {
 
   for(int feature_index=0; feature_index<(kNumFeatures+1); feature_index++)
   {
-	const arma::vec gradient_term = \
+    const arma::vec gradient_term = \
       (kSigmoidVal-kTrainingLabels) % kTrainingFeatures.col(feature_index);
-	gradient_array(feature_index) = sum(gradient_term)/kNumTrainEx;
+    gradient_array(feature_index) = sum(gradient_term)/kNumTrainEx;
   }
   set_gradient(gradient_array);
 
@@ -101,7 +101,7 @@ int LogisticRegression::LabelPrediction(const Data &data) {
 
 // Unpacks WrapperStruct to obtain instances of LogisticRegression and Data.
 double ComputeCostWrapper(const std::vector<double> &theta,
-	std::vector<double> &grad,void *void_data) {
+    std::vector<double> &grad,void *void_data) {
   WrapperStruct *wrap_struct = static_cast<WrapperStruct *>(void_data);
   LogisticRegression *log_res = wrap_struct->log_res;
   Data *data = wrap_struct->data;

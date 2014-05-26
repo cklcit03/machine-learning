@@ -37,10 +37,10 @@ class LogisticRegression
  public:
   // Sets default values for algorithm parameters.
   LogisticRegression() {
-	num_iters_ = 1;
-	theta_.zeros(3,1);
-	gradient_.zeros(3,1);
-	predictions_.zeros(3,1);
+    num_iters_ = 1;
+    theta_.zeros(3,1);
+    gradient_.zeros(3,1);
+    predictions_.zeros(3,1);
   }
 
   // Sets values for algorithm parameters.
@@ -49,7 +49,7 @@ class LogisticRegression
   // "predictions_arg" corresponds to an initial guess of the training label
   // predictions.
   LogisticRegression(int num_iters_arg,arma::vec theta_arg,
-	  arma::vec gradient_arg,arma::vec predictions_arg) : \
+    arma::vec gradient_arg,arma::vec predictions_arg) : \
       num_iters_(num_iters_arg),theta_(theta_arg),gradient_(gradient_arg),
       predictions_(predictions_arg) {}
 
@@ -67,7 +67,7 @@ class LogisticRegression
   // ((training label) * log(sigmoid(theta_ * training features)) + 
   // (1 - (training label))*log(1-sigmoid(theta_ * training features)))
   double ComputeCost(const std::vector<double> &theta,
-	  std::vector<double> &grad,const Data &data);
+    std::vector<double> &grad,const Data &data);
 
   // Computes gradient given training data in "data" and current
   // weights in theta_.
@@ -108,13 +108,13 @@ class LogisticRegression
   inline int set_gradient(arma::vec gradient_arg) {
     gradient_ = gradient_arg;
 
-	return 0;
+    return 0;
   }
 
   inline int set_predictions(arma::vec predictions_arg) {
     predictions_ = predictions_arg;
 
-	return 0;
+    return 0;
   }
 
  private:
@@ -136,14 +136,14 @@ class LogisticRegression
 // and an instance of Data class.  This struct will be passed as "void_data"
 // to ComputeCostWrapper.
 struct WrapperStruct {
-	LogisticRegression *log_res;
-	Data *data;
+  LogisticRegression *log_res;
+  Data *data;
 };
 
 // nlopt requires a wrapper function.  A WrapperStruct is contained in
 // void_data, and it is unpacked in this wrapper function.
 // This wrapper function calls ComputeCost to update "theta" and "grad".
 double ComputeCostWrapper(const std::vector<double> &theta,
-	std::vector<double> &grad,void *void_data);
+  std::vector<double> &grad,void *void_data);
 
 #endif	// LOGISTIC_REGRESSION_H_
