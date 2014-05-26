@@ -35,8 +35,8 @@ int main(void) {
     predictions_vec);
 
   // Compute initial cost and gradient.
-  const std::vector<double> kTheta(3,0.0);
-  std::vector<double> grad(3,0.0);
+  const std::vector<double> kTheta(kNumFeatures+1,0.0);
+  std::vector<double> grad(kNumFeatures+1,0.0);
   const double kInitCost = log_res.ComputeCost(kTheta,grad,applicant_data);
   const int kReturnCode = log_res.ComputeGradient(applicant_data);
   const arma::vec kInitGradient = log_res.gradient();
@@ -50,13 +50,13 @@ int main(void) {
   std::cin.ignore();
 
   // Use L-BFGS algorithm to solve for optimum weights and cost.
-  nlopt::opt opt(nlopt::LD_LBFGS,3);
+  nlopt::opt opt(nlopt::LD_LBFGS,kNumFeatures+1);
   WrapperStruct wrap_struct;
   wrap_struct.log_res = &log_res;
   wrap_struct.data = &applicant_data;
   opt.set_min_objective(ComputeCostWrapper,&wrap_struct);
   opt.set_xtol_rel(1e-4);
-  std::vector<double> nlopt_theta(3,0.0);
+  std::vector<double> nlopt_theta(kNumFeatures+1,0.0);
   double min_cost = 0.0;
   nlopt::result nlopt_result = opt.optimize(nlopt_theta,min_cost);
   for(int feature_index=0; feature_index<(kNumFeatures+1); feature_index++)
@@ -72,7 +72,7 @@ int main(void) {
 
   // Predict admission probability for a student with score 45 on exam 1 and 
   // score 85 on exam 2.
-  arma::vec kStudentScores = arma::randu<arma::vec>(3,1);
+  arma::vec kStudentScores = arma::randu<arma::vec>(kNumFeatures+1,1);
   kStudentScores(0) = 1;
   kStudentScores(1) = 45;
   kStudentScores(2) = 85;
