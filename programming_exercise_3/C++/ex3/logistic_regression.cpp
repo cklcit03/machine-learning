@@ -306,8 +306,6 @@ int MultiClassRegularizedLogisticRegression::LabelPrediction\
   const arma::mat kSigmoidArg = kTrainingFeatures*theta();
   const arma::mat kSigmoidVal = ComputeSigmoid(kSigmoidArg);
   arma::vec current_predictions = predictions();
-  std::cout.setf(std::ios::fixed,std::ios::floatfield);
-  std::cout.precision(1);
   for(int example_index=0; example_index<kNumTrainEx; example_index++)
   {
     int curr_max_index = 0;
