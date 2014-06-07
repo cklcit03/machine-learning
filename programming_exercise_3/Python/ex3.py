@@ -47,19 +47,19 @@ def displayData(X):
     displayArray = (-1)*np.ones((pad+displayRows*(exampleHeight+pad),pad+displayCols*(exampleWidth+pad)))
     currEx = 1
     for rowIndex in range(1,displayRows+1):
-      for colIndex in range(1,displayCols+1):
+        for colIndex in range(1,displayCols+1):
+            if (currEx > numRows):
+                break
+            maxVal = np.amax(np.absolute(X[currEx-1,:]))
+            minRowIdx = pad+(rowIndex-1)*(exampleHeight+pad)
+            maxRowIdx = pad+(rowIndex-1)*(exampleHeight+pad)+exampleHeight
+            minColIdx = pad+(colIndex-1)*(exampleWidth+pad)
+            maxColIdx = pad+(colIndex-1)*(exampleWidth+pad)+exampleWidth
+            xReshape = np.reshape(X[currEx-1,],(exampleHeight,exampleWidth))
+            displayArray[minRowIdx:maxRowIdx,minColIdx:maxColIdx] = (1/maxVal)*np.fliplr(np.rot90(xReshape,3))
+            currEx = currEx+1
         if (currEx > numRows):
-          break
-        maxVal = np.amax(np.absolute(X[currEx-1,:]))
-        minRowIdx = pad+(rowIndex-1)*(exampleHeight+pad)
-        maxRowIdx = pad+(rowIndex-1)*(exampleHeight+pad)+exampleHeight
-        minColIdx = pad+(colIndex-1)*(exampleWidth+pad)
-        maxColIdx = pad+(colIndex-1)*(exampleWidth+pad)+exampleWidth
-        xReshape = np.reshape(X[currEx-1,],(exampleHeight,exampleWidth))
-        displayArray[minRowIdx:maxRowIdx,minColIdx:maxColIdx] = (1/maxVal)*np.fliplr(np.rot90(xReshape,3))
-        currEx = currEx+1
-      if (currEx > numRows):
-        break
+            break
     plt.imshow(displayArray,cmap=cm.Greys_r)
     plt.axis('off')
 
