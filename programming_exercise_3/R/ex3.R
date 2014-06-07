@@ -41,7 +41,7 @@ displayData <- function(X){
       rowIdx = pad+(rowIndex-1)*(exampleHeight+pad)+1:exampleHeight
       colIdx = pad+(colIndex-1)*(exampleWidth+pad)+1:exampleWidth
       xReshape = matrix(X[currEx,],nrow=exampleHeight,byrow=FALSE)
-      displayArray[rowIdx,colIdx] = (1/maxVal)*as.numeric(t(xReshape[nrow(xReshape):1,]) )
+      displayArray[rowIdx,colIdx] = (1/maxVal)*as.numeric(t(xReshape[nrow(xReshape):1,]))
       currEx = currEx+1
     }
     if (currEx > numRows) {
@@ -112,7 +112,6 @@ oneVsAll <- function(X,y,numLabels,lambda){
 # Perform label prediction on training data
 predictOneVsAll <- function(X,allTheta){
   numTrainEx = dim(X)[1]
-  numLabels = dim(allTheta)[1]
   onesVec = t(t(rep(1,numTrainEx)))
   augX = cbind(onesVec,X)
   sigmoidArr <- computeSigmoid(augX%*%t(allTheta))
