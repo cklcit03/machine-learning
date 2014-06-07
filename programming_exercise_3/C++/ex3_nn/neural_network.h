@@ -96,7 +96,7 @@ class NeuralNetwork
   }
 
  private:
-  // Current weights for logistic regression.
+  // Current weights.
   std::vector<arma::mat> theta_;
 
   // Current training label predictions.

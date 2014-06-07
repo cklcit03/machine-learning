@@ -38,7 +38,7 @@ int NeuralNetwork::LabelPrediction (const DataMulti &data_multi) {
   {
     const arma::mat kOnesMat = arma::ones(layer_activation_out.n_rows,1);
     layer_activation_in = arma::join_horiz(kOnesMat,layer_activation_out);
-	sigmoid_arg = layer_activation_in*theta_.at(layer_index).t();
+    sigmoid_arg = layer_activation_in*theta_.at(layer_index).t();
     layer_activation_out = ComputeSigmoid(sigmoid_arg);
   }
   arma::vec current_predictions = predictions();
