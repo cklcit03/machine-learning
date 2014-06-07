@@ -69,7 +69,6 @@ computeSigmoid <- function(z){
 # Perform label prediction on training data
 predict <- function(Theta1,Theta2,X){
   numTrainEx = dim(X)[1]
-  numLabels = dim(Theta1)[1]
   onesVec = t(t(rep(1,numTrainEx)))
   augX = cbind(onesVec,X)
   hiddenLayerActivation <- computeSigmoid(augX%*%t(Theta1))

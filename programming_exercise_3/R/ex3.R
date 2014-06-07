@@ -145,4 +145,4 @@ returnCode <- readKey()
 
 # Perform one-versus-all classification using logistic regression
 trainingPredict <- (predictOneVsAll(xMat,allTheta))
-print(sprintf("Train Accuracy: %.6f",100*apply((trainingPredict == yVec),2,mean)))
+print(sprintf("Training Set Accuracy: %.6f",100*apply((trainingPredict == yVec),2,mean)))
