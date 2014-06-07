@@ -322,7 +322,7 @@ int MultiClassRegularizedLogisticRegression::LabelPrediction\
     }
     if (curr_max_index == 0)
     {
-      curr_max_index = 10;
+      curr_max_index = data_multi.num_labels();
     }
     current_predictions(example_index) = curr_max_index;
   }
