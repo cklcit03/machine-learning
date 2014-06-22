@@ -51,9 +51,9 @@ class NeuralNetwork
     int num_layers_arg) : predictions_(predictions_arg),\
     num_layers_(num_layers_arg) {
     theta_ = theta_arg;
-	input_layer_size_ = theta_.at(0).n_cols-1;
-	hidden_layer_size_ = theta_.at(1).n_cols-1;
-	output_layer_size_ = theta_.at(1).n_rows;
+    input_layer_size_ = theta_.at(0).n_cols-1;
+    hidden_layer_size_ = theta_.at(1).n_cols-1;
+    output_layer_size_ = theta_.at(1).n_rows;
   }
 
   ~NeuralNetwork() {}
@@ -132,7 +132,7 @@ class NeuralNetwork
     return output_layer_size_;
   }
 
-  inline double lambda() const {
+  inline virtual double lambda() const {
     return lambda_;
   }
 
@@ -176,7 +176,7 @@ class NeuralNetwork
     return 0;
   }
 
-  inline int set_lambda(double lambda_arg) {
+  inline virtual int set_lambda(double lambda_arg) {
     lambda_ = lambda_arg;
 
     return 0;
