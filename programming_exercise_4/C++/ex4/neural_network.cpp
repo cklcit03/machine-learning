@@ -177,7 +177,7 @@ int NeuralNetwork::ComputeGradient(const DataMulti &data_multi) {
     arma::colvec hidden_layer_error_term = theta_.at(1).t()*output_layer_error;
     arma::colvec hidden_layer_error = \
       hidden_layer_error_term.rows(1,hidden_layer_size_) % \
-	  ComputeSigmoidGradient((example_features*theta_.at(0).t()).t());
+      ComputeSigmoidGradient((example_features*theta_.at(0).t()).t());
 
     // Perform step 4.
     accum_hidden_layer_grad = \
