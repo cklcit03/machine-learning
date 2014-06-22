@@ -45,7 +45,7 @@ int NeuralNetwork::RandInitializeWeights() {
     arma::mat layer_theta_rand = \
       2*epsilon_init*arma::randu<arma::mat>(num_out_units,num_in_units)-\
       epsilon_init*arma::ones<arma::mat>(num_out_units,num_in_units);
-	theta_.at(layer_index) = layer_theta_rand;
+    theta_.at(layer_index) = layer_theta_rand;
   }
 
   return(0);
@@ -121,7 +121,7 @@ double NeuralNetwork::ComputeCost(const std::vector<double> &opt_param,
   const double kRegTerm = \
     (lambda()/(2*kNumTrainEx))*(accu(kNLoptTheta1MatSquaredTrans)+\
       accu(kNLoptTheta2MatSquaredTrans)-\
-	  accu(kNLoptTheta1MatSquaredTrans.row(0))-\
+      accu(kNLoptTheta1MatSquaredTrans.row(0))-\
       accu(kNLoptTheta2MatSquaredTrans.row(0)));
   const double kJThetaReg = kJTheta+kRegTerm;
 
@@ -154,7 +154,7 @@ int NeuralNetwork::ComputeGradient(const DataMulti &data_multi) {
   {
 
     // Perform step 1.
-	arma::rowvec example_features = \
+    arma::rowvec example_features = \
       data_multi.training_features().row(example_index);
     arma::mat sigmoid_arg = example_features*theta_.at(0).t();
     arma::mat hidden_layer_activation = ComputeSigmoid(sigmoid_arg);
@@ -165,9 +165,9 @@ int NeuralNetwork::ComputeGradient(const DataMulti &data_multi) {
     arma::mat output_layer_activation = ComputeSigmoid(sigmoid_arg);
 
     // Perform step 2.
-	arma::rowvec training_labels = \
+    arma::rowvec training_labels = \
       arma::zeros<arma::rowvec>(1,output_layer_size_);
-	int column_index = \
+    int column_index = \
       (int)as_scalar(data_multi.training_labels().row(example_index));
     training_labels(column_index-1) = 1;
     arma::colvec output_layer_error = \
