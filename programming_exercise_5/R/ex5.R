@@ -278,6 +278,8 @@ returnCode <- readKey()
 
 # Generate values for validation curve for polynomial regression
 validationCurveList <- validationCurve(xPolyNorm$xNormalized,yVec,xValPolyNorm,yValVec)
+
+# Plot validation curve
 plot(validationCurveList$lambdaVec,validationCurveList$errorTrain,type='l',col="blue",xlab="lambda",ylab="Error")
 lines(validationCurveList$lambdaVec,validationCurveList$errorVal,col="green")
 plotLegend <- legend('bottomright',legend=c("",""),lty=c(1,1),lwd=c(2.5,2.5),col=c("blue","green"),bty="n",trace=TRUE)
