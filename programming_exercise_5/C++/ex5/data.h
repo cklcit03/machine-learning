@@ -137,7 +137,7 @@ class DataDebug: public Data
       arma::join_horiz(arma::ones<arma::vec>(num_val_ex_),\
         validation_data.cols(0,num_features()-1));
     validation_labels_ = validation_data.col(num_features());
-	arma::mat testing_data;
+    arma::mat testing_data;
     testing_data.load(test_file_name_arg,arma::csv_ascii);
     num_test_ex_ = testing_data.n_rows;
     testing_features_ = \
@@ -354,10 +354,10 @@ class DataDebug: public Data
   arma::mat testing_features_normalized_;
   arma::mat validation_features_normalized_;
 
-  // Mean of each training feature
+  // Mean of each training feature.
   arma::vec mu_vec_;
 
-  // Standard deviation of each training feature
+  // Standard deviation of each training feature.
   arma::vec sigma_vec_;
 
   DISALLOW_COPY_AND_ASSIGN(DataDebug);
