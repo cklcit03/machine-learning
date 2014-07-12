@@ -27,34 +27,34 @@ int LearningCurve(DataDebug &data_debug,LinearRegression &lin_reg,\
     // Determine if we need to use mapped features.
     if (use_poly == 0) {
       data_debug.set_features(data_debug.training_features().rows(0,ex_index));
-	}
-	else {
+    }
+    else {
       data_debug.set_features(data_debug.features_normalized().rows(0,ex_index));
-	}
-	data_debug.set_labels(data_debug.training_labels().rows(0,ex_index));
-	const int kFeatures = data_debug.features().n_cols;
+    }
+    data_debug.set_labels(data_debug.training_labels().rows(0,ex_index));
+    const int kFeatures = data_debug.features().n_cols;
     std::vector<double> theta_stack_vec(kFeatures,1.0);
     std::vector<double> grad_vec(kFeatures,0.0);
-	lin_reg.set_lambda(1.0);
-	lin_reg.Train(data_debug);
-	for(unsigned int f_index=0; f_index<(unsigned)kFeatures; f_index++)
+    lin_reg.set_lambda(1.0);
+    lin_reg.Train(data_debug);
+    for(unsigned int f_index=0; f_index<(unsigned)kFeatures; f_index++)
     {
       theta_stack_vec.at(f_index) = \
         arma::as_scalar(lin_reg.theta().row(f_index));
     }
-	lin_reg.set_lambda(0.0);
-	error_train[ex_index] = \
+    lin_reg.set_lambda(0.0);
+    error_train[ex_index] = \
       lin_reg.ComputeCost(theta_stack_vec,grad_vec,data_debug);
 
     // Determine if we need to use mapped features.
-	if (use_poly == 0) {
+    if (use_poly == 0) {
       data_debug.set_features(data_debug.validation_features());
-	}
+    }
     else {
       data_debug.set_features(data_debug.validation_features_normalized());
-	}
-	data_debug.set_labels(data_debug.validation_labels());
-	error_val[ex_index] = \
+    }
+    data_debug.set_labels(data_debug.validation_labels());
+    error_val[ex_index] = \
       lin_reg.ComputeCost(theta_stack_vec,grad_vec,data_debug);
   }
 
