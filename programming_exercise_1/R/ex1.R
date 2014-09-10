@@ -30,7 +30,7 @@ plotData <- function(x,y){
 
 # Read key press
 readKey <- function(){
-  cat ("Program paused.  Press enter to continue.")
+  cat("Program paused.  Press enter to continue.")
   line <- readline()
   return(0)
 }
