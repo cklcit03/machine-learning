@@ -39,7 +39,7 @@ plotDecisionBoundary <- function(X,y,theta){
 
 # Read key press
 readKey <- function(){
-  cat ("Program paused. Press enter to continue.")
+  cat("Program paused. Press enter to continue.")
   line <- readline()
   return(0)
 }
@@ -53,7 +53,10 @@ computeSigmoid <- function(z){
 # Compute cost function J(\theta)
 computeCost <- function(theta,X,y,numTrainEx){
   hTheta <- computeSigmoid(X%*%theta)
-  jTheta = (colSums(-y*log(hTheta)-(1-y)*log(1-hTheta)))/numTrainEx
+  if (numTrainEx > 0)
+    jTheta = (colSums(-y*log(hTheta)-(1-y)*log(1-hTheta)))/numTrainEx
+  else
+    stop('Insufficient training examples')
   return(jTheta)  
 }
 
@@ -61,13 +64,17 @@ computeCost <- function(theta,X,y,numTrainEx){
 computeGradient <- function(theta,X,y,numTrainEx){
   numFeatures = dim(X)[2]
   hTheta <- computeSigmoid(X%*%theta)
-  gradArray = matrix(0,numFeatures,1)
-  gradTermArray = matrix(0,numTrainEx,numFeatures)
   if (numFeatures > 0) {
-    for(gradIndex in 1:numFeatures) {
-      gradTermArray[,gradIndex] = (hTheta-y)*X[,gradIndex]
-      gradArray[gradIndex] = (sum(gradTermArray[,gradIndex]))/(numTrainEx)
+    if (numTrainEx > 0) {
+      gradArray = matrix(0,numFeatures,1)
+      gradTermArray = matrix(0,numTrainEx,numFeatures)
+      for(gradIndex in 1:numFeatures) {
+        gradTermArray[,gradIndex] = (hTheta-y)*X[,gradIndex]
+        gradArray[gradIndex] = (sum(gradTermArray[,gradIndex]))/(numTrainEx)
+      }
     }
+    else
+      stop('Insufficient training examples')
   }
   else
     stop('Insufficient features')
