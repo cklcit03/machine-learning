@@ -46,7 +46,7 @@ plotDecisionBoundary <- function(X,y,theta){
 
 # Read key press
 readKey <- function(){
-  cat ("Program paused. Press enter to continue.")
+  cat("Program paused. Press enter to continue.")
   line <- readline()
   return(0)
 }
@@ -74,8 +74,12 @@ computeSigmoid <- function(z){
 computeCost <- function(theta,X,y,numTrainEx,lambda){
   hTheta <- computeSigmoid(X%*%theta)
   thetaSquared = theta^2
-  jTheta = (colSums(-y*log(hTheta)-(1-y)*log(1-hTheta)))/numTrainEx
-  jThetaReg = jTheta+(lambda/(2*numTrainEx))*sum(thetaSquared[-1])
+  if (numTrainEx > 0) {
+    jTheta = (colSums(-y*log(hTheta)-(1-y)*log(1-hTheta)))/numTrainEx
+    jThetaReg = jTheta+(lambda/(2*numTrainEx))*sum(thetaSquared[-1])
+  }
+  else
+    stop('Insufficient training examples')
   return(jThetaReg)
 }
 
@@ -83,19 +87,21 @@ computeCost <- function(theta,X,y,numTrainEx,lambda){
 computeGradient <- function(theta,X,y,numTrainEx,lambda){
   numFeatures = dim(X)[2]
   hTheta <- computeSigmoid(X%*%theta)
-  gradArray = matrix(0,numFeatures,1)
-  gradArrayReg = matrix(0,numFeatures,1)
-  gradTermArray = matrix(0,numTrainEx,numFeatures)
   if (numFeatures > 0) {
-    for(gradIndex in 1:numFeatures) {
-      gradTermArray[,gradIndex] = (hTheta-y)*X[,gradIndex]
-      gradArray[gradIndex] = (sum(gradTermArray[,gradIndex]))/(numTrainEx)
-      gradArrayReg[gradIndex] = gradArray[gradIndex]+(lambda/numTrainEx)*theta[gradIndex]
+    if (numTrainEx > 0) {
+      gradArray = matrix(0,numFeatures,1)
+      gradArrayReg = matrix(0,numFeatures,1)
+      gradTermArray = matrix(0,numTrainEx,numFeatures)
+      for(gradIndex in 1:numFeatures) {
+        gradTermArray[,gradIndex] = (hTheta-y)*X[,gradIndex]
+        gradArray[gradIndex] = (sum(gradTermArray[,gradIndex]))/(numTrainEx)
+        gradArrayReg[gradIndex] = gradArray[gradIndex]+(lambda/numTrainEx)*theta[gradIndex]
+      }
+      gradArrayReg[1] = gradArrayReg[1]-(lambda/numTrainEx)*theta[1]
     }
   }
   else
     stop('Insufficient features')
-  gradArrayReg[1] = gradArrayReg[1]-(lambda/numTrainEx)*theta[1]
   return(gradArrayReg)
 }
 
