@@ -69,6 +69,8 @@ def computeSigmoid(z):
 def computeCost(theta,X,y,numTrainEx):
     "Compute cost function J(\theta)"
     numFeatures = X.shape[1]
+    if (numFeatures == 0):
+        raise InsufficientFeatures('numFeatures = 0')
     theta = np.reshape(theta,(numFeatures,1),order='F')
     hTheta = computeSigmoid(np.dot(X,theta))
     if (numTrainEx == 0):
@@ -81,11 +83,11 @@ def computeCost(theta,X,y,numTrainEx):
 def computeGradient(theta,X,y,numTrainEx):
     "Compute gradient of cost function J(\theta)"
     numFeatures = X.shape[1]
+    if (numFeatures == 0):
+        raise InsufficientFeatures('numFeatures = 0')
     theta = np.reshape(theta,(numFeatures,1),order='F')
     hTheta = computeSigmoid(np.dot(X,theta))
     gradArray = np.zeros((numFeatures,1))
-    if (numFeatures == 0):
-        raise InsufficientFeatures('numFeatures = 0')
     if (numTrainEx == 0):
         raise InsufficientTrainingExamples('numTrainEx = 0')
     for gradIndex in range(0,numFeatures):

@@ -93,6 +93,8 @@ def computeCost(theta,X,y,numTrainEx,lamb):
     theta = np.reshape(theta,(numFeatures,1),order='F')
     hTheta = computeSigmoid(np.dot(X,theta))
     thetaSquared = np.power(theta,2)
+    if (numTrainEx == 0):
+        raise InsufficientTrainingExamples('numTrainEx = 0')
     jTheta = (np.sum(np.subtract(np.multiply(-y,np.log(hTheta)),np.multiply((1-y),np.log(1-hTheta))),axis=0))/numTrainEx
     jThetaReg = jTheta+(lamb/(2*numTrainEx))*np.sum(thetaSquared,axis=0)-thetaSquared[0]
 
@@ -102,12 +104,14 @@ def computeCost(theta,X,y,numTrainEx,lamb):
 def computeGradient(theta,X,y,numTrainEx,lamb):
     "Compute gradient of regularized cost function J(\theta)"
     numFeatures = X.shape[1]
+    if (numFeatures == 0):
+        raise InsufficientFeatures('numFeatures = 0')
     theta = np.reshape(theta,(numFeatures,1),order='F')
     hTheta = computeSigmoid(np.dot(X,theta))
     gradArray = np.zeros((numFeatures,1))
     gradArrayReg = np.zeros((numFeatures,1))
-    if (numFeatures == 0):
-        raise InsufficientFeatures('numFeatures = 0')
+    if (numTrainEx == 0):
+        raise InsufficientTrainingExamples('numTrainEx = 0')
     for gradIndex in range(0,numFeatures):
         gradTerm = np.multiply(np.reshape(X[:,gradIndex],(numTrainEx,1)),np.subtract(hTheta,y))
         gradArray[gradIndex] = (np.sum(gradTerm,axis=0))/numTrainEx
@@ -122,8 +126,6 @@ def computeCostGradList(X,y,theta,lamb):
     "Aggregate computed cost and gradient"
     numFeatures = X.shape[1]
     numTrainEx = y.shape[0]
-    if (numTrainEx == 0):
-        raise InsufficientTrainingExamples('numTrainEx = 0')
     jThetaReg = computeCost(theta,X,y,numTrainEx,lamb)
     gradArrayRegFlat = computeGradient(theta,X,y,numTrainEx,lamb)
     gradArrayReg = np.reshape(gradArrayRegFlat,(numFeatures,1),order='F')
@@ -136,6 +138,8 @@ def labelPrediction(X,theta):
     "Perform label prediction on training data"
     numTrainEx = X.shape[0]
     sigmoidArray = computeSigmoid(np.dot(X,theta))
+    if (numTrainEx == 0):
+        raise InsufficientTrainingExamples('numTrainEx = 0')
     p = np.zeros((numTrainEx,1))
     for trainIndex in range(0,numTrainEx):
         if (sigmoidArray[trainIndex] >= 0.5):
@@ -179,6 +183,8 @@ def main():
     # Compute accuracy on training set
     trainingPredict = labelPrediction(featureXMat,thetaOpt)
     numTrainMatch = 0
+    if (numTrainEx == 0):
+        raise InsufficientTrainingExamples('numTrainEx = 0')
     for trainIndex in range(0,numTrainEx):
         if (trainingPredict[trainIndex] == yVec[trainIndex]):
             numTrainMatch += 1
