@@ -90,6 +90,8 @@ def computeSigmoid(z):
 def computeCost(theta,X,y,numTrainEx,lamb):
     "Compute regularized cost function J(\theta)"
     numFeatures = X.shape[1]
+    if (numFeatures == 0):
+        raise InsufficientFeatures('numFeatures = 0')
     theta = np.reshape(theta,(numFeatures,1),order='F')
     hTheta = computeSigmoid(np.dot(X,theta))
     thetaSquared = np.power(theta,2)
