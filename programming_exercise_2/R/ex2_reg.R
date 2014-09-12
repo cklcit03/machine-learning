@@ -108,12 +108,8 @@ computeGradient <- function(theta,X,y,numTrainEx,lambda){
 # Aggregate computed cost and gradient
 computeCostGradList <- function(X,y,theta,lambda){
   numTrainEx = dim(y)[1]
-  if (numTrainEx > 0) {
-    jThetaReg <- computeCost(theta,X,y,numTrainEx,lambda)
-    gradArrayReg <- computeGradient(theta,X,y,numTrainEx,lambda)
-  }
-  else
-    stop('Insufficient training examples')
+  jThetaReg <- computeCost(theta,X,y,numTrainEx,lambda)
+  gradArrayReg <- computeGradient(theta,X,y,numTrainEx,lambda)
   returnList = list("jThetaReg"=jThetaReg,"gradArrayReg"=gradArrayReg)
   return(returnList)
 }
