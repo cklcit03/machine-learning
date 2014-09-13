@@ -69,11 +69,12 @@ computeSigmoid <- function(z){
 computeCost <- function(theta,X,y,numTrainEx,lambda){
   hTheta <- computeSigmoid(X%*%theta)
   thetaSquared = theta^2
-  if (numTrainEx > 0)
+  if (numTrainEx > 0) {
     jTheta = (colSums(-y*log(hTheta)-(1-y)*log(1-hTheta)))/numTrainEx
+    jThetaReg = jTheta+(lambda/(2*numTrainEx))*sum(thetaSquared[-1])
+  }
   else
     stop('Insufficient training examples')
-  jThetaReg = jTheta+(lambda/(2*numTrainEx))*sum(thetaSquared[-1])
   return(jThetaReg)
 }
 
