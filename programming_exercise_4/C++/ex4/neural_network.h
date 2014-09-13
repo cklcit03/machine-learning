@@ -94,7 +94,7 @@ class NeuralNetwork
   // Step 2: computes "error term" for output layer.
   // Step 3: computes "error term" for hidden layer.
   // Step 4: accumulates gradient term using above-mentioned "error terms".
-  // After iterating over all examples, perform following steps. 
+  // After iterating over all examples, performs following steps. 
   // Step 5: divides accumulated gradient term by number of training examples
   // to obtain unregularized gradient.
   // Step 6: scales weights in theta_ by 
