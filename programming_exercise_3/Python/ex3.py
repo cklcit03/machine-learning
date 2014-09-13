@@ -131,6 +131,8 @@ def oneVsAll(X,y,numLabels,lamb):
 def predictOneVsAll(X,allTheta):
     "Perform label prediction on training data"
     numTrainEx = X.shape[0]
+    if (numTrainEx == 0):
+        raise InsufficientTrainingExamples('numTrainEx = 0')
     onesVec = np.ones((numTrainEx,1))
     augX = np.c_[onesVec,X]
     sigmoidArray = computeSigmoid(np.dot(augX,np.transpose(allTheta)))

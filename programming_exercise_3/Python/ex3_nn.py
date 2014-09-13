@@ -77,6 +77,8 @@ def computeSigmoid(z):
 def predict(Theta1,Theta2,X):
     "Perform label prediction on training data"
     numTrainEx = X.shape[0]
+    if (numTrainEx == 0):
+        raise InsufficientTrainingExamples('numTrainEx = 0')
     onesVec = np.ones((numTrainEx,1))
     augX = np.c_[onesVec,X]
     hiddenLayerActivation = computeSigmoid(np.dot(augX,np.transpose(Theta1)))
@@ -117,6 +119,8 @@ def main():
     # Perform one-versus-all classification using trained parameters
     trainingPredict = predict(theta1Mat,theta2Mat,xMat)
     numTrainMatch = 0
+    if (numTrainEx == 0):
+        raise InsufficientTrainingExamples('numTrainEx = 0')
     for trainIndex in range(0,numTrainEx):
         if (trainingPredict[trainIndex] == yVec[trainIndex]):
             numTrainMatch += 1
