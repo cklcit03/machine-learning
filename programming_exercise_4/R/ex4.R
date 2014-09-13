@@ -54,7 +54,7 @@ displayData <- function(X){
 
 # Read key press
 readKey <- function(){
-  cat ("Program paused. Press enter to continue.")
+  cat("Program paused. Press enter to continue.")
   line <- readline()
   return(0)
 }
@@ -71,23 +71,27 @@ computeCost <- function(theta,X,y,lambda,layer1Size,layer2Size,layer3Size){
   Theta1 = matrix(thetaMat[1:(layer2Size*(layer1Size+1)),1],nrow=layer2Size)
   Theta2 = matrix(thetaMat[(1+layer2Size*(layer1Size+1)):(layer2Size*(layer1Size+1)+layer3Size*(layer2Size+1)),1],nrow=layer3Size)
   numTrainEx = dim(X)[1]
-  onesVec = t(t(rep(1,numTrainEx)))
-  augX = cbind(onesVec,X)
-  hiddenLayerActivation <- computeSigmoid(augX%*%t(Theta1))
-  onesVecMod = t(t(rep(1,dim(hiddenLayerActivation)[1])))
-  hiddenLayerActivationMod = cbind(onesVecMod,hiddenLayerActivation)
-  outputLayerActivation <- computeSigmoid(hiddenLayerActivationMod%*%t(Theta2))
-  numLabels = dim(Theta2)[1]
-  yMat = mat.or.vec(numTrainEx,numLabels)
-  for(exampleIndex in 1:numTrainEx) {
-    yMat[exampleIndex,y[exampleIndex,]] = 1
+  if (numTrainEx > 0) {
+    onesVec = t(t(rep(1,numTrainEx)))
+    augX = cbind(onesVec,X)
+    hiddenLayerActivation <- computeSigmoid(augX%*%t(Theta1))
+    onesVecMod = t(t(rep(1,dim(hiddenLayerActivation)[1])))
+    hiddenLayerActivationMod = cbind(onesVecMod,hiddenLayerActivation)
+    outputLayerActivation <- computeSigmoid(hiddenLayerActivationMod%*%t(Theta2))
+    numLabels = dim(Theta2)[1]
+    yMat = mat.or.vec(numTrainEx,numLabels)
+    for(exampleIndex in 1:numTrainEx) {
+      yMat[exampleIndex,y[exampleIndex,]] = 1
+    }
+    costTerm1 = -yMat*log(outputLayerActivation)
+    costTerm2 = -(1-yMat)*log(1-outputLayerActivation)
+    jTheta = (1/numTrainEx)*sum(costTerm1+costTerm2)
+    theta1Squared = Theta1^2
+    theta2Squared = Theta2^2
+    jThetaReg = jTheta+(lambda/(2*numTrainEx))*(sum(t(theta1Squared)[-1,])+sum(t(theta2Squared)[-1,]))
   }
-  costTerm1 = -yMat*log(outputLayerActivation)
-  costTerm2 = -(1-yMat)*log(1-outputLayerActivation)
-  jTheta = (1/numTrainEx)*sum(costTerm1+costTerm2)
-  theta1Squared = Theta1^2
-  theta2Squared = Theta2^2
-  jThetaReg = jTheta+(lambda/(2*numTrainEx))*(sum(t(theta1Squared)[-1,])+sum(t(theta2Squared)[-1,]))
+  else
+    stop('Insufficient training examples')
   return(jThetaReg)
 }
 
@@ -97,50 +101,54 @@ computeGradient <- function(theta,X,y,lambda,layer1Size,layer2Size,layer3Size){
   Theta1 = matrix(thetaMat[1:(layer2Size*(layer1Size+1)),1],nrow=layer2Size)
   Theta2 = matrix(thetaMat[(1+layer2Size*(layer1Size+1)):(layer2Size*(layer1Size+1)+layer3Size*(layer2Size+1)),1],nrow=layer3Size)
   numTrainEx = dim(X)[1]
-  onesVec = t(t(rep(1,numTrainEx)))
-  augX = cbind(onesVec,X)
-  delta1Mat = mat.or.vec(dim(Theta1)[1],dim(augX)[2])
-  delta2Mat = mat.or.vec(dim(Theta2)[1],dim(Theta1)[1]+1)
-  numLabels = dim(Theta2)[1]
+  if (numTrainEx > 0) {
+    onesVec = t(t(rep(1,numTrainEx)))
+    augX = cbind(onesVec,X)
+    delta1Mat = mat.or.vec(dim(Theta1)[1],dim(augX)[2])
+    delta2Mat = mat.or.vec(dim(Theta2)[1],dim(Theta1)[1]+1)
+    numLabels = dim(Theta2)[1]
 
-  # Iterate over the training examples
-  for(exampleIndex in 1:numTrainEx) {
+    # Iterate over the training examples
+    for(exampleIndex in 1:numTrainEx) {
 
-    # Step 1
-    exampleX = augX[exampleIndex,]
-    hiddenLayerActivation <- computeSigmoid(exampleX%*%t(Theta1))
-    onesVecMod = t(t(rep(1,dim(hiddenLayerActivation)[1])))
-    hiddenLayerActivationMod = cbind(onesVecMod,hiddenLayerActivation)
-    outputLayerActivation <- computeSigmoid(hiddenLayerActivationMod%*%t(Theta2))
+      # Step 1
+      exampleX = augX[exampleIndex,]
+      hiddenLayerActivation <- computeSigmoid(exampleX%*%t(Theta1))
+      onesVecMod = t(t(rep(1,dim(hiddenLayerActivation)[1])))
+      hiddenLayerActivationMod = cbind(onesVecMod,hiddenLayerActivation)
+      outputLayerActivation <- computeSigmoid(hiddenLayerActivationMod%*%t(Theta2))
 
-    # Step 2
-    yVec = mat.or.vec(1,numLabels)
-    yVec[1,y[exampleIndex,]] = 1
-    delta3Vec = t(outputLayerActivation-yVec)
+      # Step 2
+      yVec = mat.or.vec(1,numLabels)
+      yVec[1,y[exampleIndex,]] = 1
+      delta3Vec = t(outputLayerActivation-yVec)
 
-    # Step 3
-    delta2Int = t(Theta2)%*%delta3Vec
-    delta2Vec = delta2Int[-1,]*computeSigmoidGradient(t(exampleX%*%t(Theta1)))
+      # Step 3
+      delta2Int = t(Theta2)%*%delta3Vec
+      delta2Vec = delta2Int[-1,]*computeSigmoidGradient(t(exampleX%*%t(Theta1)))
 
-    # Step 4
-    delta1Mat = delta1Mat+delta2Vec%*%exampleX
-    delta2Mat = delta2Mat+delta3Vec%*%cbind(1,hiddenLayerActivation)
+      # Step 4
+      delta1Mat = delta1Mat+delta2Vec%*%exampleX
+      delta2Mat = delta2Mat+delta3Vec%*%cbind(1,hiddenLayerActivation)
+    }
+
+    # Step 5 (without regularization)
+    theta1Grad = (1/numTrainEx)*delta1Mat
+    theta2Grad = (1/numTrainEx)*delta2Mat
+
+    # Step 5 (with regularization)
+    theta1Grad[,-1] = theta1Grad[,-1]+(lambda/numTrainEx)*Theta1[,-1]
+    theta2Grad[,-1] = theta2Grad[,-1]+(lambda/numTrainEx)*Theta2[,-1]
+
+    # Unroll gradients
+    theta1GradStack = stack(as.data.frame(theta1Grad))
+    theta2GradStack = stack(as.data.frame(theta2Grad))
+    theta1GradStackVals = theta1GradStack[,"values"]
+    theta2GradStackVals = theta2GradStack[,"values"]
+    gradArrayReg = c(t(theta1GradStackVals),t(theta2GradStackVals))
   }
-
-  # Step 5 (without regularization)
-  theta1Grad = (1/numTrainEx)*delta1Mat
-  theta2Grad = (1/numTrainEx)*delta2Mat
-
-  # Step 5 (with regularization)
-  theta1Grad[,-1] = theta1Grad[,-1]+(lambda/numTrainEx)*Theta1[,-1]
-  theta2Grad[,-1] = theta2Grad[,-1]+(lambda/numTrainEx)*Theta2[,-1]
-
-  # Unroll gradients
-  theta1GradStack = stack(as.data.frame(theta1Grad))
-  theta2GradStack = stack(as.data.frame(theta2Grad))
-  theta1GradStackVals = theta1GradStack[,"values"]
-  theta2GradStackVals = theta2GradStack[,"values"]
-  gradArrayReg = c(t(theta1GradStackVals),t(theta2GradStackVals))
+  else
+    stop('Insufficient training examples')
 
   return(gradArrayReg)
 }
