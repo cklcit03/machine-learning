@@ -111,7 +111,7 @@ class Data
 
 // Stores training data, including features and labels.  Sample usage:
 // const std::string kDataFileName = "trainingData.txt";
-// DataMulti training_data_mapped(kDataFileName,kNumLabels);
+// DataMulti training_data_multi(kDataFileName,kNumLabels);
 class DataMulti: public Data
 {
  public:
