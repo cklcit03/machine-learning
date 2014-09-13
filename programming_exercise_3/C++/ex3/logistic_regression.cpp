@@ -286,7 +286,7 @@ int MultiClassRegularizedLogisticRegression::OneVsAll(DataMulti &data_multi) {
   {
     printf("class_index = %d\n",class_index);
     wrap_struct.class_label = class_index;
-	nlopt::opt opt(nlopt::LD_LBFGS,data_multi.num_features()+1);
+    nlopt::opt opt(nlopt::LD_LBFGS,data_multi.num_features()+1);
     opt.set_min_objective(ComputeCostWrapper,&wrap_struct);
     opt.set_ftol_abs(1e-6);
     std::vector<double> nlopt_theta(data_multi.num_features()+1,0.0);
