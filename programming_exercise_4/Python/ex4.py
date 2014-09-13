@@ -81,6 +81,8 @@ def computeCost(theta,X,y,lamb,layer1Size,layer2Size,layer3Size):
     theta2Slice = theta[(layer2Size*(layer1Size+1)):(layer2Size*(layer1Size+1)+layer3Size*(layer2Size+1)),:]
     Theta2 = np.reshape(theta2Slice,(layer3Size,layer2Size+1),order='F')
     numTrainEx = X.shape[0]
+    if (numTrainEx == 0):
+        raise InsufficientTrainingExamples('numTrainEx = 0')
     onesVec = np.ones((numTrainEx,1))
     augX = np.c_[onesVec,X]
     hiddenLayerActivation = computeSigmoid(np.dot(augX,np.transpose(Theta1)))
@@ -110,6 +112,8 @@ def computeGradient(theta,X,y,lamb,layer1Size,layer2Size,layer3Size):
     theta2Slice = theta[(layer2Size*(layer1Size+1)):(layer2Size*(layer1Size+1)+layer3Size*(layer2Size+1)),:]
     Theta2 = np.reshape(theta2Slice,(layer3Size,layer2Size+1),order='F')
     numTrainEx = X.shape[0]
+    if (numTrainEx == 0):
+        raise InsufficientTrainingExamples('numTrainEx = 0')
     onesVec = np.ones((numTrainEx,1))
     augX = np.c_[onesVec,X]
     delta1Mat = np.zeros((Theta1.shape[0],augX.shape[1]))
@@ -176,6 +180,8 @@ def randInitializeWeights(lIn,lOut):
 def predict(Theta1,Theta2,X):
     "Perform label prediction on training data"
     numTrainEx = X.shape[0]
+    if (numTrainEx == 0):
+        raise InsufficientTrainingExamples('numTrainEx = 0')
     onesVec = np.ones((numTrainEx,1))
     augX = np.c_[onesVec,X]
     hiddenLayerActivation = computeSigmoid(np.dot(augX,np.transpose(Theta1)))
@@ -207,7 +213,7 @@ def main():
     plt.show()
     input("Program paused. Press enter to continue.")
 
-    # Load two files that contain parameters trained by a neural network into R
+    # Load two files that contain parameters trained by a neural network
     print("\n")
     print("Loading Saved Neural Network Parameters ...")
     theta1Mat = np.genfromtxt("../Theta1.txt",delimiter=",")
@@ -274,6 +280,8 @@ def main():
     # Perform one-versus-all classification using trained parameters
     trainingPredict = predict(theta1Mat,theta2Mat,xMat)
     numTrainMatch = 0
+    if (numTrainEx == 0):
+        raise InsufficientTrainingExamples('numTrainEx = 0')
     for trainIndex in range(0,numTrainEx):
         if (trainingPredict[trainIndex] == yVec[trainIndex]):
             numTrainMatch += 1
