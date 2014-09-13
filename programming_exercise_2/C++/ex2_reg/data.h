@@ -128,13 +128,7 @@ class DataMapped: public Data
   // Sets default values for training data.
   DataMapped() : Data() {}
 
-  // Reads CSV file "file_name_arg".
-  // Sets values for training data based on contents of this file.
-  // Each row of this file is a training example.
-  // Each column of this file is a training feature (except for the last 
-  // column, which consists of training labels).
-  // For logistic regression, always include a dummy feature (that is set to 
-  // unity) for each training example.
+  // Use constructor for Data given "file_name_arg".
   // Map features into all polynomial terms of first two features up to the
   // sixth power.
   explicit DataMapped(std::string file_name_arg) : Data(file_name_arg,0) {
