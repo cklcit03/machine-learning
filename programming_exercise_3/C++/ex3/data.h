@@ -111,7 +111,7 @@ class Data
 
 // Stores training data, including features and labels.  Sample usage:
 // const std::string kDataFileName = "trainingData.txt";
-// DataMulti training_data_mapped(kDataFileName,kNumLabels);
+// DataMulti training_data_multi(kDataFileName,kNumLabels);
 class DataMulti: public Data
 {
  public:
@@ -125,8 +125,6 @@ class DataMulti: public Data
   // column, which consists of training labels).
   // For logistic regression, always include a dummy feature (that is set to 
   // unity) for each training example.
-  // Map features into all polynomial terms of first two features up to the
-  // sixth power.
   explicit DataMulti(std::string file_name_arg,int num_labels_arg) : \
     Data(file_name_arg),num_labels_(num_labels_arg) {}
 
