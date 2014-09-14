@@ -39,7 +39,7 @@ class LinearRegression
   LinearRegression() {
     theta_.zeros(3,1);
     gradient_.zeros(3,1);
-	lambda_ = 0.0;
+    lambda_ = 0.0;
   }
 
   // Sets values for algorithm parameters.
@@ -52,18 +52,18 @@ class LinearRegression
 
   ~LinearRegression() {}
 
-  // Computes cost function given training data in "data_debug", current 
+  // Computes cost function given data in "data_debug", current 
   // weights in theta_ and current regularization parameter lambda_.
   // Cost function term (for each training example) is (w/o regularization): 
   // (1 / (2 * (number of training examples))) * 
   // (theta_ * (training features) - (training label))^2
-  // Sums all of these terms to obtain standard logistic regression cost.
+  // Sums all of these terms to obtain standard linear regression cost.
   // To this cost, adds following term:
   // (lambda_ / (2 * (number of training examples))) * sum(theta_ * theta_)
   double ComputeCost(const std::vector<double> &opt_param,
     std::vector<double> &grad,const DataDebug &data_debug);
 
-  // Computes gradient given training data in "data_debug", current
+  // Computes gradient given data in "data_debug", current
   // weights in theta_ and current regularization parameter lambda_.
   // Gradient term (for each training example and each training feature) is
   // (w/o regularization):
