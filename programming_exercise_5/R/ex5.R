@@ -23,7 +23,7 @@ library(pracma)
 
 # Read key press
 readKey <- function(){
-  cat ("Program paused. Press enter to continue.")
+  cat("Program paused. Press enter to continue.")
   line <- readline()
   return(0)
 }
@@ -47,19 +47,23 @@ computeGradient <- function(theta,X,y,lambda){
   numTrainEx = dim(X)[1]
   numFeatures = dim(X)[2]
   hTheta  = X%*%theta
-  gradArray = matrix(0,numFeatures,1)
-  gradArrayReg = matrix(0,numFeatures,1)
-  gradTermArray = matrix(0,numTrainEx,numFeatures)
   if (numFeatures > 0) {
-    for(gradIndex in 1:numFeatures) {
-      gradTermArray[,gradIndex] = (hTheta-y)*X[,gradIndex]
-      gradArray[gradIndex] = (sum(gradTermArray[,gradIndex]))/(numTrainEx)
-      gradArrayReg[gradIndex] = gradArray[gradIndex]+(lambda/numTrainEx)*theta[gradIndex]
+    if (numTrainEx > 0) {
+      gradArray = matrix(0,numFeatures,1)
+      gradArrayReg = matrix(0,numFeatures,1)
+      gradTermArray = matrix(0,numTrainEx,numFeatures)
+      for(gradIndex in 1:numFeatures) {
+        gradTermArray[,gradIndex] = (hTheta-y)*X[,gradIndex]
+        gradArray[gradIndex] = (sum(gradTermArray[,gradIndex]))/(numTrainEx)
+        gradArrayReg[gradIndex] = gradArray[gradIndex]+(lambda/numTrainEx)*theta[gradIndex]
+        gradArrayReg[1] = gradArrayReg[1]-(lambda/numTrainEx)*theta[1]
+      }
     }
+	else
+      stop('Insufficient training examples')
   }
   else
     stop('Insufficient features')
-  gradArrayReg[1] = gradArrayReg[1]-(lambda/numTrainEx)*theta[1]
   return(gradArrayReg)
 }
 
