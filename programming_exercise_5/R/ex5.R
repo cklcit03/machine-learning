@@ -59,7 +59,7 @@ computeGradient <- function(theta,X,y,lambda){
         gradArrayReg[1] = gradArrayReg[1]-(lambda/numTrainEx)*theta[1]
       }
     }
-	else
+    else
       stop('Insufficient training examples')
   }
   else
