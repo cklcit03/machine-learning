@@ -29,20 +29,32 @@
 // Provides an interface to LibSVM and stores relevant parameters.
 // Sample usage:
 // SupportVectorMachine supp_vec_mach(training_data,svm_type,kernel_type);
-// const int kReturnCode = supp_vec_mach.TrainAndPredict(predict_flag);
+// const int kReturnCode = supp_vec_mach.Train();
 class SupportVectorMachine
 {
  public:
-  // Sets default values for algorithm parameters.
+  // Sets default values for SVM problem and its associated parameters.
   SupportVectorMachine() {
     svm_problem_.l = 1;
     svm_problem_.y[0] = 0.0;
-	svm_problem_.x[0][0].index = -1;
+    svm_problem_.x[0][0].index = -1;
     svm_problem_.x[0][0].value = 0;
     svm_parameter_.svm_type = C_SVC;
-	svm_parameter_.kernel_type = LINEAR;
-	svm_parameter_.gamma = 1.0;
-	svm_parameter_.C = 1.0;
+    svm_parameter_.kernel_type = LINEAR;
+    svm_parameter_.gamma = 1.0;
+    svm_parameter_.C = 1.0;
+    svm_parameter_.degree = 3;
+    svm_parameter_.cache_size = 100;
+    svm_parameter_.eps = 0.001;
+    svm_parameter_.shrinking = 1;
+    svm_parameter_.probability = 0;
+    svm_parameter_.nr_weight = 2;
+    svm_parameter_.weight = new double[svm_parameter_.nr_weight];
+    svm_parameter_.weight[0] = 1.0;
+    svm_parameter_.weight[1] = 1.0;
+    svm_parameter_.weight_label = new int[svm_parameter_.nr_weight];
+    svm_parameter_.weight_label[0] = 0;
+    svm_parameter_.weight_label[1] = 1;
   }
 
   // Sets values for SVM problem and its associated parameters.
@@ -70,7 +82,7 @@ class SupportVectorMachine
       {
         if (data.training_features().at(ex_index,feat_index) != 0) {
           svm_problem_.x[ex_index][sparse_index].index = feat_index;
-		  svm_problem_.x[ex_index][sparse_index].value = \
+          svm_problem_.x[ex_index][sparse_index].value = \
             data.training_features().at(ex_index,feat_index);
           sparse_index++;
         }
@@ -93,16 +105,16 @@ class SupportVectorMachine
     svm_parameter_.eps = 0.001;
     svm_parameter_.shrinking = 1;
     svm_parameter_.probability = 0;
-	svm_parameter_.nr_weight = 2;
+    svm_parameter_.nr_weight = 2;
     svm_parameter_.weight = new double[svm_parameter_.nr_weight];
     svm_parameter_.weight[0] = 1.0;
-	svm_parameter_.weight[1] = 1.0;
-	svm_parameter_.weight_label = new int[svm_parameter_.nr_weight];
-	svm_parameter_.weight_label[0] = 0;
-	svm_parameter_.weight_label[1] = 1;
+    svm_parameter_.weight[1] = 1.0;
+    svm_parameter_.weight_label = new int[svm_parameter_.nr_weight];
+    svm_parameter_.weight_label[0] = 0;
+    svm_parameter_.weight_label[1] = 1;
 
-    // Initializes the SVM model to NULL (it will be trained later).
-	memset(&svm_model_,0,sizeof(struct svm_model));
+    // Initializes the SVM model to NULL since it will be trained later.
+    memset(&svm_model_,0,sizeof(struct svm_model));
   }
 
   ~SupportVectorMachine() {

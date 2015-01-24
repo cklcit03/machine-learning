@@ -222,14 +222,14 @@ class DataDebug: public Data
 
  private:
 
-  // Features that are used for computing cost and gradient.
+  // Training features.
   arma::mat features_;
 
   // Test and cross-validation features.
   arma::mat testing_features_;
   arma::mat validation_features_;
 
-  // Labels that are used for computing cost and gradient.
+  // Training labels.
   arma::vec labels_;
 
   // Test and cross-validation labels.

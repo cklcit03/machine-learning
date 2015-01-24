@@ -18,29 +18,29 @@
 
 #include "dataset3Params.h"
 
-// Uses LibSVM for training.
+// Uses LibSVM for training and prediction.
 int Dataset3Params(DataDebug &data_debug,arma::rowvec C_vec,\
   arma::rowvec sigma_vec,double *C_arg,double *sigma_arg) {
   int best_pred_err = 1000000;
   for(int C_index=0; C_index<8; C_index++)
   {
     for(int sigma_index=0; sigma_index<8; sigma_index++)
-	{
+    {
       const int kSvmType3 = C_SVC;
       const int kKernelType3 = RBF;
       const double kCurrSigma = sigma_vec(sigma_index);
       const double kGamma3 = 1.0/(2.0*kCurrSigma*kCurrSigma);
-	  const double kCurrC = C_vec(C_index);
+      const double kCurrC = C_vec(C_index);
       SupportVectorMachine svm_model_3(data_debug,kSvmType3,kKernelType3,\
         kGamma3,kCurrC);
       svm_model_3.Train();
-	  int curr_pred_err = svm_model_3.Predict(data_debug);
+      int curr_pred_err = svm_model_3.Predict(data_debug);
       if (curr_pred_err < best_pred_err) {
         best_pred_err = curr_pred_err;
         *C_arg = kCurrC;
         *sigma_arg = kCurrSigma;
-	  }
-	}
+      }
+    }
   }
 
   return 0;

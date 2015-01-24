@@ -42,7 +42,7 @@ int SupportVectorMachine::Predict(const DataDebug &data_debug) {
     curr_test_ex = new svm_node[data_debug.num_features()+1];
     int sparse_index = 0;
     for(int feat_index=0; feat_index<data_debug.num_features(); feat_index++)
-	{
+    {
       if (data_debug.testing_features().at(test_index,feat_index) != 0) {
         curr_test_ex[sparse_index].index = feat_index;
         curr_test_ex[sparse_index].value = \
@@ -55,9 +55,9 @@ int SupportVectorMachine::Predict(const DataDebug &data_debug) {
     curr_test_ex[sparse_index].index = -1;
     curr_test_ex[sparse_index].value = 0;
     double pred_result = svm_predict(&svm_model_,curr_test_ex);
-	if (pred_result != data_debug.testing_labels().at(test_index)) {
+    if (pred_result != data_debug.testing_labels().at(test_index)) {
       num_mismatch++;
-	}
+    }
     delete [] curr_test_ex;
   }
 
