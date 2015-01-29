@@ -28,7 +28,7 @@
 
 // Provides an interface to LibSVM and stores relevant parameters.
 // Sample usage:
-// SupportVectorMachine supp_vec_mach(training_data,svm_type,kernel_type);
+// SupportVectorMachine supp_vec_mach(training_data,svm_type,kernel_type,gamma_arg,C_arg);
 // const int kReturnCode = supp_vec_mach.Train();
 class SupportVectorMachine
 {
@@ -59,8 +59,8 @@ class SupportVectorMachine
 
   // Sets values for SVM problem and its associated parameters.
   // "data" corresponds to the training data for the SVM problem.
-  // "svm_type_arg" corresponds to the type of SVM
-  // "kernel_type_arg" corresponds to the type of kernel function
+  // "svm_type_arg" corresponds to the type of SVM.
+  // "kernel_type_arg" corresponds to the type of kernel function.
   // "gamma_arg" corresponds to the gamma parameter for a poly/rbf/sigmoid SVM.
   // "C_arg" corresponds to the C parameter for C_SVC, EPSILON_SVR, and NU_SVR.
   SupportVectorMachine(const Data &data,int svm_type_arg,int kernel_type_arg,\
@@ -93,7 +93,7 @@ class SupportVectorMachine
       svm_problem_.x[ex_index][sparse_index].value = 0;
     }
 
-    // Initializes the parameters for the SVM problem.
+    // Initializes some of the parameters for the SVM problem.
     svm_parameter_.svm_type = svm_type_arg;
     svm_parameter_.kernel_type = kernel_type_arg;
     svm_parameter_.gamma = gamma_arg;
