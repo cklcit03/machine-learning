@@ -88,7 +88,7 @@ int main(void) {
   {
     double curr_coef = svm_model.svm_model().sv_coef[0][sv_idx];
     for(int col_idx=0; col_idx<spam_train.num_features(); col_idx++)
-	{
+    {
       int curr_idx = svm_model.svm_model().SV[sv_idx][col_idx].index;
       if (curr_idx == -1) {
         break;
