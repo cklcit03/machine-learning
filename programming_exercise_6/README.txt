@@ -4,10 +4,10 @@ To generate spamTrain.txt, start Octave (or Matlab) and change the working direc
 load('spamTrain.mat');
 fid = fopen('spamTrain.txt','w+');
 for ex_idx=1:size(X,1)
-	for feature_idx=1:size(X,2)
-		fprintf(fid,'%.15f,',X(ex_idx,feature_idx));
-	end
-	fprintf(fid,'%d',y(ex_idx));
+    for feature_idx=1:size(X,2)
+        fprintf(fid,'%.15f,',X(ex_idx,feature_idx));
+    end
+    fprintf(fid,'%d',y(ex_idx));
     fprintf(fid, '\n');
 end
 fclose(fid);
@@ -18,10 +18,10 @@ To generate spamTest.txt, start Octave (or Matlab) and change the working direct
 load('spamTest.mat');
 fid = fopen('spamTest.txt','w+');
 for ex_idx=1:size(Xtest,1)
-	for feature_idx=1:size(Xtest,2)
-		fprintf(fid,'%.15f,',Xtest(ex_idx,feature_idx));
-	end
-	fprintf(fid,'%d',ytest(ex_idx));
+    for feature_idx=1:size(Xtest,2)
+        fprintf(fid,'%.15f,',Xtest(ex_idx,feature_idx));
+    end
+    fprintf(fid,'%d',ytest(ex_idx));
     fprintf(fid, '\n');
 end
 fclose(fid);
