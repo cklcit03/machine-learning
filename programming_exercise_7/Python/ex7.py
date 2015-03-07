@@ -16,7 +16,6 @@
 # Machine Learning
 # Programming Exercise 7: K-Means Clustering
 # Problem: Apply K-Means Clustering to image compression
-import itertools
 import matplotlib.colors as colors
 import matplotlib.pyplot as plt
 import numpy as np
