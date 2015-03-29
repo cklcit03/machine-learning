@@ -32,7 +32,7 @@ int KMeansClustering::FindClosestCentroids(const DataUnlabeled \
       arma::norm(data_unlabeled.training_features().row(ex_index)-\
       centroids_.row(0),2);
     for(int cent_index=1;cent_index<(num_centroids_);cent_index++)
-	{
+    {
       double tmp_distance = \
         arma::norm(data_unlabeled.training_features().row(ex_index)-\
         centroids_.row(cent_index),2);
@@ -40,7 +40,7 @@ int KMeansClustering::FindClosestCentroids(const DataUnlabeled \
         min_distance = tmp_distance;
         centroid_assignments_.at(ex_index) = cent_index+1;
       }
-	}
+    }
   }
 
   return 0;
@@ -56,12 +56,12 @@ int KMeansClustering::ComputeCentroids(const DataUnlabeled \
     arma::mat is_centroid_idx = arma::zeros<arma::mat>(kNumTrainEx,1);
     for(int ex_index=0;ex_index<kNumTrainEx;ex_index++)
     {
-	  is_centroid_idx.at(ex_index,0) = (centroid_assignments_.at(ex_index,0) \
+      is_centroid_idx.at(ex_index,0) = (centroid_assignments_.at(ex_index,0) \
         == cent_index+1) ? 1 : 0;
     }
-	arma::mat sum_centroid_points = \
+    arma::mat sum_centroid_points = \
       is_centroid_idx.t()*data_unlabeled.training_features();
-	centroids_.row(cent_index) = \
+    centroids_.row(cent_index) = \
       sum_centroid_points/arma::as_scalar(arma::sum(is_centroid_idx));
   }
 
