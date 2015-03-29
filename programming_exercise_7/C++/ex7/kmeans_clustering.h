@@ -35,7 +35,7 @@ class KMeansClustering
   // Sets default values for algorithm parameters.
   KMeansClustering() {
     num_centroids_ = 1;
-	centroids_ = arma::zeros<arma::mat>(1,1);
+    centroids_ = arma::zeros<arma::mat>(1,1);
     centroid_assignments_ = arma::zeros<arma::vec>(1,1);
   }
 
