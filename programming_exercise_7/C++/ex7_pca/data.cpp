@@ -1,4 +1,4 @@
-// Copyright (C) 2014  Caleb Lo
+// Copyright (C) 2015  Caleb Lo
 //
 //    This program is free software: you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ int DataUnlabeledNormalized::FeatureNormalize() {
     arma::zeros<arma::mat>(kNumTrainEx,kNumFeatures);
   for(int row_index=0; row_index<kNumTrainEx;row_index++) {
     kTrainingFeaturesNormalized.row(row_index) = \
-	  (training_features().row(row_index)-mu_vec.t())/sigma_vec.t();
+      (training_features().row(row_index)-mu_vec.t())/sigma_vec.t();
   }
   set_training_features_normalized(kTrainingFeaturesNormalized);
 
