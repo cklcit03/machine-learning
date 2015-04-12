@@ -35,8 +35,8 @@ class PCA
   // Sets default values for algorithm parameters.
   PCA() {
     left_sing_vec_ = arma::zeros<arma::mat>(1,1);
-	sing_val_ = arma::zeros<arma::vec>(1,1);
-	mapped_data_ = arma::zeros<arma::mat>(1,1);
+    sing_val_ = arma::zeros<arma::vec>(1,1);
+    mapped_data_ = arma::zeros<arma::mat>(1,1);
     recovered_data_ = arma::zeros<arma::mat>(1,1);
   }
 
