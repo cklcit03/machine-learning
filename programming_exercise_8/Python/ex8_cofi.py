@@ -38,6 +38,7 @@ class InsufficientTrainingExamples(Exception):
 
 # Display current iteration of fmin_ncg
 def callbackFMinNcg(Xi):
+    "Display current iteration of fmin_ncg"
     global Nfeval
     print("Nfeval = %d" % Nfeval)
     Nfeval += 1
@@ -112,6 +113,7 @@ def computeCostGradList(y,R,theta,lamb,numUsers,numMovies,numFeatures):
     jThetaReg = computeCost(theta,y,R,numTrainEx,lamb,numUsers,numMovies,numFeatures)
     gradArrayRegFlat = computeGradient(theta,y,R,numTrainEx,lamb,numUsers,numMovies,numFeatures)
     gradArrayReg = np.reshape(gradArrayRegFlat,(numFeatures*(numUsers+numMovies),1),order='F')
+
     returnList = {'jThetaReg': jThetaReg,'gradArrayReg': gradArrayReg}
 
     return(returnList)
@@ -147,6 +149,7 @@ def normalizeRatings(Y,R):
         ratedUsers = np.where(R[movieIndex,:] == 1)
         YMean[movieIndex,] = np.sum(Y[movieIndex,:])/np.sum(R[movieIndex,:])
         YNorm[movieIndex,ratedUsers] = Y[movieIndex,ratedUsers]-YMean[movieIndex,:]
+
     returnList = {'YMean': YMean,'YNorm': YNorm}
 
     return(returnList)
