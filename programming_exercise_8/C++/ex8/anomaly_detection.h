@@ -30,8 +30,8 @@
 // Implements key functions for anomaly detection and stores relevant 
 // parameters.
 // Sample usage:
-// AnomalyDetection anom_detect(training_data);
-// const int kReturnCode = anom_detect.EstimateGaussian();
+// AnomalyDetection anom_detect(training_data,cross_val_data);
+// const int kReturnCode = anom_detect.EstimateGaussian(training_data);
 class AnomalyDetection
 {
  public:
@@ -59,8 +59,8 @@ class AnomalyDetection
     // Sets the probability of each training example.
     data_probs_ = arma::zeros<arma::vec>(data_unlabeled.num_train_ex());
 
-	// Sets the probability of each cross-validation example.
-	data_cross_val_probs_ = arma::zeros<arma::vec>(data.num_train_ex());
+    // Sets the probability of each cross-validation example.
+    data_cross_val_probs_ = arma::zeros<arma::vec>(data.num_train_ex());
 
     // Sets default values for best F-score and threshold.
     best_F1_ = 0.0;
