@@ -68,7 +68,7 @@ int main(void) {
   {
     if (anom_detect_2.data_probs()[ex_index] < anom_detect_2.best_epsilon()) {
       outlier_indices.push_back(ex_index);
-	}
+    }
   }
   printf("# Outliers found: %d\n",outlier_indices.size());
   printf("   (you should see a value epsilon of about 1.38e-18)\n");
