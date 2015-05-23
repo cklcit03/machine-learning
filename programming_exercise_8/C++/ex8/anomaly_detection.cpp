@@ -45,14 +45,14 @@ int AnomalyDetection::MultivariateGaussian(const Data &data,\
     double kProbVecNumerator = arma::as_scalar(arma::exp(-0.5*\
       (kTrainFeat.row(ex_index)-data_mean_.t())*arma::inv(kVarianceMat)*\
       (kTrainFeat.row(ex_index)-data_mean_.t()).t()));
-	double kProbVecDenominator = arma::as_scalar(pow(2.0*M_PI,\
+    double kProbVecDenominator = arma::as_scalar(pow(2.0*M_PI,\
       0.5*kNumTrainFeat)*sqrt(arma::as_scalar(arma::det(kVarianceMat))));
     if (cross_val_flag == 1) {
       data_cross_val_probs_[ex_index] = kProbVecNumerator/kProbVecDenominator;
     }
-	else {
+    else {
       data_probs_[ex_index] = kProbVecNumerator/kProbVecDenominator;
-	}
+    }
   }
 
   return 0;
@@ -74,7 +74,7 @@ int AnomalyDetection::SelectThreshold(const Data &data) {
     {
       predictions_vec(ex_index) = \
         (data_cross_val_probs_(ex_index) < curr_epsilon) ? 1 : 0;
-	}
+    }
     int num_false_negatives = 0;
     int num_false_positives = 0;
     int num_true_positives = 0;
@@ -83,7 +83,7 @@ int AnomalyDetection::SelectThreshold(const Data &data) {
       if ((predictions_vec(ex_index) == 1) && (kTrainLabels(ex_index) == 1)) {
         num_true_positives++;
       }
-	  else if ((predictions_vec(ex_index) == 1) && \
+      else if ((predictions_vec(ex_index) == 1) && \
         (kTrainLabels(ex_index) == 0)) {
         num_false_positives++;
       }
@@ -91,7 +91,7 @@ int AnomalyDetection::SelectThreshold(const Data &data) {
         (kTrainLabels(ex_index) == 1)) {
         num_false_negatives++;
       }
-	}
+    }
     if (num_true_positives > 0) {
       double precision_val = (double)num_true_positives/\
         (double)(num_true_positives+num_false_positives);
@@ -101,9 +101,9 @@ int AnomalyDetection::SelectThreshold(const Data &data) {
       if (curr_f_score > best_F1_) {
         best_F1_ = curr_f_score;
         best_epsilon_ = curr_epsilon;
-	  }
-	}
-	curr_epsilon += kStepSize;
+      }
+    }
+    curr_epsilon += kStepSize;
   }
 
   return 0;
