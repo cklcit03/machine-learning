@@ -44,7 +44,7 @@ PlotDecisionBoundary <- function(X, y, theta) {
   # Args:
   #   X: Features that have already been plotted.
   #   y: Data labels.
-  #   theta: Parameter that determines slope of decision boundary.
+  #   theta: Parameter that determines shape of decision boundary.
   #
   # Returns:
   #   None.
@@ -195,7 +195,7 @@ ComputeCostGradList <- function(X, y, theta, lambda) {
   return(returnList)
 }
 
-LabelPrediction <- function(X, theta){
+LabelPrediction <- function(X, theta) {
   # Performs label prediction on training data.
   #
   # Args:
