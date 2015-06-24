@@ -99,7 +99,7 @@ GradientDescentMulti <- function(X, y, theta, alpha, numiters) {
   #   numiters: Number of iterations for gradient descent.
   #
   # Returns:
-  #   returnList: List of three objects.
+  #   returnList: List of two objects.
   #               theta: Updated vector of parameters for linear regression.
   #               jHistory: Vector of linear regression cost at each iteration.
   numTrainEx <- dim(y)[1]
