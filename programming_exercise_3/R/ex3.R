@@ -70,7 +70,7 @@ DisplayData <- function(X) {
   return(0)
 }
 
-ReadKey <- function(){
+ReadKey <- function() {
   # Reads key press.
   #
   # Args:
