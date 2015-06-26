@@ -18,6 +18,9 @@
 # Problem: Predict housing prices given sizes/bedrooms of various houses
 # Linear regression with multiple variables
 
+# Load packages
+library(pracma)
+
 ReadKey <- function() {
   # Reads key press.
   #
