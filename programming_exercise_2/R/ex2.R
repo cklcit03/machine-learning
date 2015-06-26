@@ -74,7 +74,7 @@ ComputeSigmoid <- function(z) {
   #   z: Can be a scalar, a vector or a matrix.
   #
   # Returns:
-  #   None.
+  #   sigmoidZ: Sigmoid function value.
   sigmoidZ <- 1 / (1 + exp(-z))
   return(sigmoidZ)
 }
