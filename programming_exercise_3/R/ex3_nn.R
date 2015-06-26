@@ -104,7 +104,7 @@ Predict <- function(Theta1, Theta2, X) {
   #           hidden layer).
   #   Theta2: Matrix of neural network parameters (map from hidden layer to
   #           output layer).
-  #        X: Matrix of features. 
+  #   X: Matrix of features.
   #
   # Returns:
   #   p: Vector of predicted class labels (one per example).
