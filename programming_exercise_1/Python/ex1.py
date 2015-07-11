@@ -15,132 +15,175 @@
 
 # Machine Learning
 # Programming Exercise 1: Linear Regression
-# Problem: Predict profits for a food truck given data for profits/populations of various cities
+# Problem: Predict profits for a food truck given data for profits/populations
+# of various cities
 # Linear regression with one variable
-import matplotlib.pyplot as plt
 from matplotlib import cm
-from matplotlib import rc
+from matplotlib import pyplot
 from mpl_toolkits.mplot3d import Axes3D
-import numpy as np
+import numpy
 
-class InsufficientIterations(Exception):
-    def __init__(self,value):
+class Error(Exception):
+    def __init__(self, value):
         self.value = value
     def __str__(self):
         return repr(self.value)
 
-class InsufficientTrainingExamples(Exception):
-    def __init__(self,value):
-        self.value = value
-    def __str__(self):
-        return repr(self.value)
 
-# Plot data
-def plotData(x,y):
-    "Plot data"
-    plt.plot(x,y,'rx',markersize=18)
-    plt.ylabel('Profit in $10,0000s',fontsize=18)
-    plt.xlabel('Population of City in 10,000s',fontsize=18)
+def plot_data(x, y):
+    """ Plots data.
 
+    Args:
+      x: X-values of data to be plotted.
+      y: Y-values of data to be plotted.
+
+    Returns:
+      None.
+    """
+    pyplot.plot(x, y, 'rx', markersize=18)
+    pyplot.ylabel('Profit in $10,0000s', fontsize=18)
+    pyplot.xlabel('Population of City in 10,000s', fontsize=18)
     return None
 
-# Compute cost function J(\theta)
-def computeCost(X,y,theta):
-    "Compute cost function J(\theta)"
-    numTrainEx = y.shape[0]
-    if (numTrainEx == 0):
-        raise InsufficientTrainingExamples('numTrainEx = 0')
-    diffVec = np.subtract(np.dot(X,theta),y)
-    diffVecSq = np.multiply(diffVec,diffVec)
-    jTheta = (np.sum(diffVecSq,axis=0))/(2*numTrainEx)
 
-    return(np.asscalar(jTheta))
+def compute_cost(X, y, theta):
+    """ Computes cost function J(\theta).
 
-# Run gradient descent
-def gradientDescent(X,y,theta,alpha,numiters):
-    "Run gradient descent"
-    if (numiters <= 0):
-        raise InsufficientIterations('numiters <= 0')
-    numTrainEx = y.shape[0]
-    if (numTrainEx == 0):
-        raise InsufficientTrainingExamples('numTrainEx = 0')
-    jThetaArray = np.zeros((numiters,1))
-    for thetaIndex in range(0,numiters):
-        diffVec = np.subtract(np.dot(X,theta),y)
-        diffVecTimesX = np.c_[np.multiply(diffVec,np.reshape(X[:,0],(numTrainEx,1))),np.multiply(diffVec,np.reshape(X[:,1],(numTrainEx,1)))]
-        thetaNew = np.subtract(theta,alpha*(1/numTrainEx)*np.reshape(np.sum(diffVecTimesX,axis=0),(2,1)))
-        jThetaArray[thetaIndex] = computeCost(X,y,thetaNew)
-        theta = thetaNew
+    Args:
+      X: Matrix of features.
+      y: Vector of labels.
+      theta: Vector of parameters for linear regression.
 
-    return(theta)
+    Returns:
+      j_theta: Linear regression cost.
 
-# Main function
+    Raises:
+      An error occurs if the number of training examples is 0.
+    """
+    num_train_ex = y.shape[0]
+    if num_train_ex == 0: raise Error('num_train_ex = 0')
+    diff_vec = numpy.subtract(numpy.dot(X, theta), y)
+    diff_vec_sq = numpy.multiply(diff_vec, diff_vec)
+    j_theta = (numpy.sum(diff_vec_sq, axis=0))/(2*num_train_ex)
+    return numpy.asscalar(j_theta)
+
+
+def gradient_descent(X, y, theta, alpha, numiters):
+    """ Runs gradient descent.
+
+    Args:
+      X: Matrix of features.
+      y: Vector of labels.
+      theta: Vector of parameters for linear regression.
+      alpha: Learning rate for gradient descent.
+      numiters: Number of iterations for gradient descent.
+
+    Returns:
+      theta: Updated vector of parameters for linear regression.
+
+    Raises:
+      An error occurs if the number of iterations is 0.
+      An error occurs if the number of training examples is 0.
+    """
+    if numiters <= 0: raise Error('numiters <= 0')
+    num_train_ex = y.shape[0]
+    if num_train_ex == 0: raise Error('num_train_ex = 0')
+    j_theta_array = numpy.zeros((numiters, 1))
+    for theta_index in range(0, numiters):
+        diff_vec = numpy.subtract(numpy.dot(X, theta), y)
+        diff_vec_times_X = numpy.c_[numpy.multiply(diff_vec,
+                                                   numpy.reshape(X[:, 0],
+                                                                 (num_train_ex,
+                                                                  1))),
+                                    numpy.multiply(diff_vec,
+                                                   numpy.reshape(X[:, 1],
+                                                                 (num_train_ex,
+                                                                  1)))]
+        theta_new = numpy.subtract(theta, alpha*(1/num_train_ex)*
+                                   numpy.reshape(numpy.sum(diff_vec_times_X,
+                                                           axis=0), (2, 1)))
+        j_theta_array[theta_index] = compute_cost(X, y, theta_new)
+        theta = theta_new
+    return theta
+
+
 def main():
-    "Main function"
+    """ Main function
+    """
     print("Plotting Data ...")
-    foodTruckData = np.genfromtxt("../foodTruckData.txt",delimiter=",")
-    returnCode = plotData(foodTruckData[:,0],foodTruckData[:,1])
-    plt.show()
+    food_truck_data = numpy.genfromtxt("../foodTruckData.txt", delimiter=",")
+    return_code = plot_data(food_truck_data[:, 0], food_truck_data[:, 1])
+    pyplot.show()
     input("Program paused. Press enter to continue.")
     print("")
     print("Running Gradient Descent ...")
-    numTrainEx = foodTruckData.shape[0]
-    onesVec = np.ones((numTrainEx,1))
-    xMat = np.c_[onesVec,foodTruckData[:,0]]
-    thetaVec = np.zeros((2,1))
-    yVec = np.reshape(foodTruckData[:,1],(numTrainEx,1))
+    num_train_ex = food_truck_data.shape[0]
+    ones_vec = numpy.ones((num_train_ex, 1))
+    x_mat = numpy.c_[ones_vec, food_truck_data[:, 0]]
+    theta_vec = numpy.zeros((2, 1))
+    y_vec = numpy.reshape(food_truck_data[:, 1], (num_train_ex, 1))
 
     # Compute initial cost
-    initCost = computeCost(xMat,yVec,thetaVec)
-    print("ans = %.3f" % initCost)
+    init_cost = compute_cost(x_mat, y_vec, theta_vec)
+    print("ans = %.3f" % init_cost)
 
     # Run gradient descent
     iterations = 1500
     alpha = 0.01
-    thetaFinal = gradientDescent(xMat,yVec,thetaVec,alpha,iterations)
-    print("Theta found by gradient descent: %s" % np.array_str(np.transpose(np.round(thetaFinal,6))))
-    returnCode = plotData(foodTruckData[:,0],foodTruckData[:,1])
-    plt.hold(True)
-    plt.plot(xMat[:,1],np.dot(xMat,thetaFinal),'b-',markersize=18)
-    plt.legend(('Training data','Linear regression'),loc='lower right')
-    plt.hold(False)
-    plt.show()
+    theta_final = gradient_descent(x_mat, y_vec, theta_vec, alpha, iterations)
+    print("Theta found by gradient descent: %s" %
+          numpy.array_str(numpy.transpose(numpy.round(theta_final, 6))))
+    return_code = plot_data(food_truck_data[:, 0], food_truck_data[:, 1])
+    pyplot.hold(True)
+    pyplot.plot(x_mat[:, 1], numpy.dot(x_mat, theta_final), 'b-', markersize=18)
+    pyplot.legend(('Training data', 'Linear regression'), loc='lower right')
+    pyplot.hold(False)
+    pyplot.show()
 
     # Predict profit for population size of 35000
-    predProfit1 = np.asscalar(np.dot(np.array([1,3.5]),thetaFinal))
-    predProfit1Scaled = 10000*predProfit1
-    print("For population = 35,000, we predict a profit of %.6f" % predProfit1Scaled)
+    pred_profit_1 = numpy.asscalar(numpy.dot(numpy.array([1, 3.5]),
+                                             theta_final))
+    pred_profit_1_scaled = 10000*pred_profit_1
+    print("For population = 35,000, we predict a profit of %.6f" %
+          pred_profit_1_scaled)
 
     # Predict profit for population size of 70000
-    predProfit2 = np.asscalar(np.dot(np.array([1,7.0]),thetaFinal))
-    predProfit2Scaled = 10000*predProfit2
-    print("For population = 70,000, we predict a profit of %.6f" % predProfit2Scaled)
+    pred_profit_2 = numpy.asscalar(numpy.dot(numpy.array([1, 7.0]),
+                                             theta_final))
+    pred_profit_2_scaled = 10000*pred_profit_2
+    print("For population = 70,000, we predict a profit of %.6f" %
+          pred_profit_2_scaled)
     input("Program paused. Press enter to continue.")
     print("")
     print("Visualizing J(theta_0, theta_1) ...\n")
-    theta0Vals = np.linspace(-10,10,num=100)
-    theta1Vals = np.linspace(-1,4,num=100)
-    jVals = np.zeros((theta0Vals.shape[0],theta1Vals.shape[0]))
-    for theta0Index in range(0,theta0Vals.shape[0]):
-        for theta1Index in range(0,theta1Vals.shape[0]):
-            tVec = np.vstack((theta0Vals[theta0Index],theta1Vals[theta1Index]))
-            jVals[theta0Index,theta1Index] = computeCost(xMat,yVec,tVec);
-    jValsTrans = np.transpose(jVals)
-    theta0ValsX,theta1ValsY = np.meshgrid(theta0Vals,theta1Vals)
-    jValsReshape = jValsTrans.reshape(theta0ValsX.shape)
-    fig = plt.figure()
-    ax = fig.add_subplot(111,projection='3d')
-    ax.plot_surface(theta0ValsX,theta1ValsY,jValsReshape,rstride=1,cstride=1,cmap=cm.jet)
-    ax.set_ylabel(r'$\Theta_1$',fontsize=18)
-    ax.set_xlabel(r'$\Theta_0$',fontsize=18)
-    plt.show()
-    plt.contour(theta0ValsX,theta1ValsY,jValsReshape,levels=np.logspace(-2,3,20))
-    plt.ylabel(r'$\Theta_1$',fontsize=18)
-    plt.xlabel(r'$\Theta_0$',fontsize=18)
-    plt.hold(True)
-    plt.plot(thetaFinal[0],thetaFinal[1],'rx',markersize=18,markeredgewidth=3)
-    plt.hold(False)
-    plt.show()
+    theta_0_vals = numpy.linspace(-10, 10, num=100)
+    theta_1_vals = numpy.linspace(-1, 4, num=100)
+    j_vals = numpy.zeros((theta_0_vals.shape[0], theta_1_vals.shape[0]))
+    for theta_0_index in range(0, theta_0_vals.shape[0]):
+        for theta_1_index in range(0, theta_1_vals.shape[0]):
+            t_vec = numpy.vstack((theta_0_vals[theta_0_index],
+                                  theta_1_vals[theta_1_index]))
+            j_vals[theta_0_index, theta_1_index] = compute_cost(x_mat, y_vec,
+                                                                t_vec)
+    j_vals_trans = numpy.transpose(j_vals)
+    theta_0_vals_X, theta_1_vals_Y = numpy.meshgrid(theta_0_vals, theta_1_vals)
+    j_vals_reshape = j_vals_trans.reshape(theta_0_vals_X.shape)
+    fig = pyplot.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.plot_surface(theta_0_vals_X, theta_1_vals_Y, j_vals_reshape, rstride=1,
+                    cstride=1, cmap=cm.jet)
+    ax.set_ylabel(r'$\Theta_1$', fontsize=18)
+    ax.set_xlabel(r'$\Theta_0$', fontsize=18)
+    pyplot.show()
+    pyplot.contour(theta_0_vals_X, theta_1_vals_Y, j_vals_reshape,
+                   levels=numpy.logspace(-2, 3, 20))
+    pyplot.ylabel(r'$\Theta_1$', fontsize=18)
+    pyplot.xlabel(r'$\Theta_0$', fontsize=18)
+    pyplot.hold(True)
+    pyplot.plot(theta_final[0], theta_final[1], 'rx', markersize=18,
+                markeredgewidth=3)
+    pyplot.hold(False)
+    pyplot.show()
 
 # Call main function
 if __name__ == "__main__":
