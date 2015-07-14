@@ -18,127 +18,164 @@
 # Problem: Predict label for a handwritten digit given data for 
 # pixel values of various handwritten digits
 # Use parameters trained by a neural network for prediction
-import matplotlib.pyplot as plt
-import matplotlib.cm as cm
-import numpy as np
-from scipy.optimize import fmin_ncg
+from matplotlib import cm
+from matplotlib import pyplot
+import numpy
 
-class InsufficientFeatures(Exception):
-    def __init__(self,value):
+
+class Error(Exception):
+    def __init__(self, value):
         self.value = value
     def __str__(self):
         return repr(self.value)
 
-class InsufficientTrainingExamples(Exception):
-    def __init__(self,value):
-        self.value = value
-    def __str__(self):
-        return repr(self.value)
 
-# Display 2D data in a grid
-def displayData(X):
-    "Display 2D data in a grid"
-    exampleWidth = (np.round(np.sqrt(X.shape[1]))).astype(int)
-    numRows = X.shape[0]
-    numCols = X.shape[1]
-    exampleHeight = (numCols/exampleWidth)
-    displayRows = (np.floor(np.sqrt(numRows))).astype(int)
-    displayCols = (np.ceil(numRows/displayRows)).astype(int)
+def display_data(X):
+    """ Displays 2D data in a grid.
+
+    Args:
+      X: Matrix of 2D data that will be displayed using imshow().
+
+    Returns:
+      None.
+
+    Raises:
+      An error occurs if the number of rows is 0.
+      An error occurs if the number of cols is 0.
+    """
+    num_rows = X.shape[0]
+    if (num_rows == 0): raise Error('num_rows = 0')
+    num_cols = X.shape[1]
+    if (num_cols == 0): raise Error('num_cols = 0')
+    example_width = (numpy.round(numpy.sqrt(num_cols))).astype(int)
+    example_height = (num_cols/example_width)
+    display_rows = (numpy.floor(numpy.sqrt(num_rows))).astype(int)
+    display_cols = (numpy.ceil(num_rows/display_rows)).astype(int)
     pad = 1
-    displayArray = (-1)*np.ones((pad+displayRows*(exampleHeight+pad),pad+displayCols*(exampleWidth+pad)))
-    currEx = 1
-    for rowIndex in range(1,displayRows+1):
-        for colIndex in range(1,displayCols+1):
-            if (currEx > numRows):
+    display_array = (-1)*numpy.ones((pad+display_rows*(example_height+pad),
+                                     pad+display_cols*(example_width+pad)))
+    curr_ex = 1
+    for row_index in range(1, display_rows+1):
+        for col_index in range(1, display_cols+1):
+            if (curr_ex > num_rows):
                 break
-            maxVal = np.amax(np.absolute(X[currEx-1,:]))
-            minRowIdx = pad+(rowIndex-1)*(exampleHeight+pad)
-            maxRowIdx = pad+(rowIndex-1)*(exampleHeight+pad)+exampleHeight
-            minColIdx = pad+(colIndex-1)*(exampleWidth+pad)
-            maxColIdx = pad+(colIndex-1)*(exampleWidth+pad)+exampleWidth
-            xReshape = np.reshape(X[currEx-1,],(exampleHeight,exampleWidth))
-            displayArray[minRowIdx:maxRowIdx,minColIdx:maxColIdx] = (1/maxVal)*np.fliplr(np.rot90(xReshape,3))
-            currEx = currEx+1
-        if (currEx > numRows):
+            max_val = numpy.amax(numpy.absolute(X[curr_ex-1, :]))
+            min_row_idx = pad+(row_index-1)*(example_height+pad)
+            max_row_idx = pad+(row_index-1)*(example_height+pad)+example_height
+            min_col_idx = pad+(col_index-1)*(example_width+pad)
+            max_col_idx = pad+(col_index-1)*(example_width+pad)+example_width
+            x_reshape = numpy.reshape(X[curr_ex-1, ], (example_height,
+                                                       example_width))
+            display_array[min_row_idx:max_row_idx, min_col_idx:max_col_idx] = (
+                (1/max_val)*numpy.fliplr(numpy.rot90(x_reshape, 3)))
+            curr_ex = curr_ex+1
+        if (curr_ex > num_rows):
             break
-    plt.imshow(displayArray,cmap=cm.Greys_r)
-    plt.axis('off')
-
+    pyplot.imshow(display_array, cmap=cm.Greys_r)
+    pyplot.axis('off')
     return None
 
-# Compute sigmoid function
-def computeSigmoid(z):
-    "Compute sigmoid function"
-    sigmoidZ = 1/(1+np.exp(-z))
 
-    return(sigmoidZ)
+def compute_sigmoid(z):
+    """ Computes sigmoid function.
 
-# Perform label prediction on training data
-def predict(Theta1,Theta2,X):
-    "Perform label prediction on training data"
-    numTrainEx = X.shape[0]
-    if (numTrainEx == 0):
-        raise InsufficientTrainingExamples('numTrainEx = 0')
-    onesVec = np.ones((numTrainEx,1))
-    augX = np.c_[onesVec,X]
-    hiddenLayerActivation = computeSigmoid(np.dot(augX,np.transpose(Theta1)))
-    onesVecMod = np.ones((hiddenLayerActivation.shape[0],1))
-    hiddenLayerActivationMod = np.c_[onesVecMod,hiddenLayerActivation]
-    outputLayerActivation = computeSigmoid(np.dot(hiddenLayerActivationMod,np.transpose(Theta2)))
-    p = np.argmax(outputLayerActivation,axis=1)
-    for exampleIndex in range(0,numTrainEx):
-        p[exampleIndex] = p[exampleIndex]+1
+    Args:
+      z: Can be a scalar, a vector or a matrix.
 
-    return(p)
+    Returns:
+      sigmoid_z: Sigmoid function value.
+    """
+    sigmoid_z = 1/(1+numpy.exp(-z))
+    return sigmoid_z
 
-# Main function
+
+def predict(theta_1, theta_2, X):
+    """ Performs label prediction on training data.
+
+    Args:
+      theta_1: Matrix of neural network parameters (map from input layer to
+               hidden layer).
+      theta_2: Matrix of neural network parameters (map from hidden layer to
+               output layer).
+      X: Matrix of features.
+
+    Returns:
+      p: Vector of predicted class labels (one per example).
+
+    Raises:
+      An error occurs if the number of training examples is 0.
+    """
+    num_train_ex = X.shape[0]
+    if (num_train_ex == 0): raise Error('num_train_ex = 0')
+    ones_vec = numpy.ones((num_train_ex, 1))
+    aug_x = numpy.c_[ones_vec, X]
+    hidden_layer_activation = (
+        compute_sigmoid(numpy.dot(aug_x, numpy.transpose(theta_1))))
+    ones_vec_mod = numpy.ones((hidden_layer_activation.shape[0], 1))
+    hidden_layer_activation_mod = numpy.c_[ones_vec_mod,
+                                           hidden_layer_activation]
+    output_layer_activation = (
+        compute_sigmoid(numpy.dot(hidden_layer_activation_mod,
+                                  numpy.transpose(theta_2))))
+    p = numpy.argmax(output_layer_activation, axis=1)
+    for example_index in range(0, num_train_ex):
+        p[example_index] = p[example_index]+1
+    return p
+
+
 def main():
-    "Main function"
+    """ Main function
+
+    Raises:
+      An error occurs if the number of training examples is 0.
+    """
     print("Loading and Visualizing Data ...")
-    digitData = np.genfromtxt("../digitData.txt",delimiter=",")
-    numTrainEx = digitData.shape[0]
-    numFeatures = digitData.shape[1]-1
-    xMat = digitData[:,0:numFeatures]
-    yVec = digitData[:,numFeatures:(numFeatures+1)]
+    digit_data = numpy.genfromtxt("../digitData.txt", delimiter=",")
+    num_train_ex = digit_data.shape[0]
+    if (num_train_ex == 0): raise Error('num_train_ex = 0')
+    num_features = digit_data.shape[1]-1
+    x_mat = digit_data[:, 0:num_features]
+    y_vec = digit_data[:, num_features:(num_features+1)]
 
     # Randomly select 100 data points to display
-    randIndices = np.random.permutation(numTrainEx)
-    xMatSel = xMat[randIndices[0],:]
-    for randIndex in range(1,100):
-        xMatSel = np.vstack([xMatSel,xMat[randIndices[randIndex],:]])
-    returnCode = displayData(xMatSel)
-    plt.show()
+    rand_indices = numpy.random.permutation(num_train_ex)
+    x_mat_sel = x_mat[rand_indices[0], :]
+    for rand_index in range(1, 100):
+        x_mat_sel = numpy.vstack([x_mat_sel,
+                                  x_mat[rand_indices[rand_index], :]])
+    return_code = display_data(x_mat_sel)
+    pyplot.show()
     input("Program paused. Press enter to continue.")
 
     # Load two files that contain parameters trained by a neural network into R
     print("\n")
     print("Loading Saved Neural Network Parameters ...")
-    theta1Mat = np.genfromtxt("../Theta1.txt",delimiter=",")
-    theta2Mat = np.genfromtxt("../Theta2.txt",delimiter=",")
+    theta_1_mat = numpy.genfromtxt("../Theta1.txt", delimiter=",")
+    theta_2_mat = numpy.genfromtxt("../Theta2.txt", delimiter=",")
 
     # Perform one-versus-all classification using trained parameters
-    trainingPredict = predict(theta1Mat,theta2Mat,xMat)
-    numTrainMatch = 0
-    if (numTrainEx == 0):
-        raise InsufficientTrainingExamples('numTrainEx = 0')
-    for trainIndex in range(0,numTrainEx):
-        if (trainingPredict[trainIndex] == yVec[trainIndex]):
-            numTrainMatch += 1
+    training_predict = predict(theta_1_mat, theta_2_mat, x_mat)
+    num_train_match = 0
+    for train_index in range(0, num_train_ex):
+        if (training_predict[train_index] == y_vec[train_index]):
+            num_train_match += 1
     print("\n")
-    print("Training Set Accuracy: %.6f" % (100*numTrainMatch/numTrainEx))
+    print("Training Set Accuracy: %.6f" % (100*num_train_match/num_train_ex))
     input("Program paused. Press enter to continue.")
 
     # Display example images along with predictions from neural network
-    randIndices = np.random.permutation(numTrainEx)
-    for exampleIndex in range(0,10):
+    rand_indices = numpy.random.permutation(num_train_ex)
+    for example_index in range(0, 10):
         print("\n")
         print("Displaying Example Image")
         print("\n")
-        xMatSel = np.reshape(xMat[randIndices[exampleIndex],:],(1,numFeatures),order='F')
-        returnCode = displayData(xMatSel)
-        plt.show()
-        examplePredict = predict(theta1Mat,theta2Mat,xMatSel)
-        print("Neural Network Prediction: %d (digit %d)" % (examplePredict,examplePredict%10))
+        x_mat_sel = numpy.reshape(x_mat[rand_indices[example_index], :],
+                                  (1, num_features), order='F')
+        return_code = display_data(x_mat_sel)
+        pyplot.show()
+        example_predict = predict(theta_1_mat, theta_2_mat, x_mat_sel)
+        print("Neural Network Prediction: %d (digit %d)" % (example_predict,
+                                                            example_predict%10))
         input("Program paused. Press enter to continue.")
 
 # Call main function
