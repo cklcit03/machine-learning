@@ -345,7 +345,8 @@ def main():
     lamb = 0
     neural_network_cost = compute_cost(theta_stack, x_mat, y_vec, lamb,
                                        i_l_siz, h_l_siz, num_label)
-    print("Cost at parameters (loaded from theta_1.txt and theta_2.txt): %.6f" % neural_network_cost)
+    print("Cost at parameters (loaded from theta_1.txt and theta_2.txt): %.6f" %
+          neural_network_cost)
     print("(this value should be about 0.287629)")
     print("\n")
     input("Program paused. Press enter to continue.")
@@ -356,7 +357,8 @@ def main():
     lamb = 1
     neural_network_cost = compute_cost(theta_stack, x_mat, y_vec, lamb,
                                        i_l_siz, h_l_siz, num_label)
-    print("Cost at parameters (loaded from Theta1.txt and Theta2.txt): %.6f" % neural_network_cost)
+    print("Cost at parameters (loaded from Theta1.txt and Theta2.txt): %.6f" %
+          neural_network_cost)
     print("(this value should be about 0.383770)")
     input("Program paused. Press enter to continue.")
 
