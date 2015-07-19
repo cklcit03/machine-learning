@@ -20,6 +20,7 @@
 from matplotlib import pyplot
 import numpy
 
+
 class Error(Exception):
     def __init__(self, value):
         self.value = value
@@ -35,9 +36,9 @@ def feature_normalize(X):
 
     Returns:
       return_list: List of three objects.
-                  x_normalized: Matrix of normalized features.
-                  mu_vec: Vector of mean values of features.
-                  sigma_vec: Vector of standard deviations of features.
+                   x_normalized: Matrix of normalized features.
+                   mu_vec: Vector of mean values of features.
+                   sigma_vec: Vector of standard deviations of features.
 
     Raises:
       An error occurs if the number of features is 0.
@@ -54,7 +55,7 @@ def feature_normalize(X):
         x_normalized[index] = numpy.divide(numpy.subtract(X[index, :], mu_vec),
                                            sigma_vec)
     return_list = {'x_normalized': x_normalized, 'mu_vec': mu_vec,
-                  'sigma_vec': sigma_vec}
+                   'sigma_vec': sigma_vec}
     return return_list
 
 
