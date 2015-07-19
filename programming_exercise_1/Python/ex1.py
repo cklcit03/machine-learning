@@ -23,6 +23,7 @@ from matplotlib import pyplot
 from mpl_toolkits.mplot3d import Axes3D
 import numpy
 
+
 class Error(Exception):
     def __init__(self, value):
         self.value = value
