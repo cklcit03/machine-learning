@@ -21,6 +21,7 @@ from matplotlib import pyplot
 from scipy.optimize import fmin_ncg
 import numpy
 
+
 class Error(Exception):
     def __init__(self, value):
         self.value = value
