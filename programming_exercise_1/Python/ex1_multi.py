@@ -34,7 +34,7 @@ def feature_normalize(X):
       X: Matrix of features.
 
     Returns:
-      returnList: List of three objects.
+      return_list: List of three objects.
                   x_normalized: Matrix of normalized features.
                   mu_vec: Vector of mean values of features.
                   sigma_vec: Vector of standard deviations of features.
@@ -53,9 +53,9 @@ def feature_normalize(X):
     for index in range(0, num_ex):
         x_normalized[index] = numpy.divide(numpy.subtract(X[index, :], mu_vec),
                                            sigma_vec)
-    returnList = {'x_normalized': x_normalized, 'mu_vec': mu_vec,
+    return_list = {'x_normalized': x_normalized, 'mu_vec': mu_vec,
                   'sigma_vec': sigma_vec}
-    return returnList
+    return return_list
 
 
 def compute_cost_multi(X, y, theta):
@@ -91,9 +91,10 @@ def gradient_descent_multi(X, y, theta, alpha, numiters):
       numiters: Number of iterations for gradient descent.
 
     Returns:
-      returnList: List of two objects.
-                  theta: Updated vector of parameters for linear regression.
-                  j_history: Vector of linear regression cost at each iteration.
+      return_list: List of two objects.
+                   theta: Updated vector of parameters for linear regression.
+                   j_history: Vector of linear regression cost at each
+                              iteration.
 
     Raises:
       An error occurs if the number of features is 0.
@@ -123,8 +124,8 @@ def gradient_descent_multi(X, y, theta, alpha, numiters):
                                                  (num_features, 1)))
         j_theta_array[theta_index] = compute_cost_multi(X, y, theta_new)
         theta = theta_new
-    returnList = {'theta': theta, 'j_history': j_theta_array}
-    return returnList
+    return_list = {'theta': theta, 'j_history': j_theta_array}
+    return return_list
 
 
 def normal_eqn(X, y):
