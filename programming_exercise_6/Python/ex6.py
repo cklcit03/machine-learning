@@ -16,164 +16,215 @@
 # Machine Learning
 # Programming Exercise 6: Support Vector Machines
 # Problem: Use SVMs to learn decision boundaries for various example datasets
-import matplotlib.pyplot as plt
-import matplotlib.cm as cm
-import numpy as np
+from matplotlib import pyplot
 from sklearn import svm
+import numpy
 
-class InsufficientFeatures(Exception):
-    def __init__(self,value):
+
+class Error(Exception):
+    def __init__(self, value):
         self.value = value
     def __str__(self):
         return repr(self.value)
 
-class InsufficientTrainingExamples(Exception):
-    def __init__(self,value):
-        self.value = value
-    def __str__(self):
-        return repr(self.value)
 
-# Plot data
-def plotData(x,y):
-    "Plot data"
-    positiveIndices = np.where(y == 1)
-    negativeIndices = np.where(y == 0)
-    pos = plt.scatter(x[positiveIndices,0],x[positiveIndices,1],s=80,marker='+',color='k')
-    plt.hold(True)
-    neg = plt.scatter(x[negativeIndices,0],x[negativeIndices,1],s=80,marker='s',color='y')
-    plt.hold(False)
+def plot_data(x, y):
+    """ Plots data.
 
+    Args:
+      x: Features to be plotted.
+      y: Data labels.
+
+    Returns:
+      None.
+    """
+    positive_indices = numpy.where(y == 1)
+    negative_indices = numpy.where(y == 0)
+    pos = pyplot.scatter(x[positive_indices, 0], x[positive_indices, 1], s=80,
+                         marker='+', color='k')
+    pyplot.hold(True)
+    neg = pyplot.scatter(x[negative_indices, 0], x[negative_indices, 1], s=80,
+                         marker='s', color='y')
+    pyplot.hold(False)
     return None
 
-# Plot linear decision boundary
-def plotLinearDecisionBoundary(x,y,theta):
-    "Plot linear decision boundary"
-    plotData(np.c_[x[:,0],x[:,1]],y)
-    plt.hold(True)
-    yLineVals = (theta[0]+theta[1]*x[:,0])/(-1*theta[2])
-    plt.plot(x[:,0],yLineVals,'b-',markersize=18)
-    plt.hold(False)
 
+def plot_linear_decision_boundary(x, y, theta):
+    """ Plots linear decision boundary.
+
+    Args:
+      x: Features that have already been plotted.
+      y: Data labels.
+      theta: Parameter that determines slope of decision boundary.
+
+    Returns:
+      None.
+    """
+    plot_data(numpy.c_[x[:, 0], x[:, 1]], y)
+    pyplot.hold(True)
+    y_line_vals = (theta[0]+theta[1]*x[:, 0])/(-1*theta[2])
+    pyplot.plot(x[:, 0], y_line_vals, 'b-', markersize=18)
+    pyplot.hold(False)
     return None
 
-# Plot non-linear decision boundary learned via SVM
-def plotDecisionBoundary(x,y,svmModel):
-    "Plot non-linear decision boundary learned via SVM"
-    plotData(np.c_[x[:,0],x[:,1]],y)
-    plt.hold(True)
-    x1 = np.linspace(np.amin(x[:,0],axis=0),np.amax(x[:,0],axis=0),num=100)
-    x2 = np.linspace(np.amin(x[:,1],axis=0),np.amax(x[:,1],axis=0),num=100)
-    jVals = np.zeros((x1.shape[0],x2.shape[0]))
-    for x1Index in range(0,x1.shape[0]):
-        for x2Index in range(0,x2.shape[0]):
-            jVals[x1Index,x2Index] = svmModel.predict([[x1[x1Index,],x2[x2Index,]]])
-    jValsTrans = np.transpose(jVals)
-    x1X,x2Y = np.meshgrid(x1,x2)
-    jValsReshape = jValsTrans.reshape(x1X.shape)
-    plt.contour(x1,x2,jValsReshape,1)
-    plt.hold(False)
 
+def plot_decision_boundary(x, y, svm_model):
+    """ Plots non-linear decision boundary learned via SVM.
+
+    Args:
+      x: Features to be plotted.
+      y: Data labels.
+      svm_model: Fitted SVM model.
+
+    Returns:
+      None.
+    """
+    plot_data(numpy.c_[x[:, 0], x[:, 1]], y)
+    pyplot.hold(True)
+    x1 = numpy.linspace(numpy.amin(x[:, 0], axis=0),
+                        numpy.amax(x[:, 0], axis=0), num=100)
+    x2 = numpy.linspace(numpy.amin(x[:, 1], axis=0),
+                        numpy.amax(x[:, 1], axis=0), num=100)
+    j_vals = numpy.zeros((x1.shape[0], x2.shape[0]))
+    for x1_index in range(0, x1.shape[0]):
+        for x2_index in range(0, x2.shape[0]):
+            j_vals[x1_index, x2_index] = svm_model.predict([[x1[x1_index, ],
+                                                             x2[x2_index, ]]])
+    j_vals_trans = numpy.transpose(j_vals)
+    x1_x, x2_y = numpy.meshgrid(x1, x2)
+    j_vals_reshape = j_vals_trans.reshape(x1_x.shape)
+    pyplot.contour(x1, x2, j_vals_reshape, 1)
+    pyplot.hold(False)
     return None
 
-# Select optimal learning parameters for radial basis SVM
-def dataset3Params(X1,y1,Xval,yVal):
-    "Select optimal learning parameters for radial basis SVM"
+
+def dataset3_params(X1, y1, x_val, y_val):
+    """ Selects optimal learning parameters for radial basis SVM.
+
+    Args:
+      X1: Matrix of training features.
+      y1: Vector of training labels.
+      x_val: Matrix of cross-validation features.
+      y_val: Vector of cross-validation labels.
+
+    Returns:
+      return_list: List of two objects.
+                   C: Best (in terms of minimum prediction error for 
+                      cross-validation data) value that controls penalty for 
+                      misclassified training examples.
+                   sigma: Best (in terms of minimum prediction error for 
+                          cross-validation data) value that determines how fast
+                          similarity metric decreases as examples are further 
+                          apart.
+
+    Raises:
+      An error occurs if the number of cross-validation examples is 0.
+    """
+    num_val_ex = y_val.shape[0]
+    if (num_val_ex == 0): raise Error('num_val_ex == 0')
     C = 1
     sigma = 0.3
-    cArr = np.c_[0.01,0.03,0.1,0.3,1,3,10,30]
-    numC = cArr.shape[1]
-    cArr= np.reshape(cArr,(numC,1),order='F')
-    sigmaArr = np.c_[0.01,0.03,0.1,0.3,1,3,10,30]
-    numSigma = sigmaArr.shape[1]
-    sigmaArr= np.reshape(sigmaArr,(numSigma,1),order='F')
-    bestPredErr = 1000000
-    for cIndex in range(0,numC):
-        for sigmaIndex in range(0,numSigma):
-            svmModelTmp = svm.SVC(C=cArr[cIndex],kernel='rbf',gamma=1/(2*np.power(sigmaArr[sigmaIndex],2)))
-            svmModelTmp.fit(X1,y1)
-            predVec = svmModelTmp.predict(Xval)
-            currPredErr = 0
-            for valIndex in range(0,yVal.shape[0]):
-                if (predVec[valIndex] != yVal[valIndex]):
-                    currPredErr = currPredErr + 1
-            if (currPredErr < bestPredErr):
-                cBest = cArr[cIndex]
-                sigmaBest = sigmaArr[sigmaIndex]
-                bestPredErr = currPredErr
-    C = cBest
-    sigma = sigmaBest
-    returnList = {'C': C,'sigma': sigma}
+    c_arr = numpy.c_[0.01, 0.03, 0.1, 0.3, 1, 3, 10, 30]
+    num_c = c_arr.shape[1]
+    c_arr = numpy.reshape(c_arr, (num_c, 1), order='F')
+    sig_arr = numpy.c_[0.01, 0.03, 0.1, 0.3, 1, 3, 10, 30]
+    num_sigma = sig_arr.shape[1]
+    sig_arr = numpy.reshape(sig_arr, (num_sigma, 1), order='F')
+    best_pred_err = 1000000
+    for c_index in range(0, num_c):
+        for sigma_index in range(0, num_sigma):
+            svm_model_tmp = svm.SVC(C=c_arr[c_index], kernel='rbf',
+                                    gamma=1/(2*numpy.power(sig_arr[sigma_index],
+                                                           2)))
+            svm_model_tmp.fit(X1, y1)
+            pred_vec = svm_model_tmp.predict(x_val)
+            curr_pred_err = 0
+            for val_index in range(0, num_val_ex):
+                if (pred_vec[val_index] != y_val[val_index]):
+                    curr_pred_err = curr_pred_err + 1
+            if (curr_pred_err < best_pred_err):
+                c_best = c_arr[c_index]
+                sigma_best = sig_arr[sigma_index]
+                best_pred_err = curr_pred_err
+    C = c_best
+    sigma = sigma_best
+    return_list = {'C': C, 'sigma': sigma}
+    return return_list
 
-    return(returnList)
 
-# Main function
 def main():
-    "Main function"
+    """ Main function
+    """
     print("Loading and Visualizing Data ...")
-    exampleData1 = np.genfromtxt("../exampleData1.txt",delimiter=",")
-    numTrainEx = exampleData1.shape[0]
-    numFeatures = exampleData1.shape[1]-1
+    example_data_1 = numpy.genfromtxt("../exampleData1.txt", delimiter=",")
+    num_train_ex = example_data_1.shape[0]
+    num_features = example_data_1.shape[1]-1
 
     # Plot data
-    xMat = exampleData1[:,0:numFeatures]
-    yVec = exampleData1[:,numFeatures]
-    returnCode = plotData(xMat,yVec)
-    plt.show()
+    x_mat = example_data_1[:, 0:num_features]
+    y_vec = example_data_1[:, num_features]
+    return_code = plot_data(x_mat, y_vec)
+    pyplot.show()
     input("Program paused. Press enter to continue.")
     print("")
 
     # Train linear SVM on data
     print("Training Linear SVM ...")
-    svmModel = svm.SVC(kernel='linear')
-    svmModel.fit(xMat,yVec)
-    thetaOpt = np.c_[svmModel.intercept_,svmModel.coef_]
-    returnCode = plotLinearDecisionBoundary(xMat,yVec,np.transpose(thetaOpt))
-    plt.show()
+    svm_model = svm.SVC(kernel='linear')
+    svm_model.fit(x_mat, y_vec)
+    theta_opt = numpy.c_[svm_model.intercept_, svm_model.coef_]
+    return_code = plot_linear_decision_boundary(x_mat, y_vec,
+                                                numpy.transpose(theta_opt))
+    pyplot.show()
     input("Program paused. Press enter to continue.")
     print("")
 
     # Load another dataset and plot it
-    exampleData2 = np.genfromtxt("../exampleData2.txt",delimiter=",")
-    numTrainEx2 = exampleData2.shape[0]
-    numFeatures2 = exampleData2.shape[1]-1
-    xMat2 = exampleData2[:,0:numFeatures2]
-    yVec2 = exampleData2[:,numFeatures2]
-    returnCode = plotData(xMat2,yVec2)
-    plt.show()
+    example_data_2 = numpy.genfromtxt("../exampleData2.txt", delimiter=",")
+    num_train_ex_2 = example_data_2.shape[0]
+    num_features_2 = example_data_2.shape[1]-1
+    x_mat_2 = example_data_2[:, 0:num_features_2]
+    y_vec_2 = example_data_2[:, num_features_2]
+    return_code = plot_data(x_mat_2, y_vec_2)
+    pyplot.show()
     input("Program paused. Press enter to continue.")
     print("")
 
     # Train radial basis SVM on data
     print("Training SVM with RBF Kernel (this may take 1 to 2 minutes) ...")
-    sigmaVal = 0.1
-    svmModel2 = svm.SVC(kernel='rbf',gamma=1/(2*np.power(sigmaVal,2)))
-    svmModel2.fit(xMat2,yVec2)
-    returnCode = plotDecisionBoundary(xMat2,yVec2,svmModel2)
-    plt.show()
+    sigma_val = 0.1
+    svm_model_2 = svm.SVC(kernel='rbf', gamma=1/(2*numpy.power(sigma_val, 2)))
+    svm_model_2.fit(x_mat_2, y_vec_2)
+    return_code = plot_decision_boundary(x_mat_2, y_vec_2, svm_model_2)
+    pyplot.show()
     input("Program paused. Press enter to continue.")
     print("")
 
     # Load another dataset (along with cross-validation data) and plot it
-    exampleData3 = np.genfromtxt("../exampleData3.txt",delimiter=",")
-    numTrainEx3 = exampleData3.shape[0]
-    numFeatures3 = exampleData3.shape[1]-1
-    xMat3 = exampleData3[:,0:numFeatures3]
-    yVec3 = exampleData3[:,numFeatures3]
-    exampleValData3 = np.genfromtxt("../exampleValData3.txt",delimiter=",")
-    numValEx3 = exampleValData3.shape[0]
-    xValMat3 = exampleValData3[:,0:numFeatures3]
-    yValVec3 = exampleValData3[:,numFeatures3]
-    returnCode = plotData(xMat3,yVec3)
-    plt.show()
+    example_data_3 = numpy.genfromtxt("../exampleData3.txt", delimiter=",")
+    num_train_ex_3 = example_data_3.shape[0]
+    num_features_3 = example_data_3.shape[1]-1
+    x_mat_3 = example_data_3[:, 0:num_features_3]
+    y_vec_3 = example_data_3[:, num_features_3]
+    example_val_data_3 = numpy.genfromtxt("../exampleValData3.txt",
+                                          delimiter=",")
+    num_val_ex_3 = example_val_data_3.shape[0]
+    x_val_mat_3 = example_val_data_3[:, 0:num_features_3]
+    y_val_vec_3 = example_val_data_3[:, num_features_3]
+    return_code = plot_data(x_mat_3, y_vec_3)
+    pyplot.show()
     input("Program paused. Press enter to continue.")
     print("")
 
     # Use cross-validation data to train radial basis SVM
-    dataset3ParamsList = dataset3Params(xMat3,yVec3,xValMat3,yValVec3)
-    svmModel3 = svm.SVC(C=dataset3ParamsList['C'],kernel='rbf',gamma=1/(2*np.power(dataset3ParamsList['sigma'],2)))
-    svmModel3.fit(xMat3,yVec3)
-    returnCode = plotDecisionBoundary(xMat3,yVec3,svmModel3)
-    plt.show()
+    dataset3_params_list = dataset3_params(x_mat_3, y_vec_3, x_val_mat_3,
+                                           y_val_vec_3)
+    svm_model_3 = svm.SVC(C=dataset3_params_list['C'], kernel='rbf',
+                          gamma=1/(2*numpy.power(dataset3_params_list['sigma'],
+                                                 2)))
+    svm_model_3.fit(x_mat_3, y_vec_3)
+    return_code = plot_decision_boundary(x_mat_3, y_vec_3, svm_model_3)
+    pyplot.show()
     input("Program paused. Press enter to continue.")
     print("")
 
