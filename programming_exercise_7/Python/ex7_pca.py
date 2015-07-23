@@ -16,434 +16,592 @@
 # Machine Learning
 # Programming Exercise 7: Principal Component Analysis (PCA)
 # Problem: Use PCA for dimensionality reduction
-import matplotlib.cm as cm
-import matplotlib.colors as colors
-import matplotlib.pyplot as plt
-import numpy as np
-import png
+from matplotlib import cm
+from matplotlib import colors
+from matplotlib import pyplot
 from mpl_toolkits.mplot3d import Axes3D
+import numpy
+import png
 
-class InsufficientCentroids(Exception):
-    def __init__(self,value):
+
+class Error(Exception):
+    def __init__(self, value):
         self.value = value
     def __str__(self):
         return repr(self.value)
 
-class InsufficientData(Exception):
-    def __init__(self,value):
-        self.value = value
-    def __str__(self):
-        return repr(self.value)
 
-class InsufficientDimensions(Exception):
-    def __init__(self,value):
-        self.value = value
-    def __str__(self):
-        return repr(self.value)
+def feature_normalize(X):
+    """ Performs feature normalization.
 
-class InsufficientFeatures(Exception):
-    def __init__(self,value):
-        self.value = value
-    def __str__(self):
-        return repr(self.value)
+    Args:
+      X: Matrix of features.
 
-class InsufficientIterations(Exception):
-    def __init__(self,value):
-        self.value = value
-    def __str__(self):
-        return repr(self.value)
+    Returns:
+      return_list: List of three objects.
+                   x_norm: Matrix of normalized features.
+                   mu_vec: Vector of mean values of features.
+                   sigma_vec: Vector of standard deviations of features.
 
-class InsufficientTrainingExamples(Exception):
-    def __init__(self,value):
-        self.value = value
-    def __str__(self):
-        return repr(self.value)
-
-# Perform feature normalization
-def featureNormalize(X):
-    "Perform feature normalization"
-    numTrainEx = X.shape[0]
-    if (numTrainEx == 0):
-        raise InsufficientTrainingExamples('numTrainEx = 0')
-    numFeatures = X.shape[1]
-    if (numFeatures == 0):
-        raise InsufficientFeatures('numFeatures = 0')
-    xNormalized = np.zeros((numTrainEx,numFeatures))
-    muVec = np.mean(X,axis=0)
+    Raises:
+      An error occurs if the number of training examples is 0.
+      An error occurs if the number of features is 0.
+    """
+    num_train_ex = X.shape[0]
+    if (num_train_ex == 0): raise Error('num_train_ex = 0')
+    num_features = X.shape[1]
+    if (num_features == 0): raise Error('num_features = 0')
+    x_norm = numpy.zeros((num_train_ex, num_features))
+    mu_vec = numpy.mean(X, axis=0)
 
     # Note that standard deviation for numpy uses a denominator of n
     # Standard deviation for R and Octave uses a denominator of n-1
-    sigmaVec = np.std(X,axis=0,dtype=np.float32)
-    for index in range(0,numTrainEx):
-        xNormalized[index] = np.divide(np.subtract(X[index,:],muVec),sigmaVec)
-    returnList = {'xNormalized': xNormalized,'muVec': muVec,'sigmaVec': sigmaVec}
+    sigma_vec = numpy.std(X, axis=0, dtype=numpy.float32)
+    for index in range(0, num_train_ex):
+        x_norm[index] = numpy.divide(numpy.subtract(X[index, :], mu_vec),
+                                     sigma_vec)
+    return_list = {'x_norm': x_norm, 'mu_vec': mu_vec, 'sigma_vec': sigma_vec}
+    return return_list
 
-    return(returnList)
 
-# Run PCA on input data
 def pca(X):
-    "Run PCA on input data"
-    numTrainEx = X.shape[0]
-    if (numTrainEx >= 1):
-        covMat = (1/numTrainEx)*np.dot(X.conj().T,X)
-        U,s,V = np.linalg.svd(covMat)
-    else:
-        raise InsufficientTrainingExamples('numTrainEx < 1')
-    returnList = {"leftSingVec": U,"singVal": s}
+    """ Runs PCA on input data.
 
-    return(returnList)
+    Args:
+      X: Matrix of features.
 
-# Draw line between input points
-def drawLine(startPoint,endPoint):
-    "Draw line between input points"
-    plt.plot([startPoint[0],endPoint[0]],[startPoint[1],endPoint[1]],'b')
+    Returns:
+      return_list: List of two objects.
+                   left_sing_vec: Matrix whose columns contain the left singular
+                                  vectors of X.
+                   sing_val: Vector containing the singular values of X.
 
+    Raises:
+      An error occurs if the number of training examples is 0.
+    """
+    num_train_ex = X.shape[0]
+    if (num_train_ex == 0): raise Error('num_train_ex = 0')
+    cov_mat = (1/num_train_ex)*numpy.dot(X.conj().T, X)
+    U, s, V = numpy.linalg.svd(cov_mat)
+    return_list = {"left_sing_vec": U, "sing_val": s}
+    return return_list
+
+
+def draw_line(start_point,end_point):
+    """ Draws line between input points.
+
+    Args:
+      start_point: 2-D vector that represents starting point.
+      end_point: 2-D vector that represents ending point.
+
+    Returns:
+      None.
+    """
+    pyplot.plot([start_point[0], end_point[0]], [start_point[1], end_point[1]],
+                'b')
     return None
 
-# Project input data onto reduced-dimensional space
-def projectData(X,singVec,numDim):
-    "Project input data onto reduced-dimensional space"
-    if (numDim >= 1):
-        reducedSingVec = singVec[:,0:numDim]
-        mappedData = np.dot(X,reducedSingVec)
-    else:
-        raise InsufficientDimensions('numDim < 1')
 
-    return(mappedData)
+def project_data(X, sing_vec, num_dim):
+    """ Projects input data onto reduced-dimensional space.
 
-# Project input data onto original space
-def recoverData(X,singVec,numDim):
-    "Project input data onto original space"
-    if (numDim >= 1):
-        reducedSingVec = singVec[:,0:numDim]
-        recoveredData = np.dot(X,reducedSingVec.T.conj())
-    else:
-        raise InsufficientDimensions('numDim < 1')
+    Args:
+      X: Matrix of features.
+      sing_vec: Matrix whose columns contain the left singular vectors of X.
+      num_dim: Number of dimensions for dimensionality reduction.
 
-    return(recoveredData)
+    Returns:
+      mapped_data: Matrix of projected data, where each example has been
+                   projected onto the top num_dim components of sing_vec.
 
-# Display 2D data in a grid
-def displayData(X,axes=None):
-    "Display 2D data in a grid"
-    exampleWidth = (np.round(np.sqrt(X.shape[1]))).astype(int)
-    numRows = X.shape[0]
-    numCols = X.shape[1]
-    exampleHeight = (numCols/exampleWidth)
-    displayRows = (np.floor(np.sqrt(numRows))).astype(int)
-    displayCols = (np.ceil(numRows/displayRows)).astype(int)
+    Raises:
+      An error occurs if the number of dimensions is 0.
+    """
+    if (num_dim == 0): raise Error('num_dim = 0')
+    reduced_sing_vec = sing_vec[:, 0:num_dim]
+    mapped_data = numpy.dot(X, reduced_sing_vec)
+    return mapped_data
+
+
+def recover_data(X, sing_vec, num_dim):
+    """ Projects input data onto original space.
+
+    Args:
+      X: Matrix of projected features.
+      sing_vec: Matrix whose columns contain the left singular vectors of
+                original features.
+      num_dim: Number of dimensions for projected features.
+
+    Returns:
+      recovered_data: Matrix of recovered data, where each projected example has
+                      been projected onto the original high-dimensional space.
+
+    Raises:
+      An error occurs if the number of dimensions is 0.
+    """
+    if (num_dim == 0): raise Error('num_dim = 0')
+    reduced_sing_vec = sing_vec[:, 0:num_dim]
+    recovered_data = numpy.dot(X, reduced_sing_vec.T.conj())
+    return recovered_data
+
+
+def display_data(X, axes=None):
+    """ Displays 2D data in a grid.
+
+    Args:
+      X: Matrix of 2D data that will be displayed using imshow().
+      axes: Flag that determines whether a subplot is being used.
+
+    Returns:
+      None.
+
+    Raises:
+      An error occurs if the number of rows is 0.
+      An error occurs if the number of cols is 0.
+    """
+    num_rows = X.shape[0]
+    if (num_rows == 0): raise Error('num_rows = 0')
+    num_cols = X.shape[1]
+    if (num_cols == 0): raise Error('num_cols = 0')
+    example_width = (numpy.round(numpy.sqrt(num_cols))).astype(int)
+    example_height = (num_cols/example_width)
+    display_rows = (numpy.floor(numpy.sqrt(num_rows))).astype(int)
+    display_cols = (numpy.ceil(num_rows/display_rows)).astype(int)
     pad = 1
-    displayArray = (-1)*np.ones((pad+displayRows*(exampleHeight+pad),pad+displayCols*(exampleWidth+pad)))
-    currEx = 1
-    for rowIndex in range(1,displayRows+1):
-        for colIndex in range(1,displayCols+1):
-            if (currEx > numRows):
+    display_array = (-1)*numpy.ones((pad+display_rows*(example_height+pad),
+                                     pad+display_cols*(example_width+pad)))
+    curr_ex = 1
+    for row_index in range(1, display_rows+1):
+        for col_index in range(1, display_cols+1):
+            if (curr_ex > num_rows):
                 break
-            maxVal = np.amax(np.absolute(X[currEx-1,:]))
-            minRowIdx = pad+(rowIndex-1)*(exampleHeight+pad)
-            maxRowIdx = pad+(rowIndex-1)*(exampleHeight+pad)+exampleHeight
-            minColIdx = pad+(colIndex-1)*(exampleWidth+pad)
-            maxColIdx = pad+(colIndex-1)*(exampleWidth+pad)+exampleWidth
-            xReshape = np.reshape(X[currEx-1,],(exampleHeight,exampleWidth))
-            displayArray[minRowIdx:maxRowIdx,minColIdx:maxColIdx] = (1/maxVal)*np.fliplr(np.rot90(xReshape,3))
-            currEx = currEx+1
-        if (currEx > numRows):
+            max_val = numpy.amax(numpy.absolute(X[curr_ex-1, :]))
+            min_row_idx = pad+(row_index-1)*(example_height+pad)
+            max_row_idx = pad+(row_index-1)*(example_height+pad)+example_height
+            min_col_idx = pad+(col_index-1)*(example_width+pad)
+            max_col_idx = pad+(col_index-1)*(example_width+pad)+example_width
+            x_reshape = numpy.reshape(X[curr_ex-1, ], (example_height,
+                                                       example_width))
+            display_array[min_row_idx:max_row_idx, min_col_idx:max_col_idx] = (
+                (1/max_val)*numpy.fliplr(numpy.rot90(x_reshape, 3)))
+            curr_ex = curr_ex+1
+        if (curr_ex > num_rows):
             break
 
     # If axes is not None, then we are using a subplot
     if (axes == None):
-        plt.imshow(displayArray,cmap=cm.Greys_r)
-        plt.axis('off')
+        pyplot.imshow(display_array, cmap=cm.Greys_r)
+        pyplot.axis('off')
     else:
-        axes.imshow(displayArray,cmap=cm.Greys_r)
+        axes.imshow(display_array, cmap=cm.Greys_r)
         axes.axis('off')
-
     return None
 
-# Initialize centroids for input data
-def kMeansInitCentroids(X,numCentroids):
-    "Initialize centroids for input data"
-    randIndices = np.random.permutation(X.shape[0])
-    initCentroids = np.zeros((numCentroids,3))
-    for centroidIdx in range(0,numCentroids):
-        initCentroids[centroidIdx,:] = X[randIndices[centroidIdx,],:]
-  
-    return initCentroids
 
-# Run K-Means Clustering on input data
-def runKMeans(X,initCentroids,maxIter,plotFlag):
-    "Run K-Means Clustering on input data"
-    if (maxIter > 0):
-        numData = X.shape[0]
-        if (numData > 0):
-            numCentroids = initCentroids.shape[0]
-            if (numCentroids > 0):
-                centroidIdx = np.zeros((numData,1))
-                currCentroids = initCentroids
+def k_means_init_centroids(X, num_centroids):
+    """ Initializes centroids for input data.
 
-                # Create an array that stores all centroids
-                # This array will be useful for plotting
-                allCentroids = np.zeros((numCentroids*maxIter,initCentroids.shape[1]))
-                for centroidIdx in range(0,numCentroids):
-                    allCentroids[centroidIdx,:] = initCentroids[centroidIdx,:]
-                for iterIndex in range(0,maxIter):
-                    print("K-Means iteration %d/%d..." % (iterIndex+1,maxIter))
+    Args:
+      X: Matrix of data features.
+      num_centroids: Number of centroids.
 
-                    # Assign centroid to each datum
-                    centroidIndices = findClosestCentroids(X,currCentroids)
+    Returns:
+      init_centroids: Matrix of initial centroid positions.
 
-                    # Plot progress of algorithm
-                    if (plotFlag == True):
-                        plotProgresskMeans(X,allCentroids,centroidIndices,numCentroids,iterIndex)
-                        plt.show()
-                        prevCentroids = currCentroids
-                        input("Program paused. Press enter to continue.")
-                        print("")
+    Raises:
+      An error occurs if the number of centroids is 0.
+    """
+    if (num_centroids == 0): raise Error('num_centroids == 0')
+    rand_indices = numpy.random.permutation(X.shape[0])
+    init_centroids = numpy.zeros((num_centroids, 3))
+    for centroid_idx in range(0, num_centroids):
+        init_centroids[centroid_idx, :] = X[rand_indices[centroid_idx, ], :]
+    return init_centroids
 
-                    # Compute updated centroids
-                    currCentroids = computeCentroids(X,centroidIndices,numCentroids)
-                    if (iterIndex < (maxIter-1)):
-                        for centroidIdx in range(0,numCentroids):
-                            allCentroids[(iterIndex+1)*numCentroids+centroidIdx,:] = currCentroids[centroidIdx,:]
-            else:
-                raise InsufficientCentroids('numCentroids <= 0')
-        else:
-            raise InsufficientData('numData <= 0')
-    else:
-        raise InsufficientIterations('numiters <= 0')
-    returnList = {'centroidIndices': centroidIndices,'currCentroids': currCentroids}
 
-    return(returnList)
+def run_k_means(X, init_centroids, max_iter, plot_flag):
+    """ Runs K-Means Clustering on input data.
 
-# Find closest centroids for input data using current centroid assignments
-def findClosestCentroids(X,currCentroids):
-    "Find closest centroids for input data using current centroid assignments"
-    numCentroids = currCentroids.shape[0]
-    if (numCentroids > 0):
-        numData = X.shape[0]
-        if (numData > 0):
-            centroidIdx = np.zeros((numData,1))
-            for dataIndex in range(0,numData):
-                centroidIdx[dataIndex] = 0
-                minDistance = np.sqrt(np.sum(np.multiply(X[dataIndex,:]-currCentroids[0,:],X[dataIndex,:]-currCentroids[0,:])))
-                for centroidIndex in range(1,numCentroids):
-                    tmpDistance = np.sqrt(np.sum(np.multiply(X[dataIndex,:]-currCentroids[centroidIndex,:],X[dataIndex,]-currCentroids[centroidIndex,:])))
-                    if (tmpDistance < minDistance):
-                        minDistance = tmpDistance
-                        centroidIdx[dataIndex] = centroidIndex
-        else:
-            raise InsufficientData('numData <= 0')
-    else:
-        raise InsufficientCentroids('numCentroids <= 0')
+    Args:
+      X: Matrix of data features.
+      init_centroids: Matrix of initial centroid positions.
+      max_iter: Maximum number of iterations for K-Means Clustering.
+      plot_flag: Boolean that indicates whether progress of K-Means Clustering
+                 should be plotted.
 
-    return(centroidIdx)
+    Returns:
+      return_list: List of two objects.
+                   centroid_indices: Vector where each entry contains index of 
+                                     closest centroid to corresponding example.
+                   curr_centroids: Matrix of centroid positions, where each 
+                                   centroid is the mean of the points assigned
+                                   to it.
 
-# Update centroids for input data using current centroid assignments
-def computeCentroids(X,centroidIndices,numCentroids):
-    "Update centroids for input data using current centroid assignments"
-    if (numCentroids > 0):
-        numFeatures = X.shape[1]
-        if (numFeatures > 0):
-            centroidArray = np.zeros((numCentroids,numFeatures))
-            for centroidIndex in range(0,numCentroids):
-                isCentroidIdx = (centroidIndices == centroidIndex)
-                sumCentroidPoints = np.dot(np.transpose(isCentroidIdx),X)
-                centroidArray[centroidIndex,:] = sumCentroidPoints/np.sum(isCentroidIdx)
-        else:
-            raise InsufficientFeatures('numFeatures <= 0')
-    else:
-        raise InsufficientCentroids('numCentroids <= 0')
+    Raises:
+      An error occurs if the maximum number of iterations is 0.
+      An error occurs if the number of data examples is 0.
+      An error occurs if the number of centroids is 0.
+    """
+    if (max_iter == 0): raise Error('max_iter == 0')
+    num_data = X.shape[0]
+    if (num_data == 0): raise Error('num_data == 0')
+    num_centroids = init_centroids.shape[0]
+    if (num_centroids == 0): raise Error('num_centroids == 0')
+    centroid_idx = numpy.zeros((num_data, 1))
+    curr_cent = init_centroids
 
-    return(centroidArray)
+    # Create an array that stores all centroids
+    # This array will be useful for plotting
+    all_centroids = numpy.zeros((num_centroids*max_iter,
+                                 init_centroids.shape[1]))
+    for centroid_idx in range(0, num_centroids):
+        all_centroids[centroid_idx, :] = init_centroids[centroid_idx, :]
+    for iter_index in range(0, max_iter):
+        print("K-Means iteration %d/%d..." % (iter_index+1, max_iter))
 
-# Display progress of K-Means Clustering
-def plotProgresskMeans(X,allCentroids,centroidIndices,numCentroids,iterIndex):
-    "Display progress of K-Means Clustering"
-    if (numCentroids > 0):
+        # Assign centroid to each datum
+        centroid_indices = find_closest_centroids(X, curr_cent)
 
-        # Plot input data
-        returnCode = plotDataPoints(X,centroidIndices,numCentroids)
+        # Plot progress of algorithm
+        if (plot_flag == True):
+            plot_progress_k_means(X, all_centroids, centroid_indices,
+                                  num_centroids, iter_index)
+            pyplot.show()
+            prev_centroids = curr_cent
+            input("Program paused. Press enter to continue.")
+            print("")
 
-        # Plot centroids as black X's
-        centroids = plt.scatter(allCentroids[0:(iterIndex+1)*numCentroids,0],allCentroids[0:(iterIndex+1)*numCentroids,1],s=80,marker='x',color='k')
+        # Compute updated centroids
+        curr_cent = compute_centroids(X, centroid_indices, num_centroids)
+        if (iter_index < (max_iter-1)):
+            for centroid_idx in range(0, num_centroids):
+                all_centroids[(iter_index+1)*num_centroids+centroid_idx, :] = (
+                    curr_cent[centroid_idx, :])
+    return_list = {'centroid_indices': centroid_indices, 'curr_cent': curr_cent}
+    return return_list
 
-        # Plot history of centroids with lines
-        for iter2Index in range(0,iterIndex):
-            for centroidIndex in range(0,numCentroids):
-                returnCode = drawLine(allCentroids[(iter2Index+1)*numCentroids+centroidIndex,:],allCentroids[iter2Index*numCentroids+centroidIndex,:])
-    else:
-        raise InsufficientCentroids('numCentroids <= 0')
 
+def find_closest_centroids(X, curr_cent):
+    """ Finds closest centroids for input data using current centroid
+        assignments.
+
+    Args:
+      X: Matrix of data features.
+      curr_cent: Matrix of current centroid positions.
+
+    Returns:
+      centroid_idx: Vector where each entry contains index of closest centroid
+                    to corresponding example.
+
+    Raises:
+      An error occurs if the number of centroids is 0.
+      An error occurs if the number of data examples is 0.
+    """
+    num_centroids = curr_cent.shape[0]
+    if (num_centroids == 0): raise Error('num_centroids == 0')
+    num_data = X.shape[0]
+    if (num_data == 0): raise Error('num_data == 0')
+    centroid_idx = numpy.zeros((num_data, 1))
+    for data in range(0, num_data):
+        centroid_idx[data] = 0
+        min_distance = (
+            numpy.sqrt(numpy.sum(numpy.multiply(X[data, :]-curr_cent[0, :],
+                                                X[data, :]-curr_cent[0, :]))))
+        for centroid in range(1, num_centroids):
+            tmp_distance = (
+                numpy.sqrt(numpy.sum(numpy.multiply(X[data,
+                                                      :]-curr_cent[centroid, :],
+                                                    X[data,
+                                                      :]-curr_cent[centroid,
+                                                                  :]))))
+            if (tmp_distance < min_distance):
+                min_distance = tmp_distance
+                centroid_idx[data] = centroid
+    return centroid_idx
+
+
+def compute_centroids(X, centroid_indices, num_centroids):
+    """ Updates centroids for input data using current centroid assignments.
+
+    Args:
+      X: Matrix of data features.
+      centroid_indices: Vector where each entry contains index of closest 
+                        centroid to corresponding example.
+      num_centroids: Number of centroids.
+
+    Returns:
+      centroid_array: Matrix of centroid positions, where each centroid is the
+                      mean of the points assigned to it.
+
+    Raises:
+      An error occurs if the number of centroids is 0.
+      An error occurs if the number of data features is 0.
+    """
+    if (num_centroids == 0): raise Error('num_centroids == 0')
+    num_features = X.shape[1]
+    if (num_features == 0): raise Error('num_features == 0')
+    centroid_array = numpy.zeros((num_centroids, num_features))
+    for centroid in range(0, num_centroids):
+        is_centroid_idx = (centroid_indices == centroid)
+        sum_centroid_points = numpy.dot(numpy.transpose(is_centroid_idx), X)
+        centroid_array[centroid, :] = (
+            sum_centroid_points/numpy.sum(is_centroid_idx))
+    return centroid_array
+
+
+def plot_progress_k_means(X, all_centroids, centroid_indices, num_centroids,
+                          iter_index):
+    """ Displays progress of K-Means Clustering.
+
+    Args:
+      X: Matrix of data features.
+      all_centroids: Matrix of all (current and previous) centroid positions.
+      centroid_indices: Vector where each entry contains index of closest 
+                        centroid to corresponding example.
+      num_centroids: Number of centroids.
+      iter_index: Current iteration of K-Means Clustering.
+
+    Returns:
+      None.
+
+    Raises:
+      An error occurs if the number of centroids is 0.
+    """
+    if (num_centroids == 0): raise Error('num_centroids == 0')
+
+    # Plot input data
+    return_code = plot_data_points(X, centroid_indices, num_centroids)
+
+    # Plot centroids as black X's
+    centroids = pyplot.scatter(all_centroids[0:(iter_index+1)*num_centroids, 0],
+                               all_centroids[0:(iter_index+1)*num_centroids, 1],
+                               s=80, marker='x', color='k')
+
+    # Plot history of centroids with lines
+    for iter2_index in range(0, iter_index):
+        for centroid in range(0, num_centroids):
+            return_code = (
+                draw_line(all_centroids[(iter2_index+1)*num_centroids+centroid,
+                                        :],
+                          all_centroids[iter2_index*num_centroids+centroid, :]))
     return None
 
-# Plot input data with colors according to current cluster assignments
-def plotDataPoints(X,centroidIndices,numCentroids):
-    "Plot input data with colors according to current cluster assignments"
-    palette = np.zeros((numCentroids+1,3))
-    for centroidIdx in range(0,numCentroids+1):
-        hsv_h = centroidIdx/(numCentroids+1)
+
+def plot_data_points(X, centroid_indices, num_centroids):
+    """ Plots input data with colors according to current cluster assignments.
+
+    Args:
+      X: Matrix of data features.
+      centroid_indices: Vector where each entry contains index of closest 
+                        centroid to corresponding example.
+      num_centroids: Number of centroids.
+
+    Returns:
+      None.
+
+    Raises:
+      An error occurs if the number of data examples is 0.
+    """
+    num_data = X.shape[0]
+    if (num_data == 0): raise Error('num_data == 0')
+    palette = numpy.zeros((num_centroids+1, 3))
+    for centroid_idx in range(0, num_centroids+1):
+        hsv_h = centroid_idx/(num_centroids+1)
         hsv_s = 1
         hsv_v = 1
-        palette[centroidIdx,:] = colors.hsv_to_rgb(np.r_[hsv_h,hsv_s,hsv_v])
-    numData = X.shape[0]
-    currColors = np.zeros((numData,3))
-    for dataIdx in range(0,numData):
-        currCentroidIdx = centroidIndices[dataIdx].astype(int)
-        currColors[currCentroidIdx,0] = palette[currCentroidIdx,0]
-        currColors[currCentroidIdx,1] = palette[currCentroidIdx,1]
-        currColors[currCentroidIdx,2] = palette[currCentroidIdx,2]
-        plt.scatter(X[dataIdx,0],X[dataIdx,1],s=80,marker='o',facecolors='none',edgecolors=currColors[currCentroidIdx,:])
-
+        palette[centroid_idx, :] = colors.hsv_to_rgb(numpy.r_[hsv_h, hsv_s,
+                                                              hsv_v])
+    curr_colors = numpy.zeros((num_data, 3))
+    for data_idx in range(0, num_data):
+        curr_centroid_idx = centroid_indices[data_idx].astype(int)
+        curr_colors[curr_centroid_idx, 0] = palette[curr_centroid_idx, 0]
+        curr_colors[curr_centroid_idx, 1] = palette[curr_centroid_idx, 1]
+        curr_colors[curr_centroid_idx, 2] = palette[curr_centroid_idx, 2]
+        pyplot.scatter(X[data_idx, 0], X[data_idx, 1], s=80, marker='o',
+                       facecolors='none',
+                       edgecolors=curr_colors[curr_centroid_idx, :])
     return None
 
-# Main function
+
 def main():
-    "Main function"
+    """ Main function
+
+    Raises:
+      An error occurs if the number of training examples is 0.
+    """
     print("Visualizing example dataset for PCA.")
-    exercise7Data1 = np.genfromtxt("../ex7data1.txt",delimiter=",")
-    numFeatures = exercise7Data1.shape[1]
-    numTrainEx = exercise7Data1.shape[0]
-    xMat = exercise7Data1[:,0:numFeatures]
+    exercise_7_data_1 = numpy.genfromtxt("../ex7data1.txt", delimiter=",")
+    num_train_ex = exercise_7_data_1.shape[0]
+    if (num_train_ex == 0): raise Error('num_train_ex = 0')
+    num_features = exercise_7_data_1.shape[1]
+    x_mat = exercise_7_data_1[:, 0:num_features]
 
     # Visualize input data
-    plt.scatter(xMat[:,0],xMat[:,1],s=80,facecolors='none', edgecolors='b')
-    axes = plt.gca()
-    axes.set_xlim([0.5,6.5])
-    axes.set_ylim([2,8])
-    plt.show()
+    pyplot.scatter(x_mat[:, 0], x_mat[:, 1], s=80, facecolors='none',
+                   edgecolors='b')
+    axes = pyplot.gca()
+    axes.set_xlim([0.5, 6.5])
+    axes.set_ylim([2, 8])
+    pyplot.show()
     input("Program paused. Press enter to continue.")
     print("")
 
     # Run PCA on input data
     print("Running PCA on example dataset.")
-    featureNormalizeList = featureNormalize(xMat)
-    pcaList = pca(featureNormalizeList['xNormalized'])
+    feat_norm_list = feature_normalize(x_mat)
+    pca_list = pca(feat_norm_list['x_norm'])
 
     # Draw eigenvectors centered at mean of data
-    plt.scatter(xMat[:,0],xMat[:,1],s=80,facecolors='none', edgecolors='b')
-    axes = plt.gca()
-    axes.set_xlim([0.5,6.5])
-    axes.set_ylim([2,8])
-    plt.hold(True)
-    returnCode = drawLine(featureNormalizeList['muVec'],featureNormalizeList['muVec']+1.5*pcaList['singVal'][0]*pcaList['leftSingVec'][:,0])
-    plt.hold(True)
-    returnCode = drawLine(featureNormalizeList['muVec'],featureNormalizeList['muVec']+1.5*pcaList['singVal'][1]*pcaList['leftSingVec'][:,1])
-    plt.show()
+    pyplot.scatter(x_mat[:, 0], x_mat[:, 1], s=80, facecolors='none',
+                   edgecolors='b')
+    axes = pyplot.gca()
+    axes.set_xlim([0.5, 6.5])
+    axes.set_ylim([2, 8])
+    pyplot.hold(True)
+    return_code = draw_line(feat_norm_list['mu_vec'], feat_norm_list['mu_vec']+(
+        1.5*pca_list['sing_val'][0]*pca_list['left_sing_vec'][:, 0]))
+    pyplot.hold(True)
+    return_code = draw_line(feat_norm_list['mu_vec'], feat_norm_list['mu_vec']+(
+        1.5*pca_list['sing_val'][1]*pca_list['left_sing_vec'][:, 1]))
+    pyplot.show()
     print("Top eigenvector: ")
-    print("U(:,1) = %f %f" % (pcaList['leftSingVec'][0,0],pcaList['leftSingVec'][1,0]))
+    print("U(:,1) = %f %f" % (pca_list['left_sing_vec'][0, 0],
+                              pca_list['left_sing_vec'][1, 0]))
     print("(you should expect to see -0.707107 -0.707107)")
     input("Program paused. Press enter to continue.")
     print("")
 
     # Project data onto reduced-dimensional space
     print("Dimension reduction on example dataset.")
-    plt.scatter(featureNormalizeList['xNormalized'][:,0],featureNormalizeList['xNormalized'][:,1],s=80,facecolors='none', edgecolors='b')
-    axes = plt.gca()
-    axes.set_xlim([-4,3])
-    axes.set_ylim([-4,3])
-    numDim = 1
-    projxMat = projectData(featureNormalizeList['xNormalized'],pcaList['leftSingVec'],numDim)
-    print("Projection of the first example: %f" % projxMat[0])
+    pyplot.scatter(feat_norm_list['x_norm'][:, 0],
+                   feat_norm_list['x_norm'][:, 1], s=80, facecolors='none',
+                   edgecolors='b')
+    axes = pyplot.gca()
+    axes.set_xlim([-4, 3])
+    axes.set_ylim([-4, 3])
+    num_dim = 1
+    proj_x_mat = project_data(feat_norm_list['x_norm'],
+                              pca_list['left_sing_vec'], num_dim)
+    print("Projection of the first example: %f" % proj_x_mat[0])
     print("(this value should be about 1.481274)")
-    recovxMat = recoverData(projxMat,pcaList['leftSingVec'],numDim)
-    print("Approximation of the first example: %f %f" % (recovxMat[0,0],recovxMat[0,1]))
+    recov_x_mat = recover_data(proj_x_mat, pca_list['left_sing_vec'], num_dim)
+    print("Approximation of the first example: %f %f" % (recov_x_mat[0, 0],
+                                                         recov_x_mat[0, 1]))
     print("(this value should be about  -1.047419 -1.047419)")
 
     # Draw lines connecting projected points to original points
-    plt.hold(True)
-    plt.scatter(recovxMat[:,0],recovxMat[:,1],s=80,facecolors='none', edgecolors='r')
-    plt.hold(True)
-    for exIndex in range(0,numTrainEx):
-        returnCode = drawLine(featureNormalizeList['xNormalized'][exIndex,:],recovxMat[exIndex,:])
-        plt.hold(True)
-    plt.show()
+    pyplot.hold(True)
+    pyplot.scatter(recov_x_mat[:, 0], recov_x_mat[:, 1], s=80,
+                   facecolors='none', edgecolors='r')
+    pyplot.hold(True)
+    for ex_index in range(0, num_train_ex):
+        return_code = draw_line(feat_norm_list['x_norm'][ex_index, :],
+                                recov_x_mat[ex_index, :])
+        pyplot.hold(True)
+    pyplot.show()
     input("Program paused. Press enter to continue.")
     print("")
 
     # Load and visualize face data
     print("Loading face dataset.")
-    exercise7Faces = np.genfromtxt("../ex7faces.txt",delimiter=",")
-    returnCode = displayData(exercise7Faces[0:100,:])
-    plt.show()
+    exercise_7_faces = numpy.genfromtxt("../ex7faces.txt", delimiter=",")
+    return_code = display_data(exercise_7_faces[0:100, :])
+    pyplot.show()
     input("Program paused. Press enter to continue.")
     print("")
 
     # Run PCA on face data
     print("Running PCA on face dataset.")
     print("(this mght take a minute or two ...)")
-    normalizedFacesList = featureNormalize(exercise7Faces)
-    facesList = pca(normalizedFacesList['xNormalized'])
+    normalized_faces_list = feature_normalize(exercise_7_faces)
+    faces_list = pca(normalized_faces_list['x_norm'])
 
     # Visualize top 36 eigenvectors for face data
-    returnCode = displayData(facesList['leftSingVec'][:,0:36].T.conj())
-    plt.show()
+    return_code = display_data(faces_list['left_sing_vec'][:, 0:36].T.conj())
+    pyplot.show()
     input("Program paused. Press enter to continue.")
     print("")
 
     # Project face data onto reduced-dimensional space
     print("Dimension reduction for face dataset.")
-    numFacesDim = 100
-    projFaces = projectData(normalizedFacesList['xNormalized'],facesList['leftSingVec'],numFacesDim)
+    num_faces_dim = 100
+    proj_faces = project_data(normalized_faces_list['x_norm'],
+                              faces_list['left_sing_vec'], num_faces_dim)
     print("The projected data Z has a size of:")
-    print("%d %d" % (projFaces.shape[0],projFaces.shape[1]))
+    print("%d %d" % (proj_faces.shape[0], proj_faces.shape[1]))
     input("Program paused. Press enter to continue.")
     print("")
 
     # Visualize original (normalized) and projected face data side-by-side
     print("Visualizing the projected (reduced dimension) faces.")
-    recovFaces = recoverData(projFaces,facesList['leftSingVec'],numFacesDim)
-    fig,(ax1,ax2) = plt.subplots(1,2)
+    recov_faces = recover_data(proj_faces, faces_list['left_sing_vec'],
+                               num_faces_dim)
+    fig, (ax1, ax2) = pyplot.subplots(1, 2)
     ax1.set_title('Original faces')
-    returnCode = displayData(normalizedFacesList['xNormalized'][0:100,:],ax1)
-    plt.hold(True)
+    return_code = display_data(normalized_faces_list['x_norm'][0:100, :], ax1)
+    pyplot.hold(True)
     ax2.set_title('Recovered faces')
-    returnCode = displayData(recovFaces[0:100,:],ax2)
-    plt.show()
+    return_code = display_data(recov_faces[0:100, :], ax2)
+    pyplot.show()
     input("Program paused. Press enter to continue.")
     print("")
 
     # Use PCA for visualization of high-dimensional data
-    birdSmallFile = open('../bird_small.png','rb')
-    birdSmallReader = png.Reader(file=birdSmallFile)
-    rowCount,colCount,birdSmall,meta = birdSmallReader.asDirect()
-    planeCount = meta['planes']
-    birdSmall2d = np.zeros((rowCount,colCount*planeCount))
-    for rowIndex,oneBoxedRowFlatPixels in enumerate(birdSmall):
-        birdSmall2d[rowIndex,:] = oneBoxedRowFlatPixels
-        birdSmall2d[rowIndex,:] = (1/255)*birdSmall2d[rowIndex,:].astype(float)
-    birdSmallReshape = birdSmall2d.reshape((rowCount*colCount,3))
-    numCentroids = 16
-    maxIter = 10
-    initialCentroids = kMeansInitCentroids(birdSmallReshape,numCentroids)
-    kMeansList = runKMeans(birdSmallReshape,initialCentroids,maxIter,False)
-    sampleIdx = np.floor(np.random.uniform(size=1000)*birdSmallReshape.shape[0])
-    palette = np.zeros((numCentroids+1,3))
-    for centroidIdx in range(0,numCentroids+1):
-        hsv_h = centroidIdx/(numCentroids+1)
+    bird_small_file = open('../bird_small.png', 'rb')
+    bird_small_reader = png.Reader(file=bird_small_file)
+    row_count, col_count, bird_small, meta = bird_small_reader.asDirect()
+    plane_count = meta['planes']
+    bird_small_2d = numpy.zeros((row_count, col_count*plane_count))
+    for row_index, one_boxed_row_flat_pixels in enumerate(bird_small):
+        bird_small_2d[row_index, :] = one_boxed_row_flat_pixels
+        bird_small_2d[row_index, :] = (1/255)*bird_small_2d[row_index,
+                                                            :].astype(float)
+    bird_reshape = bird_small_2d.reshape((row_count*col_count, 3))
+    num_centroids = 16
+    max_iter = 10
+    initial_centroids = k_means_init_centroids(bird_reshape,
+                                               num_centroids)
+    k_m_list = run_k_means(bird_reshape, initial_centroids, max_iter, False)
+    sample_idx = (
+        numpy.floor(numpy.random.uniform(size=1000)*bird_reshape.shape[0]))
+    palette = numpy.zeros((num_centroids+1, 3))
+    for centroid_idx in range(0, num_centroids+1):
+        hsv_h = centroid_idx/(num_centroids+1)
         hsv_s = 1
         hsv_v = 1
-        palette[centroidIdx,:] = colors.hsv_to_rgb(np.r_[hsv_h,hsv_s,hsv_v])
-    fig = plt.figure(1)
+        palette[centroid_idx, :] = colors.hsv_to_rgb(numpy.r_[hsv_h, hsv_s,
+                                                              hsv_v])
+    fig = pyplot.figure(1)
     fig.clf()
     ax = Axes3D(fig)
-    currColors = np.zeros((1000,3))
-    for dataIdx in range(0,1000):
-        currCentroidIdx = kMeansList['centroidIndices'][sampleIdx[dataIdx]].astype(int)
-        currColors[currCentroidIdx,0] = palette[currCentroidIdx,0]
-        currColors[currCentroidIdx,1] = palette[currCentroidIdx,1]
-        currColors[currCentroidIdx,2] = palette[currCentroidIdx,2]
-        ax.scatter(birdSmallReshape[sampleIdx[dataIdx].astype(int),0],birdSmallReshape[sampleIdx[dataIdx].astype(int),1],birdSmallReshape[sampleIdx[dataIdx].astype(int),2],s=80,marker='o',facecolors='none',edgecolors=currColors[currCentroidIdx,:])
+    curr_colors = numpy.zeros((1000, 3))
+    for data_idx in range(0, 1000):
+        curr_centroid_idx = (
+            k_m_list['centroid_indices'][sample_idx[data_idx]].astype(int))
+        curr_colors[curr_centroid_idx, 0] = palette[curr_centroid_idx, 0]
+        curr_colors[curr_centroid_idx, 1] = palette[curr_centroid_idx, 1]
+        curr_colors[curr_centroid_idx, 2] = palette[curr_centroid_idx, 2]
+        ax.scatter(bird_reshape[sample_idx[data_idx].astype(int), 0],
+                   bird_reshape[sample_idx[data_idx].astype(int), 1],
+                   bird_reshape[sample_idx[data_idx].astype(int), 2], s=80,
+                   marker='o', facecolors='none',
+                   edgecolors=curr_colors[curr_centroid_idx, :])
     ax.set_title('Pixel dataset plotted in 3D. Color shows centroid memberships')
-    plt.show()
+    pyplot.show()
     input("Program paused. Press enter to continue.")
     print("")
 
     # Project high-dimensional data to 2D for visualization
-    normalizedBirdList = featureNormalize(birdSmallReshape)
-    birdList = pca(normalizedBirdList['xNormalized'])
-    projBird = projectData(normalizedBirdList['xNormalized'],birdList['leftSingVec'],2)
-    returnCode = plotDataPoints(projBird[sampleIdx.astype(int),:],kMeansList['centroidIndices'][sampleIdx.astype(int),:],numCentroids)
-    plt.title('Pixel dataset plotted in 2D, using PCA for dimensionality reduction')
-    plt.show()
+    normalized_bird_list = feature_normalize(bird_reshape)
+    bird_list = pca(normalized_bird_list['x_norm'])
+    proj_bird = project_data(normalized_bird_list['x_norm'],
+                             bird_list['left_sing_vec'], 2)
+    return_code = (
+        plot_data_points(proj_bird[sample_idx.astype(int), :],
+                         k_m_list['centroid_indices'][sample_idx.astype(int),
+                                                      :], num_centroids))
+    pyplot.title('Pixel dataset plotted in 2D, using PCA for dimensionality reduction')
+    pyplot.show()
     input("Program paused. Press enter to continue.")
     print("")
 

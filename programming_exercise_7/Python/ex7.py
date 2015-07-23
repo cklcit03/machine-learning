@@ -16,205 +16,287 @@
 # Machine Learning
 # Programming Exercise 7: K-Means Clustering
 # Problem: Apply K-Means Clustering to image compression
-import matplotlib.colors as colors
-import matplotlib.pyplot as plt
-import numpy as np
+from matplotlib import colors
+from matplotlib import pyplot
+import numpy
 import png
 
-class InsufficientCentroids(Exception):
-    def __init__(self,value):
+
+class Error(Exception):
+    def __init__(self, value):
         self.value = value
     def __str__(self):
         return repr(self.value)
 
-class InsufficientData(Exception):
-    def __init__(self,value):
-        self.value = value
-    def __str__(self):
-        return repr(self.value)
 
-class InsufficientFeatures(Exception):
-    def __init__(self,value):
-        self.value = value
-    def __str__(self):
-        return repr(self.value)
+def find_closest_centroids(X, curr_cent):
+    """ Finds closest centroids for input data using current centroid
+        assignments.
 
-class InsufficientIterations(Exception):
-    def __init__(self,value):
-        self.value = value
-    def __str__(self):
-        return repr(self.value)
+    Args:
+      X: Matrix of data features.
+      curr_cent: Matrix of current centroid positions.
 
-# Find closest centroids for input data using current centroid assignments
-def findClosestCentroids(X,currCentroids):
-    "Find closest centroids for input data using current centroid assignments"
-    numCentroids = currCentroids.shape[0]
-    if (numCentroids > 0):
-        numData = X.shape[0]
-        if (numData > 0):
-            centroidIdx = np.zeros((numData,1))
-            for dataIndex in range(0,numData):
-                centroidIdx[dataIndex] = 0
-                minDistance = np.sqrt(np.sum(np.multiply(X[dataIndex,:]-currCentroids[0,:],X[dataIndex,:]-currCentroids[0,:])))
-                for centroidIndex in range(1,numCentroids):
-                    tmpDistance = np.sqrt(np.sum(np.multiply(X[dataIndex,:]-currCentroids[centroidIndex,:],X[dataIndex,]-currCentroids[centroidIndex,:])))
-                    if (tmpDistance < minDistance):
-                        minDistance = tmpDistance
-                        centroidIdx[dataIndex] = centroidIndex
-        else:
-            raise InsufficientData('numData <= 0')
-    else:
-        raise InsufficientCentroids('numCentroids <= 0')
+    Returns:
+      centroid_idx: Vector where each entry contains index of closest centroid
+                    to corresponding example.
 
-    return(centroidIdx)
+    Raises:
+      An error occurs if the number of centroids is 0.
+      An error occurs if the number of data examples is 0.
+    """
+    num_centroids = curr_cent.shape[0]
+    if (num_centroids == 0): raise Error('num_centroids == 0')
+    num_data = X.shape[0]
+    if (num_data == 0): raise Error('num_data == 0')
+    centroid_idx = numpy.zeros((num_data, 1))
+    for data in range(0, num_data):
+        centroid_idx[data] = 0
+        min_distance = (
+            numpy.sqrt(numpy.sum(numpy.multiply(X[data, :]-curr_cent[0, :],
+                                                X[data, :]-curr_cent[0, :]))))
+        for centroid in range(1, num_centroids):
+            tmp_distance = (
+                numpy.sqrt(numpy.sum(numpy.multiply(X[data,
+                                                      :]-curr_cent[centroid, :],
+                                                    X[data,
+                                                      :]-curr_cent[centroid,
+                                                                  :]))))
+            if (tmp_distance < min_distance):
+                min_distance = tmp_distance
+                centroid_idx[data] = centroid
+    return centroid_idx
 
-# Update centroids for input data using current centroid assignments
-def computeCentroids(X,centroidIndices,numCentroids):
-    "Update centroids for input data using current centroid assignments"
-    if (numCentroids > 0):
-        numFeatures = X.shape[1]
-        if (numFeatures > 0):
-            centroidArray = np.zeros((numCentroids,numFeatures))
-            for centroidIndex in range(0,numCentroids):
-                isCentroidIdx = (centroidIndices == centroidIndex)
-                sumCentroidPoints = np.dot(np.transpose(isCentroidIdx),X)
-                centroidArray[centroidIndex,:] = sumCentroidPoints/np.sum(isCentroidIdx)
-        else:
-            raise InsufficientFeatures('numFeatures <= 0')
-    else:
-        raise InsufficientCentroids('numCentroids <= 0')
 
-    return(centroidArray)
+def compute_centroids(X, centroid_indices, num_centroids):
+    """ Updates centroids for input data using current centroid assignments.
 
-# Run K-Means Clustering on input data
-def runKMeans(X,initCentroids,maxIter,plotFlag):
-    "Run K-Means Clustering on input data"
-    if (maxIter > 0):
-        numData = X.shape[0]
-        if (numData > 0):
-            numCentroids = initCentroids.shape[0]
-            if (numCentroids > 0):
-                centroidIdx = np.zeros((numData,1))
-                currCentroids = initCentroids
+    Args:
+      X: Matrix of data features.
+      centroid_indices: Vector where each entry contains index of closest 
+                        centroid to corresponding example.
+      num_centroids: Number of centroids.
 
-                # Create an array that stores all centroids
-                # This array will be useful for plotting
-                allCentroids = np.zeros((numCentroids*maxIter,initCentroids.shape[1]))
-                for centroidIdx in range(0,numCentroids):
-                    allCentroids[centroidIdx,:] = initCentroids[centroidIdx,:]
-                for iterIndex in range(0,maxIter):
-                    print("K-Means iteration %d/%d..." % (iterIndex+1,maxIter))
+    Returns:
+      centroid_array: Matrix of centroid positions, where each centroid is the
+                      mean of the points assigned to it.
 
-                    # Assign centroid to each datum
-                    centroidIndices = findClosestCentroids(X,currCentroids)
+    Raises:
+      An error occurs if the number of centroids is 0.
+      An error occurs if the number of data features is 0.
+    """
+    if (num_centroids == 0): raise Error('num_centroids == 0')
+    num_features = X.shape[1]
+    if (num_features == 0): raise Error('num_features == 0')
+    centroid_array = numpy.zeros((num_centroids, num_features))
+    for centroid in range(0, num_centroids):
+        is_centroid_idx = (centroid_indices == centroid)
+        sum_centroid_points = numpy.dot(numpy.transpose(is_centroid_idx), X)
+        centroid_array[centroid, :] = (
+            sum_centroid_points/numpy.sum(is_centroid_idx))
+    return centroid_array
 
-                    # Plot progress of algorithm
-                    if (plotFlag == True):
-                        plotProgresskMeans(X,allCentroids,centroidIndices,numCentroids,iterIndex)
-                        plt.show()
-                        prevCentroids = currCentroids
-                        input("Program paused. Press enter to continue.")
-                        print("")
 
-                    # Compute updated centroids
-                    currCentroids = computeCentroids(X,centroidIndices,numCentroids)
-                    if (iterIndex < (maxIter-1)):
-                        for centroidIdx in range(0,numCentroids):
-                            allCentroids[(iterIndex+1)*numCentroids+centroidIdx,:] = currCentroids[centroidIdx,:]
-            else:
-                raise InsufficientCentroids('numCentroids <= 0')
-        else:
-            raise InsufficientData('numData <= 0')
-    else:
-        raise InsufficientIterations('numiters <= 0')
-    returnList = {'centroidIndices': centroidIndices,'currCentroids': currCentroids}
+def run_k_means(X, init_centroids, max_iter, plot_flag):
+    """ Runs K-Means Clustering on input data.
 
-    return(returnList)
+    Args:
+      X: Matrix of data features.
+      init_centroids: Matrix of initial centroid positions.
+      max_iter: Maximum number of iterations for K-Means Clustering.
+      plot_flag: Boolean that indicates whether progress of K-Means Clustering
+                 should be plotted.
 
-# Display progress of K-Means Clustering
-def plotProgresskMeans(X,allCentroids,centroidIndices,numCentroids,iterIndex):
-    "Display progress of K-Means Clustering"
-    if (numCentroids > 0):
+    Returns:
+      return_list: List of two objects.
+                   centroid_indices: Vector where each entry contains index of 
+                                     closest centroid to corresponding example.
+                   curr_centroids: Matrix of centroid positions, where each 
+                                   centroid is the mean of the points assigned
+                                   to it.
 
-        # Plot input data
-        returnCode = plotDataPoints(X,centroidIndices,numCentroids)
+    Raises:
+      An error occurs if the maximum number of iterations is 0.
+      An error occurs if the number of data examples is 0.
+      An error occurs if the number of centroids is 0.
+    """
+    if (max_iter == 0): raise Error('max_iter == 0')
+    num_data = X.shape[0]
+    if (num_data == 0): raise Error('num_data == 0')
+    num_centroids = init_centroids.shape[0]
+    if (num_centroids == 0): raise Error('num_centroids == 0')
+    centroid_idx = numpy.zeros((num_data, 1))
+    curr_cent = init_centroids
 
-        # Plot centroids as black X's
-        centroids = plt.scatter(allCentroids[0:(iterIndex+1)*numCentroids,0],allCentroids[0:(iterIndex+1)*numCentroids,1],s=80,marker='x',color='k')
+    # Create an array that stores all centroids
+    # This array will be useful for plotting
+    all_centroids = numpy.zeros((num_centroids*max_iter,
+                                 init_centroids.shape[1]))
+    for centroid_idx in range(0, num_centroids):
+        all_centroids[centroid_idx, :] = init_centroids[centroid_idx, :]
+    for iter_index in range(0, max_iter):
+        print("K-Means iteration %d/%d..." % (iter_index+1, max_iter))
 
-        # Plot history of centroids with lines
-        for iter2Index in range(0,iterIndex):
-            for centroidIndex in range(0,numCentroids):
-                returnCode = drawLine(allCentroids[(iter2Index+1)*numCentroids+centroidIndex,:],allCentroids[iter2Index*numCentroids+centroidIndex,:])
-    else:
-        raise InsufficientCentroids('numCentroids <= 0')
+        # Assign centroid to each datum
+        centroid_indices = find_closest_centroids(X, curr_cent)
 
+        # Plot progress of algorithm
+        if (plot_flag == True):
+            plot_progress_k_means(X, all_centroids, centroid_indices,
+                                  num_centroids, iter_index)
+            pyplot.show()
+            prev_centroids = curr_cent
+            input("Program paused. Press enter to continue.")
+            print("")
+
+        # Compute updated centroids
+        curr_cent = compute_centroids(X, centroid_indices, num_centroids)
+        if (iter_index < (max_iter-1)):
+            for centroid_idx in range(0, num_centroids):
+                all_centroids[(iter_index+1)*num_centroids+centroid_idx, :] = (
+                    curr_cent[centroid_idx, :])
+    return_list = {'centroid_indices': centroid_indices, 'curr_cent': curr_cent}
+    return return_list
+
+
+def plot_progress_k_means(X, all_centroids, centroid_indices, num_centroids,
+                          iter_index):
+    """ Displays progress of K-Means Clustering.
+
+    Args:
+      X: Matrix of data features.
+      all_centroids: Matrix of all (current and previous) centroid positions.
+      centroid_indices: Vector where each entry contains index of closest 
+                        centroid to corresponding example.
+      num_centroids: Number of centroids.
+      iter_index: Current iteration of K-Means Clustering.
+
+    Returns:
+      None.
+
+    Raises:
+      An error occurs if the number of centroids is 0.
+    """
+    if (num_centroids == 0): raise Error('num_centroids == 0')
+
+    # Plot input data
+    return_code = plot_data_points(X, centroid_indices, num_centroids)
+
+    # Plot centroids as black X's
+    centroids = pyplot.scatter(all_centroids[0:(iter_index+1)*num_centroids, 0],
+                               all_centroids[0:(iter_index+1)*num_centroids, 1],
+                               s=80, marker='x', color='k')
+
+    # Plot history of centroids with lines
+    for iter2_index in range(0, iter_index):
+        for centroid in range(0, num_centroids):
+            return_code = (
+                draw_line(all_centroids[(iter2_index+1)*num_centroids+centroid,
+                                        :],
+                          all_centroids[iter2_index*num_centroids+centroid, :]))
     return None
 
-# Plot input data with colors according to current cluster assignments
-def plotDataPoints(X,centroidIndices,numCentroids):
-    "Plot input data with colors according to current cluster assignments"
-    palette = np.zeros((numCentroids+1,3))
-    for centroidIdx in range(0,numCentroids+1):
-        hsv_h = centroidIdx/(numCentroids+1)
+
+def plot_data_points(X, centroid_indices, num_centroids):
+    """ Plots input data with colors according to current cluster assignments.
+
+    Args:
+      X: Matrix of data features.
+      centroid_indices: Vector where each entry contains index of closest 
+                        centroid to corresponding example.
+      num_centroids: Number of centroids.
+
+    Returns:
+      None.
+
+    Raises:
+      An error occurs if the number of data examples is 0.
+    """
+    num_data = X.shape[0]
+    if (num_data == 0): raise Error('num_data == 0')
+    palette = numpy.zeros((num_centroids+1, 3))
+    for centroid_idx in range(0, num_centroids+1):
+        hsv_h = centroid_idx/(num_centroids+1)
         hsv_s = 1
         hsv_v = 1
-        palette[centroidIdx,:] = colors.hsv_to_rgb(np.r_[hsv_h,hsv_s,hsv_v])
-    numData = X.shape[0]
-    currColors = np.zeros((numData,3))
-    for dataIdx in range(0,numData):
-        currCentroidIdx = centroidIndices[dataIdx].astype(int)
-        currColors[currCentroidIdx,0] = palette[currCentroidIdx,0]
-        currColors[currCentroidIdx,1] = palette[currCentroidIdx,1]
-        currColors[currCentroidIdx,2] = palette[currCentroidIdx,2]
-        plt.scatter(X[dataIdx,0],X[dataIdx,1],s=80,marker='o',facecolors='none',edgecolors=currColors[currCentroidIdx,:])
-
+        palette[centroid_idx, :] = colors.hsv_to_rgb(numpy.r_[hsv_h, hsv_s,
+                                                              hsv_v])
+    curr_colors = numpy.zeros((num_data, 3))
+    for data_idx in range(0, num_data):
+        curr_centroid_idx = centroid_indices[data_idx].astype(int)
+        curr_colors[curr_centroid_idx, 0] = palette[curr_centroid_idx, 0]
+        curr_colors[curr_centroid_idx, 1] = palette[curr_centroid_idx, 1]
+        curr_colors[curr_centroid_idx, 2] = palette[curr_centroid_idx, 2]
+        pyplot.scatter(X[data_idx, 0], X[data_idx, 1], s=80, marker='o',
+                       facecolors='none',
+                       edgecolors=curr_colors[curr_centroid_idx, :])
     return None
 
-# Draw line between input points
-def drawLine(startPoint,endPoint):
-    "Draw line between input points"
-    plt.plot([startPoint[0],endPoint[0]],[startPoint[1],endPoint[1]],'b')
 
+def draw_line(start_point,end_point):
+    """ Draws line between input points.
+
+    Args:
+      start_point: 2-D vector that represents starting point.
+      end_point: 2-D vector that represents ending point.
+
+    Returns:
+      None.
+    """
+    pyplot.plot([start_point[0], end_point[0]], [start_point[1], end_point[1]],
+                'b')
     return None
 
-# Initialize centroids for input data
-def kMeansInitCentroids(X,numCentroids):
-    "Initialize centroids for input data"
-    randIndices = np.random.permutation(X.shape[0])
-    initCentroids = np.zeros((numCentroids,3))
-    for centroidIdx in range(0,numCentroids):
-        initCentroids[centroidIdx,:] = X[randIndices[centroidIdx,],:]
-  
-    return initCentroids
 
-# Main function
+def k_means_init_centroids(X, num_centroids):
+    """ Initializes centroids for input data.
+
+    Args:
+      X: Matrix of data features.
+      num_centroids: Number of centroids.
+
+    Returns:
+      init_centroids: Matrix of initial centroid positions.
+
+    Raises:
+      An error occurs if the number of centroids is 0.
+    """
+    if (num_centroids == 0): raise Error('num_centroids == 0')
+    rand_indices = numpy.random.permutation(X.shape[0])
+    init_centroids = numpy.zeros((num_centroids, 3))
+    for centroid_idx in range(0, num_centroids):
+        init_centroids[centroid_idx, :] = X[rand_indices[centroid_idx, ], :]
+    return init_centroids
+
+
 def main():
-    "Main function"
+    """ Main function
+    """
     print("Finding closest centroids.")
-    exercise7Data2 = np.genfromtxt("../ex7data2.txt",delimiter=",")
-    numFeatures = exercise7Data2.shape[1]
-    xMat = exercise7Data2[:,0:numFeatures]
+    exercise_7_data_2 = numpy.genfromtxt("../ex7data2.txt", delimiter=",")
+    num_features = exercise_7_data_2.shape[1]
+    x_mat = exercise_7_data_2[:, 0:num_features]
 
     # Select an initial set of centroids
-    numCentroids = 3
-    initialCentroids = np.r_[np.c_[3,3],np.c_[6,2],np.c_[8,5]]
+    num_centroids = 3
+    initial_centroids = numpy.r_[numpy.c_[3, 3], numpy.c_[6, 2], numpy.c_[8, 5]]
 
     # Find closest centroids for example data using initial centroids
-    centroidIndices = findClosestCentroids(xMat,initialCentroids)
+    centroid_indices = find_closest_centroids(x_mat, initial_centroids)
     print("Closest centroids for the first 3 examples:")
-    print("%s" % np.array_str(np.transpose(centroidIndices[0:3])+1))
+    print("%s" % numpy.array_str(numpy.transpose(centroid_indices[0:3])+1))
     print("(the closest centroids should be 1, 3, 2 respectively)")
     input("Program paused. Press enter to continue.")
     print("")
 
     # Update centroids for example data
     print("Computing centroids means.")
-    updatedCentroids = computeCentroids(xMat,centroidIndices,numCentroids)
+    updated_centroids = compute_centroids(x_mat, centroid_indices,
+                                          num_centroids)
     print("Centroids computed after initial finding of closest centroids:")
-    print("%s" % np.array_str(np.round(updatedCentroids[0,:],6)))
-    print("%s" % np.array_str(np.round(updatedCentroids[1,:],6)))
-    print("%s" % np.array_str(np.round(updatedCentroids[2,:],6)))
+    print("%s" % numpy.array_str(numpy.round(updated_centroids[0, :], 6)))
+    print("%s" % numpy.array_str(numpy.round(updated_centroids[1, :], 6)))
+    print("%s" % numpy.array_str(numpy.round(updated_centroids[2, :], 6)))
     print("(the centroids should be")
     print("   [ 2.428301 3.157924 ]")
     print("   [ 5.813503 2.633656 ]")
@@ -224,51 +306,56 @@ def main():
 
     # Run K-Means Clustering on an example dataset
     print("Running K-Means clustering on example dataset.")
-    maxIter = 10
-    kMeansList = runKMeans(xMat,initialCentroids,maxIter,True)
+    max_iter = 10
+    k_means_list = run_k_means(x_mat, initial_centroids, max_iter, True)
     print("K-Means Done.")
     input("Program paused. Press enter to continue.")
     print("")
 
     # Use K-Means Clustering to compress an image
     print("Running K-Means clustering on pixels from an image.")
-    birdSmallFile = open('../bird_small.png','rb')
-    birdSmallReader = png.Reader(file=birdSmallFile)
-    rowCount,colCount,birdSmall,meta = birdSmallReader.asDirect()
-    planeCount = meta['planes']
-    birdSmall2d = np.zeros((rowCount,colCount*planeCount))
-    for rowIndex,oneBoxedRowFlatPixels in enumerate(birdSmall):
-        birdSmall2d[rowIndex,:] = oneBoxedRowFlatPixels
-        birdSmall2d[rowIndex,:] = (1/255)*birdSmall2d[rowIndex,:].astype(float)
-    birdSmallReshape = birdSmall2d.reshape((rowCount*colCount,3))
-    birdSmall3dReshape = birdSmallReshape.reshape((rowCount,colCount,3))
-    numCentroids = 16
-    maxIter = 10
+    bird_small_file = open('../bird_small.png', 'rb')
+    bird_small_reader = png.Reader(file=bird_small_file)
+    row_count, col_count, bird_small, meta = bird_small_reader.asDirect()
+    plane_count = meta['planes']
+    bird_small_2d = numpy.zeros((row_count, col_count*plane_count))
+    for row_index, one_boxed_row_flat_pixels in enumerate(bird_small):
+        bird_small_2d[row_index, :] = one_boxed_row_flat_pixels
+        bird_small_2d[row_index, :] = (1/255)*bird_small_2d[row_index,
+                                                            :].astype(float)
+    bird_small_reshape = bird_small_2d.reshape((row_count*col_count, 3))
+    bird_small_3d_reshape = bird_small_reshape.reshape((row_count, col_count,
+                                                        3))
+    num_centroids = 16
+    max_iter = 10
 
     # Initialize centroids randomly
-    initialCentroids = kMeansInitCentroids(birdSmallReshape,numCentroids)
-    kMeansList = runKMeans(birdSmallReshape,initialCentroids,maxIter,False)
+    initial_centroids = k_means_init_centroids(bird_small_reshape,
+                                               num_centroids)
+    k_means_list = run_k_means(bird_small_reshape, initial_centroids, max_iter,
+                               False)
     input("Program paused. Press enter to continue.")
     print("")
 
     # Use the output clusters to compress this image
     print("Applying K-Means to compress an image.")
-    currCentroids = kMeansList['currCentroids']
-    centroidIndices = findClosestCentroids(birdSmallReshape,currCentroids)
-    birdSmallRecovered = np.zeros((rowCount*colCount,3))
-    for rowIndex in range(0,birdSmallRecovered.shape[0]):
-        currIndex = centroidIndices[rowIndex,].astype(int)
-        birdSmallRecovered[rowIndex,:] = currCentroids[currIndex,:]
-    birdSmallRecovered = birdSmallRecovered.reshape((rowCount,colCount,3))
+    curr_cent = k_means_list['curr_cent']
+    centroid_indices = find_closest_centroids(bird_small_reshape, curr_cent)
+    bird_small_recovered = numpy.zeros((row_count*col_count, 3))
+    for row_index in range(0, bird_small_recovered.shape[0]):
+        curr_index = centroid_indices[row_index, :].astype(int)
+        bird_small_recovered[row_index, :] = curr_cent[curr_index, :]
+    bird_small_recovered = bird_small_recovered.reshape((row_count, col_count,
+                                                         3))
 
     # Display original and compressed images side-by-side
-    fig,(ax1,ax2) = plt.subplots(1,2)
+    fig, (ax1, ax2) = pyplot.subplots(1, 2)
     ax1.set_title('Original')
-    im1 = ax1.imshow(birdSmall3dReshape)
-    recoveredTitle = 'Compressed, with %d colors.' % numCentroids
-    ax2.set_title(recoveredTitle)
-    im2 = ax2.imshow(birdSmallRecovered)
-    plt.show()
+    im1 = ax1.imshow(bird_small_3d_reshape)
+    recovered_title = 'Compressed, with %d colors.' % num_centroids
+    ax2.set_title(recovered_title)
+    im2 = ax2.imshow(bird_small_recovered)
+    pyplot.show()
 
 # Call main function
 if __name__ == "__main__":
