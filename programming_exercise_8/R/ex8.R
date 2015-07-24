@@ -95,8 +95,7 @@ VisualizeFit <- function(X, muVec, varVec) {
   #   varVec: Vector of variances of features.
   #
   # Returns:
-  #   probVec: Vector where each entry contains probability of corresponding 
-  #            example.
+  #   None.
   plot(X[, 1], X[, 2], col="blue", pch="x", xlab="Latency (ms)", 
        ylab="Throughput (mb/s)")
   u <- seq(0, 35, length=71)
