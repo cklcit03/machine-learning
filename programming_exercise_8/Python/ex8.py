@@ -16,177 +16,222 @@
 # Machine Learning
 # Programming Exercise 8: Anomaly Detection
 # Problem: Apply anomaly detection to detect anomalous behavior in servers
-import matplotlib.colors as colors
-import matplotlib.pyplot as plt
-import numpy as np
-import png
+from matplotlib import pyplot
+import numpy
 
-class InsufficientData(Exception):
-    def __init__(self,value):
+
+class Error(Exception):
+    def __init__(self, value):
         self.value = value
     def __str__(self):
         return repr(self.value)
 
-class InsufficientFeatures(Exception):
-    def __init__(self,value):
-        self.value = value
-    def __str__(self):
-        return repr(self.value)
 
-# Estimate mean and variance of input (Gaussian) data
-def estimateGaussian(X):
-    "Estimate mean and variance of input (Gaussian) data"
-    numFeatures = X.shape[1]
-    if (numFeatures > 0):
-        muVec = np.mean(X,axis=0)
-        varVec = np.var(X,axis=0,ddof=1)
-    else:
-        raise InsufficientFeatures('numFeatures <= 0')
-    muVec = np.reshape(muVec,(1,numFeatures),order='F')
-    varVec = np.reshape(varVec,(1,numFeatures),order='F')
+def estimate_gaussian(X):
+    """ Estimates mean and variance of input (Gaussian) data.
 
-    returnList = {'muVec': muVec,'varVec': varVec}
+    Args:
+      X: Matrix of features.
 
-    return(returnList)
+    Returns:
+      return_list: List of two objects.
+                   mu_vec: Vector of mean values of features.
+                   var_vec: Vector of variances of features.
 
-# Compute multivariate Gaussian PDF for input data
-def multivariateGaussian(X,muVec,varVec):
-    "Compute multivariate Gaussian PDF for input data"
-    numFeatures = X.shape[1]
-    if (numFeatures > 0):
-        numData = X.shape[0]
-        if (numData > 0):
-            varMat = np.diag(np.ravel(varVec))
-            probVec = np.zeros((numData,1))
-            for dataIndex in range(0,numData):
-                probVec[dataIndex] = (np.exp(-0.5*np.dot(np.dot(X[dataIndex,]-muVec,np.linalg.inv(varMat)),np.transpose(X[dataIndex,]-muVec))))/((np.power(2*np.pi,0.5*numFeatures)*np.sqrt(np.linalg.det(varMat))))
-        else:
-            raise InsufficientData('numData <= 0')
-    else:
-        raise InsufficientFeatures('numFeatures <= 0')
+    Raises:
+      An error occurs if the number of features is 0.
+    """
+    num_feats = X.shape[1]
+    if (num_feats == 0): raise Error('num_feats == 0')
+    mu_vec = numpy.mean(X, axis=0)
+    var_vec = numpy.var(X, axis=0, ddof=1)
+    mu_vec = numpy.reshape(mu_vec, (1, num_feats), order='F')
+    var_vec = numpy.reshape(var_vec, (1, num_feats), order='F')
+    return_list = {'mu_vec': mu_vec, 'var_vec': var_vec}
+    return return_list
 
-    return(probVec)
 
-# Plot dataset and estimated Gaussian distribution
-def visualizeFit(X,muVec,varVec):
-    "Plot dataset and estimated Gaussian distribution"
-    plt.scatter(X[:,0],X[:,1],s=80,marker='x',color='b')
-    plt.ylabel('Throughput (mb/s)',fontsize=18)
-    plt.xlabel('Latency (ms)',fontsize=18)
-    plt.hold(True)
-    uVals = np.linspace(0,35,num=71)
-    vVals = np.linspace(0,35,num=71)
-    zVals = np.zeros((uVals.shape[0],vVals.shape[0]))
-    for uIndex in range(0,uVals.shape[0]):
-        for vIndex in range(0,vVals.shape[0]):
-            zVals[uIndex,vIndex] = multivariateGaussian(np.c_[uVals[uIndex],vVals[vIndex]],muVec,varVec)
-    zValsTrans = np.transpose(zVals)
-    uValsX,vValsY = np.meshgrid(uVals,vVals)
-    zValsReshape = zValsTrans.reshape(uValsX.shape)
-    expSeq = np.linspace(-20,1,num=8)
-    powExpSeq = np.power(10,expSeq)
-    plt.contour(uVals,vVals,zValsReshape,powExpSeq)
-    plt.hold(False)
+def multivariate_gaussian(X, mu_vec, var_vec):
+    """ Computes multivariate Gaussian PDF for input data.
 
+    Args:
+      X: Matrix of features.
+      mu_vec: Vector of mean values of features.
+      var_vec: Vector of variances of features.
+
+    Returns:
+      prob_vec: Vector where each entry contains probability of corresponding 
+                example.
+
+    Raises:
+      An error occurs if the number of features is 0.
+      An error occurs if the number of data examples is 0.
+    """
+    num_feats = X.shape[1]
+    if (num_feats == 0): raise Error('num_feats == 0')
+    num_data = X.shape[0]
+    if (num_data == 0): raise Error('num_data == 0')
+    var_mat = numpy.diag(numpy.ravel(var_vec))
+    prob_vec = numpy.zeros((num_data, 1))
+    for data_index in range(0, num_data):
+        num_term = (
+            (numpy.exp(-0.5*numpy.dot(numpy.dot(X[data_index, ]-mu_vec,
+                                                numpy.linalg.inv(var_mat)),
+                                      numpy.transpose(X[data_index,
+                                                        ]-mu_vec)))))
+        den_term = (
+            (numpy.power(2*numpy.pi,
+                         0.5*num_feats)*numpy.sqrt(numpy.linalg.det(var_mat))))
+        prob_vec[data_index] = num_term/den_term
+    return prob_vec
+
+
+def visualize_fit(X, mu_vec, var_vec):
+    """ Plots dataset and estimated Gaussian distribution.
+
+    Args:
+      X: Matrix of features.
+      mu_vec: Vector of mean values of features.
+      var_vec: Vector of variances of features.
+
+    Returns:
+      None.
+    """
+    pyplot.scatter(X[:, 0], X[:, 1], s=80, marker='x', color='b')
+    pyplot.ylabel('Throughput (mb/s)', fontsize=18)
+    pyplot.xlabel('Latency (ms)', fontsize=18)
+    pyplot.hold(True)
+    u_vals = numpy.linspace(0, 35, num=71)
+    v_vals = numpy.linspace(0, 35, num=71)
+    z_vals = numpy.zeros((u_vals.shape[0], v_vals.shape[0]))
+    for u_index in range(0, u_vals.shape[0]):
+        for v_index in range(0, v_vals.shape[0]):
+            z_vals[u_index, v_index] = (
+                multivariate_gaussian(numpy.c_[u_vals[u_index],
+                                               v_vals[v_index]], mu_vec,
+                                      var_vec))
+    z_vals_trans = numpy.transpose(z_vals)
+    u_vals_x, v_vals_y = numpy.meshgrid(u_vals, v_vals)
+    z_vals_reshape = z_vals_trans.reshape(u_vals_x.shape)
+    exp_seq = numpy.linspace(-20, 1, num=8)
+    pow_exp_seq = numpy.power(10, exp_seq)
+    pyplot.contour(u_vals, v_vals, z_vals_reshape, pow_exp_seq)
+    pyplot.hold(False)
     return None
 
-# Find the best threshold for detecting anomalies
-def selectThreshold(y,p):
-    "Find the best threshold for detecting anomalies"
-    bestEpsilon = 0
-    bestF1 = 0
-    F1 = 0
-    stepSize = 0.001*(np.max(p)-np.min(p))
-    epsilonSeq = np.linspace(np.min(p),np.max(p),num=np.ceil((np.max(p)-np.min(p))/stepSize))
-    for epsilonIndex in range(0,1000):
-        currEpsilon = epsilonSeq[epsilonIndex,]
-        predictions = (p < currEpsilon)
-        numTruePositives = np.sum((predictions == 1) & (y == 1))
-        if (numTruePositives > 0):
-            numFalsePositives = np.sum((predictions == 1) & (y == 0))
-            numFalseNegatives = np.sum((predictions == 0) & (y == 1))
-            precisionVal = numTruePositives/(numTruePositives+numFalsePositives)
-            recallVal = numTruePositives/(numTruePositives+numFalseNegatives)
-            F1 = (2*precisionVal*recallVal)/(precisionVal+recallVal)
-            if (F1 > bestF1):
-                bestF1 = F1
-                bestEpsilon = currEpsilon
 
-    returnList = {'bestF1': bestF1,'bestEpsilon': bestEpsilon}
+def select_threshold(y, p):
+    """ Finds the best threshold for detecting anomalies.
 
-    return(returnList)
+    Args:
+      y: Cross-validation labels.
+      p: Vector where each entry contains probability of corresponding
+         cross-validation example.
 
-# Main function
+    Returns:
+      return_list: List of two objects.
+                   best_f1: F1 score.
+                   best_epsilon: Selected threshold.
+    """
+    best_epsilon = 0
+    best_f1 = 0
+    f1 = 0
+    step_size = 0.001*(numpy.max(p)-numpy.min(p))
+    epsilon_seq = (
+        numpy.linspace(numpy.min(p), numpy.max(p),
+                       num=numpy.ceil((numpy.max(p)-numpy.min(p))/step_size)))
+    for epsilon_index in range(0, 1000):
+        curr_epsilon = epsilon_seq[epsilon_index, ]
+        predictions = (p < curr_epsilon)
+        num_true_positives = numpy.sum((predictions == 1) & (y == 1))
+        if (num_true_positives > 0):
+            num_false_positives = numpy.sum((predictions == 1) & (y == 0))
+            num_false_negatives = numpy.sum((predictions == 0) & (y == 1))
+            precision_val = (
+                num_true_positives/(num_true_positives+num_false_positives))
+            recall_val = (
+                num_true_positives/(num_true_positives+num_false_negatives))
+            f1 = (2*precision_val*recall_val)/(precision_val+recall_val)
+            if (f1 > best_f1):
+                best_f1 = f1
+                best_epsilon = curr_epsilon
+    return_list = {'best_f1': best_f1, 'best_epsilon': best_epsilon}
+    return return_list
+
+
 def main():
-    "Main function"
+    """ Main function
+    """
     print("Visualizing example dataset for outlier detection.")
-    serverData1 = np.genfromtxt("../serverData1.txt",delimiter=",")
-    numFeatures = serverData1.shape[1]
-    xMat = serverData1[:,0:numFeatures]
-    plt.scatter(xMat[:,0],xMat[:,1],s=80,marker='x',color='b')
-    plt.ylabel('Throughput (mb/s)',fontsize=18)
-    plt.xlabel('Latency (ms)',fontsize=18)
-    plt.axis([0, 30, 0, 30])
-    plt.show()
+    server_data_1 = numpy.genfromtxt("../serverData1.txt", delimiter=",")
+    num_feats = server_data_1.shape[1]
+    x_mat = server_data_1[:, 0:num_feats]
+    pyplot.scatter(x_mat[:, 0], x_mat[:, 1], s=80, marker='x', color='b')
+    pyplot.ylabel('Throughput (mb/s)', fontsize=18)
+    pyplot.xlabel('Latency (ms)', fontsize=18)
+    pyplot.axis([0, 30, 0, 30])
+    pyplot.show()
     input("Program paused. Press enter to continue.")
     print("")
 
     # Estimate (Gaussian) statistics of this dataset
     print("Visualizing Gaussian fit.")
-    estimateGaussianList = estimateGaussian(xMat)
-    muVec = estimateGaussianList['muVec']
-    varVec = estimateGaussianList['varVec']
-    probVec = multivariateGaussian(xMat,muVec,varVec)
-    returnCode = visualizeFit(xMat,muVec,varVec)
-    plt.show()
+    estimate_gaussian_list = estimate_gaussian(x_mat)
+    mu_vec = estimate_gaussian_list['mu_vec']
+    var_vec = estimate_gaussian_list['var_vec']
+    prob_vec = multivariate_gaussian(x_mat, mu_vec, var_vec)
+    return_code = visualize_fit(x_mat, mu_vec, var_vec)
+    pyplot.show()
     input("Program paused. Press enter to continue.")
     print("")
 
     # Use a cross-validation set to find outliers
-    serverValData1 = np.genfromtxt("../serverValData1.txt",delimiter=",")
-    numValFeatures = serverValData1.shape[1]-1
-    xValMat = serverValData1[:,0:numValFeatures]
-    yValVec = serverValData1[:,numValFeatures:(numValFeatures+1)]
-    probValVec = multivariateGaussian(xValMat,muVec,varVec)
-    selectThresholdList = selectThreshold(yValVec,probValVec)
-    bestEpsilon = selectThresholdList['bestEpsilon']
-    bestF1 = selectThresholdList['bestF1']
-    print("Best epsilon found using cross-validation: %e" % bestEpsilon)
-    print("Best F1 on Cross Validation Set:  %f" % bestF1)
+    server_val_data_1 = numpy.genfromtxt("../serverValData1.txt", delimiter=",")
+    num_val_feats = server_val_data_1.shape[1]-1
+    x_val_mat = server_val_data_1[:, 0:num_val_feats]
+    y_val_vec = server_val_data_1[:, num_val_feats:(num_val_feats+1)]
+    prob_val_vec = multivariate_gaussian(x_val_mat, mu_vec, var_vec)
+    select_threshold_list = select_threshold(y_val_vec, prob_val_vec)
+    best_epsilon = select_threshold_list['best_epsilon']
+    best_f1 = select_threshold_list['best_f1']
+    print("Best epsilon found using cross-validation: %e" % best_epsilon)
+    print("Best F1 on Cross Validation Set:  %f" % best_f1)
     print("   (you should see a value epsilon of about 8.99e-05)")
-    outlierIndices = (np.array(np.where(probVec < bestEpsilon)))[0,:]
-    returnCode = visualizeFit(xMat,muVec,varVec)
-    plt.hold(True)
-    outliers = plt.scatter(xMat[outlierIndices,0],xMat[outlierIndices,1],s=80,marker='o',facecolors='none',edgecolors='r')
-    plt.hold(False)
-    plt.show()
+    outlier_indices = (numpy.array(numpy.where(prob_vec < best_epsilon)))[0, :]
+    return_code = visualize_fit(x_mat, mu_vec, var_vec)
+    pyplot.hold(True)
+    outliers = pyplot.scatter(x_mat[outlier_indices, 0],
+                              x_mat[outlier_indices, 1], s=80, marker='o',
+                              facecolors='none', edgecolors='r')
+    pyplot.hold(False)
+    pyplot.show()
     input("Program paused. Press enter to continue.")
     print("")
 
     # Detect anomalies in another dataset
-    serverData2 = np.genfromtxt("../serverData2.txt",delimiter=",")
-    numFeatures = serverData2.shape[1]
-    xMat = serverData2[:,0:numFeatures]
+    server_data_2 = numpy.genfromtxt("../serverData2.txt", delimiter=",")
+    num_feats = server_data_2.shape[1]
+    x_mat = server_data_2[:, 0:num_feats]
 
     # Estimate (Gaussian) statistics of this dataset
-    estimateGaussianList = estimateGaussian(xMat)
-    muVec = estimateGaussianList['muVec']
-    varVec = estimateGaussianList['varVec']
-    probVec = multivariateGaussian(xMat,muVec,varVec)
+    estimate_gaussian_list = estimate_gaussian(x_mat)
+    mu_vec = estimate_gaussian_list['mu_vec']
+    var_vec = estimate_gaussian_list['var_vec']
+    prob_vec = multivariate_gaussian(x_mat, mu_vec, var_vec)
 
     # Use a cross-validation set to find outliers in this dataset
-    serverValData2 = np.genfromtxt("../serverValData2.txt",delimiter=",")
-    numValFeatures = serverValData2.shape[1]-1
-    xValMat = serverValData2[:,0:numValFeatures]
-    yValVec = serverValData2[:,numValFeatures:(numValFeatures+1)]
-    probValVec = multivariateGaussian(xValMat,muVec,varVec)
-    selectThresholdList = selectThreshold(yValVec,probValVec)
-    bestEpsilon = selectThresholdList['bestEpsilon']
-    bestF1 = selectThresholdList['bestF1']
-    outlierIndices = (np.array(np.where(probVec < bestEpsilon)))[0,:]
-    print("Best epsilon found using cross-validation: %e" % bestEpsilon)
-    print("Best F1 on Cross Validation Set:  %f" % bestF1)
-    print("# Outliers found: %d" % outlierIndices.size)
+    server_val_data_2 = numpy.genfromtxt("../serverValData2.txt", delimiter=",")
+    num_val_feats = server_val_data_2.shape[1]-1
+    x_val_mat = server_val_data_2[:, 0:num_val_feats]
+    y_val_vec = server_val_data_2[:, num_val_feats:(num_val_feats+1)]
+    prob_val_vec = multivariate_gaussian(x_val_mat, mu_vec, var_vec)
+    select_threshold_list = select_threshold(y_val_vec, prob_val_vec)
+    best_epsilon = select_threshold_list['best_epsilon']
+    best_f1 = select_threshold_list['best_f1']
+    outlier_indices = (numpy.array(numpy.where(prob_vec < best_epsilon)))[0, :]
+    print("Best epsilon found using cross-validation: %e" % best_epsilon)
+    print("Best F1 on Cross Validation Set:  %f" % best_f1)
+    print("# Outliers found: %d" % outlier_indices.size)
     print("   (you should see a value epsilon of about 1.38e-18)")
     input("Program paused. Press enter to continue.")
     print("")
