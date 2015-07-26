@@ -18,7 +18,8 @@
 #include "normal_eqn.h"
 
 // Uses pseudoinverse function pinv() from Armadillo.
-// Thus, be sure to define the following in /path/to/armadillo/include/armadillo_bits/config.hpp:
+// Thus, be sure to define the following in 
+// /path/to/armadillo/include/armadillo_bits/config.hpp:
 // ARMA_USE_LAPACK
 // ARMA_USE_BLAS
 // ARMA_BLAS_UNDERSCORE

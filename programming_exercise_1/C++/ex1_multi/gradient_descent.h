@@ -16,8 +16,8 @@
 // GradientDescent class 1) implements gradient descent algorithm and 2) stores
 // relevant parameters.
 
-#ifndef GRADIENT_DESCENT_H_
-#define GRADIENT_DESCENT_H_
+#ifndef MACHINE_LEARNING_PROGRAMMING_EXERCISE_1_EX1_MULTI_GRADIENT_DESCENT_H_
+#define MACHINE_LEARNING_PROGRAMMING_EXERCISE_1_EX1_MULTI_GRADIENT_DESCENT_H_
 
 #include <assert.h>
 #include <string>
@@ -78,6 +78,18 @@ class GradientDescent
     return 0;
   }
 
+  inline int set_alpha(double alpha_arg) {
+    alpha_ = alpha_arg;
+
+    return 0;
+  }
+
+  inline int set_num_iters(int num_iters_arg) {
+    num_iters_ = num_iters_arg;
+
+    return 0;
+  }
+
  private:
   // Current weights for gradient descent.
   arma::vec theta_;
@@ -85,9 +97,10 @@ class GradientDescent
   // Step size for gradient descent.
   double alpha_;
 
+  // Number of iterations for gradient descent.
   int num_iters_;
 
   DISALLOW_COPY_AND_ASSIGN(GradientDescent);
 };
 
-#endif	// GRADIENT_DESCENT_H_
+#endif	// MACHINE_LEARNING_PROGRAMMING_EXERCISE_1_EX1_MULTI_GRADIENT_DESCENT_H_

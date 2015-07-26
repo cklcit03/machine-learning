@@ -20,11 +20,11 @@
 // The number of training examples should always be a positive integer.
 int DataNormalized::FeatureNormalize() {
   const int kNumFeatures = num_features();
-  assert(kNumFeatures > 0);
+  assert(kNumFeatures >= 1);
   const int kNumTrainEx = num_train_ex();
-  assert(kNumTrainEx > 0);
+  assert(kNumTrainEx >= 1);
 
-  // Do not include dummy feature when normalizing.
+  // Does not include dummy feature when normalizing.
   const arma::mat kTrainingFeaturesNoDummy = \
     training_features().cols(1,kNumFeatures);
 
@@ -40,6 +40,9 @@ int DataNormalized::FeatureNormalize() {
     kTrainingFeaturesNoDummyNormalized.row(row_index) = \
       (kTrainingFeaturesNoDummy.row(row_index)-mu_vec.t())/sigma_vec.t();
   }
+
+  // Appends dummy feature to normalized data, since normalized data will be
+  // used for linear regression.
   const arma::mat kTrainingFeaturesNormalized = \
     arma::join_horiz(arma::ones<arma::vec>(kNumTrainEx),\
       kTrainingFeaturesNoDummyNormalized);

@@ -17,8 +17,8 @@
 // DataNormalized class inherits from Data class; it includes a method for 
 // normalizing training data.
 
-#ifndef DATA_H_
-#define DATA_H_
+#ifndef MACHINE_LEARNING_PROGRAMMING_EXERCISE_1_EX1_MULTI_DATA_H_
+#define MACHINE_LEARNING_PROGRAMMING_EXERCISE_1_EX1_MULTI_DATA_H_
 
 #include <assert.h>
 #include <string>
@@ -36,8 +36,8 @@ class Data
   // Sets default values for training data.
   Data() {
     num_train_ex_ = 1;
-    num_features_ = 2;
-    training_features_.ones(1,3);
+    num_features_ = 1;
+    training_features_.ones(1,2);
     training_labels_.ones(1,1);
   }
 
@@ -77,10 +77,41 @@ class Data
     return num_train_ex_;
   }
 
+  inline int set_training_features(arma::mat training_features_arg) {
+    training_features_ = training_features_arg;
+
+    return 0;
+  }
+
+  inline int set_training_labels(arma::vec training_labels_arg) {
+    training_labels_ = training_labels_arg;
+
+    return 0;
+  }
+
+  inline int set_num_features(int num_features_arg) {
+    num_features_ = num_features_arg;
+
+    return 0;
+  }
+
+  inline int set_num_train_ex(int num_train_ex_arg) {
+    num_train_ex_ = num_train_ex_arg;
+
+    return 0;
+  }
+
  private:
+  // Matrix of training features.
   arma::mat training_features_;
+
+  // Vector of training labels.
   arma::vec training_labels_;
+
+  // Number of training features.
   int num_features_;
+
+  // Number of training examples.
   int num_train_ex_;
 
   DISALLOW_COPY_AND_ASSIGN(Data);
@@ -103,7 +134,7 @@ class DataNormalized: public Data
   // Reads CSV file "file_name_arg".
   // Use constructor for Data based on contents of this file.
   // Defer initialization of member variables to FeatureNormalize()
-  explicit DataNormalized(std::string fileNameArg) : Data(fileNameArg) {}
+  explicit DataNormalized(std::string file_name_arg) : Data(file_name_arg) {}
 
   ~DataNormalized() {}
 
@@ -143,6 +174,7 @@ class DataNormalized: public Data
   }
 
  private:
+  // Matrix of normalized training features.
   arma::mat training_features_normalized_;
 
   // Mean of each training feature
@@ -154,4 +186,4 @@ class DataNormalized: public Data
   DISALLOW_COPY_AND_ASSIGN(DataNormalized);
 };
 
-#endif  // DATA_H_
+#endif  // MACHINE_LEARNING_PROGRAMMING_EXERCISE_1_EX1_MULTI_DATA_H_

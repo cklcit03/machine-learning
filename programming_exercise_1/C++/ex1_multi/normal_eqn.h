@@ -15,8 +15,8 @@
 
 // Declares function that computes normal equations.
 
-#ifndef NORMAL_EQN_H_
-#define NORMAL_EQN_H_
+#ifndef MACHINE_LEARNING_PROGRAMMING_EXERCISE_1_EX1_MULTI_NORMAL_EQN_H_
+#define MACHINE_LEARNING_PROGRAMMING_EXERCISE_1_EX1_MULTI_NORMAL_EQN_H_
 
 #include "armadillo"
 
@@ -24,4 +24,4 @@
 
 arma::vec NormalEqn(const DataNormalized &data);
 
-#endif  // NORMAL_EQN_H
+#endif  // MACHINE_LEARNING_PROGRAMMING_EXERCISE_1_EX1_MULTI_NORMAL_EQN_H

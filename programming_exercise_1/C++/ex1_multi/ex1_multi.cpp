@@ -41,11 +41,11 @@ int main(void) {
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Normalize training features.
+  // Normalizes training features.
   printf("Normalizing Features ...\n");
   const int kReturnCode1 = housing_data.FeatureNormalize();
 
-  // Compute optimal weights using gradient descent.
+  // Computes optimal weights using gradient descent.
   printf("Running gradient descent ...\n");
   const int kReturnCode2 = grad_des.RunGradientDescent(housing_data);
   const arma::vec kThetaFinal = grad_des.theta();
@@ -55,7 +55,7 @@ int main(void) {
   kThetaFinal.raw_print(std::cout);
   printf("\n");
 
-  // Predict price for a 1650 square-foot house with 3 bedrooms.
+  // Predicts price for a 1650 square-foot house with 3 bedrooms.
   arma::rowvec house_vec_1 = arma::ones<arma::rowvec>(2);
   house_vec_1(0) = 1650;
   house_vec_1(1) = 3;
@@ -69,14 +69,15 @@ int main(void) {
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Compute optimal weights using normal equations.
+  // Computes optimal weights using normal equations.
   printf("Solving with normal equations...\n");
   const arma::vec kThetaNormal = NormalEqn(housing_data);
   printf("Theta computed from the normal equations: \n");
   kThetaNormal.raw_print(std::cout);
   printf("\n");
 
-  // Use normal equations to predict price for a 1650 square-foot house with 3 bedrooms.
+  // Uses normal equations to predict price for a 1650 square-foot house with 3
+  // bedrooms.
   arma::rowvec house_vec_2 = arma::ones<arma::rowvec>(3);
   house_vec_2(1) = 1650;
   house_vec_2(2) = 3;
