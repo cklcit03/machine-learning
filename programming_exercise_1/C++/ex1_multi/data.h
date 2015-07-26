@@ -132,8 +132,8 @@ class DataNormalized: public Data
   }
 
   // Reads CSV file "file_name_arg".
-  // Use constructor for Data based on contents of this file.
-  // Defer initialization of member variables to FeatureNormalize()
+  // Uses constructor for Data based on contents of this file.
+  // Defers initialization of member variables to FeatureNormalize()
   explicit DataNormalized(std::string file_name_arg) : Data(file_name_arg) {}
 
   ~DataNormalized() {}
