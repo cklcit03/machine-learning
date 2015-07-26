@@ -30,12 +30,12 @@ int main(void) {
   const std::string kDataFileName = "../../foodTruckData.txt";
   Data food_truck_data(kDataFileName);
 
-  // Compute squared error given initial weights in theta_vec.
+  // Computes squared error given initial weights in theta_vec.
   printf("Running Gradient Descent ...\n");
   const double kInitCost = grad_des.ComputeCost(food_truck_data);
   printf("ans = %.3f\n",kInitCost);
 
-  // Compute optimal weights using gradient descent.
+  // Computes optimal weights using gradient descent.
   const int kReturnCode = grad_des.RunGradientDescent(food_truck_data);
   const arma::vec kThetaFinal = grad_des.theta();
   std::cout.setf(std::ios::fixed,std::ios::floatfield);
@@ -44,7 +44,7 @@ int main(void) {
   kThetaFinal.t().raw_print(std::cout);
   printf("\n");
 
-  // Predict profit for population size of 35000.
+  // Predicts profit for population size of 35000.
   arma::rowvec population_vec_1 = arma::ones<arma::rowvec>(2);
   population_vec_1(1) = 3.5;
   const double kPredProfit1 = as_scalar(population_vec_1*kThetaFinal);
@@ -52,7 +52,7 @@ int main(void) {
   printf("For population = 35,000, we predict a profit of %f\n",\
     kPredProfit1Scaled);
 
-  // Predict profit for population size of 70000.
+  // Predicts profit for population size of 70000.
   arma::rowvec population_vec_2 = arma::ones<arma::rowvec>(2);
   population_vec_2(1) = 7.0;
   const double kPredProfit2 = as_scalar(population_vec_2*kThetaFinal);

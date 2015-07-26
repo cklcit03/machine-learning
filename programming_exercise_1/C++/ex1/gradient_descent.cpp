@@ -20,12 +20,12 @@
 
 // The number of training examples should always be a positive integer.
 double GradientDescent::ComputeCost(const Data &data) {
+  const int kNumTrainEx = data.num_train_ex();
+  assert(kNumTrainEx >= 1);
   const arma::mat kTrainingFeatures = data.training_features();
   const arma::vec kTrainingLabels = data.training_labels();
   const arma::vec kDiffVec = kTrainingFeatures*theta_-kTrainingLabels;
-  const arma::vec kDiffVecSq = kDiffVec % kDiffVec;
-  const int kNumTrainEx = data.num_train_ex();
-  assert(kNumTrainEx > 0);
+  const arma::vec kDiffVecSq = kDiffVec % kDiffVec;  
   const double kJTheta = arma::as_scalar(sum(kDiffVecSq))/(2.0*kNumTrainEx);
 
   return kJTheta;
@@ -34,9 +34,9 @@ double GradientDescent::ComputeCost(const Data &data) {
 // The step size should be chosen carefully to guarantee convergence given a 
 // reasonable number of computations.
 int GradientDescent::RunGradientDescent(const Data &data) {
-  const int kNumTrainEx = data.num_train_ex();
-  assert(kNumTrainEx > 0);
   assert(num_iters_ >= 1);
+  const int kNumTrainEx = data.num_train_ex();
+  assert(kNumTrainEx >= 1);
   const arma::mat kTrainingFeatures = data.training_features();
   const arma::vec kTrainingLabels = data.training_labels();
 
