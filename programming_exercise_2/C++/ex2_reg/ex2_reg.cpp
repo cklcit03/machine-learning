@@ -35,7 +35,7 @@ int main(void) {
   RegularizedLogisticRegression reg_log_reg(kNumIterations,theta_vec,\
     gradient_vec,predictions_vec,kLambda);
 
-  // Compute initial cost.
+  // Computes initial cost.
   const std::vector<double> kTheta(kNumFeatures+1,0.0);
   std::vector<double> grad(kNumFeatures+1,0.0);
   const double kInitCost = reg_log_reg.ComputeCost(kTheta,grad,micro_chip_data);
@@ -44,7 +44,7 @@ int main(void) {
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Use MMA algorithm to solve for optimum weights and cost.
+  // Uses MMA algorithm to solve for optimum weights and cost.
   nlopt::opt opt(nlopt::LD_MMA,kNumFeatures+1);
   WrapperStruct wrap_struct;
   wrap_struct.reg_log_reg = &reg_log_reg;
@@ -59,7 +59,7 @@ int main(void) {
     theta_vec(feature_index) = nlopt_theta[feature_index];
   }
 
-  // Compute accuracy on training set.
+  // Computes accuracy on training set.
   const int kReturnCode2 = reg_log_reg.LabelPrediction(micro_chip_data);
   const arma::vec trainingPredict = reg_log_reg.predictions();
   const arma::vec trainingLabels = micro_chip_data.training_labels();

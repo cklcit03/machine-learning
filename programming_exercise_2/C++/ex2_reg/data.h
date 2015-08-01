@@ -17,8 +17,8 @@
 // DataMapped class inherits from Data class; it maps training features into
 // a higher-dimensional space.
 
-#ifndef DATA_H_
-#define DATA_H_
+#ifndef MACHINE_LEARNING_PROGRAMMING_EXERCISE_2_EX2_REG_DATA_H_
+#define MACHINE_LEARNING_PROGRAMMING_EXERCISE_2_EX2_REG_DATA_H_
 
 #include <string>
 
@@ -40,8 +40,10 @@ class Data
     training_labels_.ones(1,1);
   }
 
-  // Called by DataMapped constructor to set number of training examples and
-  // vector of training labels.
+  // DataMapped constructor calls this base class constructor to set number of 
+  // training examples and vector of training labels.
+  // "dummy_arg" is used to distinguish this base class constructor from its
+  // other constructor.
   Data(std::string file_name_arg,int dummy_arg) {
     arma::mat training_data;
     training_data.load(file_name_arg,arma::csv_ascii);
@@ -111,25 +113,34 @@ class Data
   }
 
  private:
+  // Matrix of training features.
   arma::mat training_features_;
+
+  // Vector of training labels.
   arma::vec training_labels_;
+
+  // Number of training features.
   int num_features_;
+
+  // Number of training examples.
   int num_train_ex_;
 
   DISALLOW_COPY_AND_ASSIGN(Data);
 };
 
-// Stores training data, including features and labels.  Sample usage:
+// Stores mapped training data, including features and labels.  
+// Sample usage:
 // const std::string kDataFileName = "trainingData.txt";
 // DataMapped training_data_mapped(kDataFileName);
 class DataMapped: public Data
 {
  public:
-  // Sets default values for training data.
+  // Sets default values for mapped training data.
   DataMapped() : Data() {}
 
-  // Use constructor for Data given "file_name_arg".
-  // Map features into all polynomial terms of first two features up to the
+  // Reads CSV file "file_name_arg".
+  // Uses special constructor for Data based on contents of this file.
+  // Maps features into all polynomial terms of first two features up to the
   // sixth power.
   explicit DataMapped(std::string file_name_arg) : Data(file_name_arg,0) {
     arma::mat training_data;
@@ -162,4 +173,4 @@ class DataMapped: public Data
   DISALLOW_COPY_AND_ASSIGN(DataMapped);
 };
 
-#endif  // DATA_H_
+#endif  // MACHINE_LEARNING_PROGRAMMING_EXERCISE_2_EX2_REG_DATA_H_

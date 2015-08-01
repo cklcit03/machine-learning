@@ -33,10 +33,13 @@ arma::vec LogisticRegression::ComputeSigmoid(const arma::vec sigmoid_arg) {
 // "grad" corresponds to the gradient.
 double LogisticRegression::ComputeCost(const std::vector<double> &theta,
     std::vector<double> &grad,const Data &data) {
+  const int kNumTrainEx = data.num_train_ex();
+  assert(kNumTrainEx >= 1);
   const int kNumFeatures = data.num_features();
+  assert(kNumFeatures >= 1);
   arma::vec nlopt_theta = arma::randu<arma::vec>(kNumFeatures+1,1);
 
-  // Use current value of "theta" from nlopt.
+  // Uses current value of "theta" from nlopt.
   for(int feature_index=0; feature_index<(kNumFeatures+1); feature_index++)
   {
     nlopt_theta(feature_index) = theta[feature_index];
@@ -46,13 +49,11 @@ double LogisticRegression::ComputeCost(const std::vector<double> &theta,
   const arma::vec kTrainingLabels = data.training_labels();
   const arma::vec kSigmoidArg = kTrainingFeatures*theta_;
   const arma::vec kSigmoidVal = ComputeSigmoid(kSigmoidArg);
-  const int kNumTrainEx = data.num_train_ex();
-  assert(kNumTrainEx > 0);
   const arma::vec kCostFuncVal = (-1)*(kTrainingLabels%arma::log(kSigmoidVal)+\
     (1-kTrainingLabels)%arma::log(1-kSigmoidVal));
   const double kJTheta = sum(kCostFuncVal)/kNumTrainEx;
 
-  // Update "grad" for nlopt.
+  // Updates "grad" for nlopt.
   const int kReturnCode = this->ComputeGradient(data);
   for(int feature_index=0; feature_index<(kNumFeatures+1); feature_index++)
   {
@@ -65,10 +66,10 @@ double LogisticRegression::ComputeCost(const std::vector<double> &theta,
 // The number of training examples should always be a positive integer.
 int LogisticRegression::ComputeGradient(const Data &data) {
   const int kNumTrainEx = data.num_train_ex();
-  assert(kNumTrainEx > 0);
-  const arma::mat kTrainingFeatures = data.training_features();
+  assert(kNumTrainEx >= 1);
   const int kNumFeatures = data.num_features();
-  assert(kNumFeatures > 0);
+  assert(kNumFeatures >= 1);
+  const arma::mat kTrainingFeatures = data.training_features();
   const arma::vec kTrainingLabels = data.training_labels();
 
   const arma::vec kSigmoidArg = kTrainingFeatures*theta_;
@@ -90,7 +91,7 @@ int LogisticRegression::ComputeGradient(const Data &data) {
 // The number of training examples should always be a positive integer.
 int LogisticRegression::LabelPrediction(const Data &data) {
   const int kNumTrainEx = data.num_train_ex();
-  assert(kNumTrainEx > 0);
+  assert(kNumTrainEx >= 1);
   const arma::mat kTrainingFeatures = data.training_features();
   const arma::vec kSigmoidArg = kTrainingFeatures*theta_;
   const arma::vec kSigmoidVal = ComputeSigmoid(kSigmoidArg);
@@ -102,27 +103,19 @@ int LogisticRegression::LabelPrediction(const Data &data) {
   return 0;
 }
 
-// Unpacks WrapperStruct to obtain instances of RegularizedLogisticRegression 
-// and DataMapped.
-double ComputeCostWrapper(const std::vector<double> &opt_param,
-    std::vector<double> &grad,void *void_data) {
-  WrapperStruct *wrap_struct = static_cast<WrapperStruct *>(void_data);
-  RegularizedLogisticRegression *reg_log_reg = wrap_struct->reg_log_reg;
-  DataMapped *data_mapped = wrap_struct->data_mapped;
-
-  return reg_log_reg->ComputeCost(opt_param,grad,*data_mapped);
-}
-
 // Arguments "opt_param" and "grad" are updated by nlopt.
 // "opt_param" corresponds to the optimization parameters.
 // "grad" corresponds to the gradient.
 double RegularizedLogisticRegression::ComputeCost(\
     const std::vector<double> &opt_param,std::vector<double> &grad,
     const Data &data) {
+  const int kNumTrainEx = data.num_train_ex();
+  assert(kNumTrainEx >= 1);
   const int kNumFeatures = data.num_features();
+  assert(kNumFeatures >= 1);
   arma::vec nlopt_theta = arma::randu<arma::vec>(kNumFeatures+1,1);
 
-  // Use current value of "theta" from nlopt.
+  // Uses current value of "theta" from nlopt.
   for(int feature_index=0; feature_index<(kNumFeatures+1); feature_index++)
   {
     nlopt_theta(feature_index) = opt_param[feature_index];
@@ -133,8 +126,6 @@ double RegularizedLogisticRegression::ComputeCost(\
   const arma::vec kCurrentTheta = theta();
   const arma::vec kSigmoidArg = kTrainingFeatures*kCurrentTheta;
   const arma::vec kSigmoidVal = ComputeSigmoid(kSigmoidArg);
-  const int kNumTrainEx = data.num_train_ex();
-  assert(kNumTrainEx > 0);
   const arma::vec kCostFuncVal = (-1)*(kTrainingLabels%arma::log(kSigmoidVal)+\
     (1-kTrainingLabels)%arma::log(1-kSigmoidVal));
   const double kJTheta = sum(kCostFuncVal)/kNumTrainEx;
@@ -142,7 +133,7 @@ double RegularizedLogisticRegression::ComputeCost(\
   const double kRegTerm = (lambda_/(2*kNumTrainEx))*sum(kThetaSquared);
   const double kJThetaReg = kJTheta+kRegTerm;
 
-  // Update "grad" for nlopt.
+  // Updates "grad" for nlopt.
   const int kReturnCode = this->ComputeGradient(data);
   const arma::vec kCurrentGradient = gradient();
   for(int feature_index=0; feature_index<(kNumFeatures+1); feature_index++)
@@ -156,11 +147,12 @@ double RegularizedLogisticRegression::ComputeCost(\
 // The number of training examples should always be a positive integer.
 int RegularizedLogisticRegression::ComputeGradient(const Data &data) {
   const int kNumTrainEx = data.num_train_ex();
-  assert(kNumTrainEx > 0);
-  const arma::mat kTrainingFeatures = data.training_features();
+  assert(kNumTrainEx >= 1);
   const int kNumFeatures = data.num_features();
-  assert(kNumFeatures > 0);
+  assert(kNumFeatures >= 1);
+  const arma::mat kTrainingFeatures = data.training_features();
   const arma::vec kTrainingLabels = data.training_labels();
+
   const arma::vec kCurrentTheta = theta();
   const arma::vec kSigmoidArg = kTrainingFeatures*kCurrentTheta;
   const arma::vec kSigmoidVal = ComputeSigmoid(kSigmoidArg);
@@ -180,4 +172,15 @@ int RegularizedLogisticRegression::ComputeGradient(const Data &data) {
   set_gradient(gradient_array_reg);
 
   return 0;
+}
+
+// Unpacks WrapperStruct to obtain instances of RegularizedLogisticRegression 
+// and DataMapped.
+double ComputeCostWrapper(const std::vector<double> &opt_param,
+    std::vector<double> &grad,void *void_data) {
+  WrapperStruct *wrap_struct = static_cast<WrapperStruct *>(void_data);
+  RegularizedLogisticRegression *reg_log_reg = wrap_struct->reg_log_reg;
+  DataMapped *data_mapped = wrap_struct->data_mapped;
+
+  return reg_log_reg->ComputeCost(opt_param,grad,*data_mapped);
 }
