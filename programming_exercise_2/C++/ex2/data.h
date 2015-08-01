@@ -15,8 +15,8 @@
 
 // Data class stores training data, including features and labels.
 
-#ifndef DATA_H_
-#define DATA_H_
+#ifndef MACHINE_LEARNING_PROGRAMMING_EXERCISE_2_EX2_DATA_H_
+#define MACHINE_LEARNING_PROGRAMMING_EXERCISE_2_EX2_DATA_H_
 
 #include <string>
 
@@ -74,13 +74,44 @@ class Data
     return num_train_ex_;
   }
 
+  inline int set_training_features(arma::mat training_features_arg) {
+    training_features_ = training_features_arg;
+
+    return 0;
+  }
+
+  inline int set_training_labels(arma::vec training_labels_arg) {
+    training_labels_ = training_labels_arg;
+
+    return 0;
+  }
+
+  inline int set_num_features(int num_features_arg) {
+    num_features_ = num_features_arg;
+
+    return 0;
+  }
+
+  inline int set_num_train_ex(int num_train_ex_arg) {
+    num_train_ex_ = num_train_ex_arg;
+
+    return 0;
+  }
+
  private:
+  // Matrix of training features.
   arma::mat training_features_;
+
+  // Vector of training labels.
   arma::vec training_labels_;
+
+  // Number of training features.
   int num_features_;
+
+  // Number of training examples.
   int num_train_ex_;
 
   DISALLOW_COPY_AND_ASSIGN(Data);
 };
 
-#endif  // DATA_H_
+#endif  // MACHINE_LEARNING_PROGRAMMING_EXERCISE_2_EX2_DATA_H_

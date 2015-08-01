@@ -34,7 +34,7 @@ int main(void) {
   LogisticRegression log_res(kNumIterations,theta_vec,gradient_vec,\
     predictions_vec);
 
-  // Compute initial cost and gradient.
+  // Computes initial cost and gradient.
   const std::vector<double> kTheta(kNumFeatures+1,0.0);
   std::vector<double> grad(kNumFeatures+1,0.0);
   const double kInitCost = log_res.ComputeCost(kTheta,grad,applicant_data);
@@ -49,7 +49,7 @@ int main(void) {
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Use L-BFGS algorithm to solve for optimum weights and cost.
+  // Uses L-BFGS algorithm to solve for optimum weights and cost.
   nlopt::opt opt(nlopt::LD_LBFGS,kNumFeatures+1);
   WrapperStruct wrap_struct;
   wrap_struct.log_res = &log_res;
@@ -70,7 +70,7 @@ int main(void) {
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Predict admission probability for a student with score 45 on exam 1 and 
+  // Predicts admission probability for a student with score 45 on exam 1 and 
   // score 85 on exam 2.
   arma::vec kStudentScores = arma::randu<arma::vec>(kNumFeatures+1,1);
   kStudentScores(0) = 1;
@@ -82,7 +82,7 @@ int main(void) {
     kAdmissionProb);
   printf("\n");
 
-  // Compute accuracy on training set.
+  // Computes accuracy on training set.
   const int kReturnCode2 = log_res.LabelPrediction(applicant_data);
   const arma::vec trainingPredict = log_res.predictions();
   const arma::vec trainingLabels = applicant_data.training_labels();
