@@ -25,12 +25,14 @@ arma::mat NeuralNetwork::ComputeSigmoid(const arma::mat sigmoid_arg) {
   return kSigmoid;
 }
 
-// The number of layers should be no less than 2.
+// The number of layers should be at least 2.
 // The number of training examples should always be a positive integer.
 int NeuralNetwork::LabelPrediction (const DataMulti &data_multi) {
-  assert(num_layers_ > 1);
+  assert(num_layers_ >= 2);
   const int kNumTrainEx = data_multi.num_train_ex();
-  assert(kNumTrainEx > 0);
+  assert(kNumTrainEx >= 1);
+  const int kNumLabels = data_multi.num_labels();
+  assert(kNumLabels >= 2);
   arma::mat layer_activation_in = data_multi.training_features();
   arma::mat sigmoid_arg = layer_activation_in*theta_.at(0).t();
   arma::mat layer_activation_out = ComputeSigmoid(sigmoid_arg);
@@ -46,7 +48,7 @@ int NeuralNetwork::LabelPrediction (const DataMulti &data_multi) {
   {
     int curr_max_index = 0;
     double curr_max_val = layer_activation_out.row(example_index)(0);
-    for(int label_index=1; label_index<data_multi.num_labels(); label_index++)
+    for(int label_index=1; label_index<kNumLabels; label_index++)
     {
       if (layer_activation_out.row(example_index)(label_index) > curr_max_val)
       {

@@ -16,8 +16,8 @@
 // NeuralNetwork class 1) implements key functions for a neural network
 // and 2) stores relevant parameters.
 
-#ifndef NEURAL_NETWORK_H_
-#define NEURAL_NETWORK_H_
+#ifndef MACHINE_LEARNING_PROGRAMMING_EXERCISE_3_EX3_NN_NEURAL_NETWORK_H_
+#define MACHINE_LEARNING_PROGRAMMING_EXERCISE_3_EX3_NN_NEURAL_NETWORK_H_
 
 #include <assert.h>
 #include <string>
@@ -102,9 +102,10 @@ class NeuralNetwork
   // Current training label predictions.
   arma::vec predictions_;
 
+  // Number of neural network layers.
   int num_layers_;
 
   DISALLOW_COPY_AND_ASSIGN(NeuralNetwork);
 };
 
-#endif	// NEURAL_NETWORK_H_
+#endif	// MACHINE_LEARNING_PROGRAMMING_EXERCISE_3_EX3_NN_NEURAL_NETWORK_H_

@@ -30,7 +30,7 @@ int main(void) {
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Load two files that contain parameters trained by a neural network.
+  // Loads two files that contain parameters trained by a neural network.
   printf("Loading Saved Neural Network Parameters ...\n");
   const std::string kTheta1FileName = "../../Theta1.txt";
   arma::mat theta1;
@@ -46,7 +46,7 @@ int main(void) {
   const int kNumLayers = 2;
   NeuralNetwork neu_net(theta_vec,predictions_vec,kNumLayers);
 
-  // Perform one-versus-all classification using trained parameters.
+  // Performs one-versus-all classification using trained parameters.
   const int kReturnCode2 = neu_net.LabelPrediction(digit_data);
   const arma::vec trainingPredict = neu_net.predictions();
   const arma::vec trainingLabels = digit_data.training_labels();
