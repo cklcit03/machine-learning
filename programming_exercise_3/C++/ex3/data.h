@@ -17,8 +17,8 @@
 // DataMulti class inherits from Data class; it applies to the case where we 
 // have more than two class labels.
 
-#ifndef DATA_H_
-#define DATA_H_
+#ifndef MACHINE_LEARNING_PROGRAMMING_EXERCISE_3_EX3_DATA_H_
+#define MACHINE_LEARNING_PROGRAMMING_EXERCISE_3_EX3_DATA_H_
 
 #include <string>
 
@@ -45,7 +45,7 @@ class Data
   // Each row of this file is a training example.
   // Each column of this file is a training feature (except for the last 
   // column, which consists of training labels).
-  // For logistic regression, always include a dummy feature (that is set to 
+  // For logistic regression, always includes a dummy feature (that is set to 
   // unity) for each training example.
   explicit Data(std::string file_name_arg) {
     arma::mat training_data;
@@ -101,24 +101,32 @@ class Data
   }
 
  private:
+  // Matrix of training features.
   arma::mat training_features_;
+
+  // Vector of training labels.
   arma::vec training_labels_;
+
+  // Number of training features.
   int num_features_;
+
+  // Number of training examples.
   int num_train_ex_;
 
   DISALLOW_COPY_AND_ASSIGN(Data);
 };
 
-// Stores training data, including features and labels.  Sample usage:
+// Stores multi-class training data, including features and labels.
+// Sample usage:
 // const std::string kDataFileName = "trainingData.txt";
 // DataMulti training_data_multi(kDataFileName,kNumLabels);
 class DataMulti: public Data
 {
  public:
-  // Sets default values for training data.
+  // Sets default values for multi-class training data.
   DataMulti() : Data() {}
 
-  // Use constructor for Data given "file_name_arg".
+  // Uses constructor for Data given "file_name_arg".
   // "num_labels_arg" corresponds to the number of class labels.
   explicit DataMulti(std::string file_name_arg,int num_labels_arg) : \
     Data(file_name_arg),num_labels_(num_labels_arg) {}
@@ -136,9 +144,10 @@ class DataMulti: public Data
   }
 
  private:
+  // Number of class labels.
   int num_labels_;
 
   DISALLOW_COPY_AND_ASSIGN(DataMulti);
 };
 
-#endif  // DATA_H_
+#endif  // MACHINE_LEARNING_PROGRAMMING_EXERCISE_3_EX3_DATA_H_

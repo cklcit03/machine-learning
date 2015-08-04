@@ -40,12 +40,12 @@ int main(void) {
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Train one logistic regression classifier for each digit.
+  // Trains one logistic regression classifier for each digit.
   const int kReturnCode = mul_class_reg_log_reg.OneVsAll(digit_data);
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Perform one-versus-all classification using logistic regression.
+  // Performs one-versus-all classification using logistic regression.
   const int kReturnCode2 = mul_class_reg_log_reg.LabelPrediction(digit_data);
   const arma::vec trainingPredict = mul_class_reg_log_reg.predictions();
   const arma::vec trainingLabels = digit_data.training_labels();

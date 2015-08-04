@@ -21,8 +21,8 @@
 // RegularizedLogisticRegression class; it applies to the case where we have
 // more than two class labels.
 
-#ifndef LOGISTIC_REGRESSION_H_
-#define LOGISTIC_REGRESSION_H_
+#ifndef MACHINE_LEARNING_PROGRAMMING_EXERCISE_3_EX3_LOGISTIC_REGRESSION_H_
+#define MACHINE_LEARNING_PROGRAMMING_EXERCISE_3_EX3_LOGISTIC_REGRESSION_H_
 
 #include <assert.h>
 #include <string>
@@ -51,6 +51,7 @@ class LogisticRegression
   // Sets values for algorithm parameters.
   // "num_iters_arg" corresponds to the number of iterations.
   // "theta_arg" corresponds to an initial guess of the weights.
+  // "gradient_arg" corresponds to an initial guess of the gradient.
   // "predictions_arg" corresponds to an initial guess of the training label
   // predictions.
   LogisticRegression(int num_iters_arg,arma::mat theta_arg,
@@ -70,7 +71,7 @@ class LogisticRegression
   // Cost function term (for each training example) is: 
   // (-1 / (number of training examples)) * 
   // ((training label) * log(sigmoid(theta_ * training features)) + 
-  // (1 - (training label))*log(1-sigmoid(theta_ * training features)))
+  // (1 - (training label)) * log(1 - sigmoid(theta_ * training features)))
   double ComputeCost(const std::vector<double> &theta,
     std::vector<double> &grad,const Data &data);
 
@@ -138,6 +139,7 @@ class LogisticRegression
   // Current training label predictions.
   arma::vec predictions_;
 
+  // Number of iterations for logistic regression.
   int num_iters_;
 
   DISALLOW_COPY_AND_ASSIGN(LogisticRegression);
@@ -157,7 +159,7 @@ class RegularizedLogisticRegression: public LogisticRegression
   }
 
   // Sets values for algorithm parameters.
-  // Use constructor for LogisticRegression given "num_iters_arg", "theta_arg",
+  // Uses constructor for LogisticRegression given "num_iters_arg", "theta_arg",
   // "gradient_arg" and "predictions_arg".
   // "lambda_arg" corresponds to the regularization parameter.
   RegularizedLogisticRegression(int num_iters_arg,arma::mat theta_arg,
@@ -172,7 +174,7 @@ class RegularizedLogisticRegression: public LogisticRegression
   // Cost function term (for each training example) is (w/o regularization): 
   // (-1 / (number of training examples)) * 
   // ((training label) * log(sigmoid(theta_ * training features)) + 
-  // (1 - (training label))*log(1-sigmoid(theta_ * training features)))
+  // (1 - (training label)) * log(1 - sigmoid(theta_ * training features)))
   // Sums all of these terms to obtain standard logistic regression cost.
   // To this cost, adds following term:
   // (lambda_ / (2 * (number of training examples))) * sum(theta_ * theta_)
@@ -203,6 +205,7 @@ class RegularizedLogisticRegression: public LogisticRegression
   }
 
  private:
+  // Regularization parameter for logistic regression.
   double lambda_;
 
   DISALLOW_COPY_AND_ASSIGN(RegularizedLogisticRegression);
@@ -222,7 +225,7 @@ class MultiClassRegularizedLogisticRegression: public RegularizedLogisticRegress
   }
 
   // Sets values for algorithm parameters.
-  // Use constructor for RegularizedLogisticRegression given "num_iters_arg", 
+  // Uses constructor for RegularizedLogisticRegression given "num_iters_arg", 
   // "theta_arg", "gradient_arg", "predictions_arg" and "lambda_arg"
   // "num_class_arg" corresponds to the number of class labels.
   MultiClassRegularizedLogisticRegression(int num_iters_arg,\
@@ -243,7 +246,7 @@ class MultiClassRegularizedLogisticRegression: public RegularizedLogisticRegress
   // Cost function term (for each training example) is (w/o regularization): 
   // (-1 / (number of training examples)) * 
   // ((training label) * log(sigmoid(theta_ * training features)) + 
-  // (1 - (training label))*log(1-sigmoid(theta_ * training features)))
+  // (1 - (training label)) * log(1 - sigmoid(theta_ * training features)))
   // Sums all of these terms to obtain standard logistic regression cost.
   // To this cost, adds following term:
   // (lambda_ / (2 * (number of training examples))) * sum(theta_ * theta_)
@@ -288,6 +291,7 @@ class MultiClassRegularizedLogisticRegression: public RegularizedLogisticRegress
   }
 
  private:
+  // Number of classes in training data.
   int num_class_;
 
   DISALLOW_COPY_AND_ASSIGN(MultiClassRegularizedLogisticRegression);
@@ -309,4 +313,4 @@ struct WrapperStruct {
 double ComputeCostWrapper(const std::vector<double> &opt_param,
   std::vector<double> &grad,void *void_data);
 
-#endif	// LOGISTIC_REGRESSION_H_
+#endif	// MACHINE_LEARNING_PROGRAMMING_EXERCISE_3_EX3_LOGISTIC_REGRESSION_H_
