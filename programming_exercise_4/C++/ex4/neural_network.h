@@ -16,8 +16,8 @@
 // NeuralNetwork class 1) implements key functions for a neural network
 // and 2) stores relevant parameters.
 
-#ifndef NEURAL_NETWORK_H_
-#define NEURAL_NETWORK_H_
+#ifndef MACHINE_LEARNING_PROGRAMMING_EXERCISE_4_EX4_NEURAL_NETWORK_H_
+#define MACHINE_LEARNING_PROGRAMMING_EXERCISE_4_EX4_NEURAL_NETWORK_H_
 
 #include <assert.h>
 #include <string>
@@ -65,7 +65,7 @@ class NeuralNetwork
 
   // Computes gradient of sigmoid function.
   // Given an argument x, computes the following:
-  // exp(-x) / ((1 + exp(-x)) * (1 + exp(-x))
+  // exp(-x) / ((1 + exp(-x)) * (1 + exp(-x)))
   arma::mat ComputeSigmoidGradient(const arma::mat sigmoid_arg);
 
   // Performs random initialization of weights in theta_.
@@ -79,7 +79,7 @@ class NeuralNetwork
   // regularization): 
   // (-1 / (number of training examples)) * 
   // ((training label) * log(activation of output unit for this class) + 
-  // (1 - (training label))*log(1-activation of output unit for this class))
+  // (1 - (training label)) * log(1 - activation of output unit for this class))
   // Sums all of these terms to obtain standard neural network cost.
   // To this cost, adds following term:
   // (lambda_ / (2 * (number of training examples))) * (squared Frobenius norm of theta_)
@@ -207,8 +207,10 @@ class NeuralNetwork
   // Number of units in output layer.
   int output_layer_size_;
 
+  // Regularization parameter for neural network.
   double lambda_;
-  
+
+  // Number of neural network layers.
   int num_layers_;
 
   DISALLOW_COPY_AND_ASSIGN(NeuralNetwork);
@@ -228,4 +230,4 @@ struct WrapperStruct {
 double ComputeCostWrapper(const std::vector<double> &opt_param,
   std::vector<double> &grad,void *void_data);
 
-#endif	// NEURAL_NETWORK_H_
+#endif	// MACHINE_LEARNING_PROGRAMMING_EXERCISE_4_EX4_NEURAL_NETWORK_H_

@@ -16,11 +16,11 @@
 // A macro to disallow the copy constructor and operator= functions
 // This should be used in the private: declarations for a class
 
-#ifndef MACRO_H_
-#define MACRO_H_
+#ifndef MACHINE_LEARNING_PROGRAMMING_EXERCISE_4_EX4_MACRO_H_
+#define MACHINE_LEARNING_PROGRAMMING_EXERCISE_4_EX4_MACRO_H_
 
 #define DISALLOW_COPY_AND_ASSIGN(TypeName)  \
   TypeName(const TypeName &);               \
   void operator=(const TypeName &)
 
-#endif  // MACRO_H_
+#endif  // MACHINE_LEARNING_PROGRAMMING_EXERCISE_4_EX4_MACRO_H_

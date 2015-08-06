@@ -28,7 +28,7 @@ int main(void) {
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Load two files that contain parameters trained by a neural network.
+  // Loads two files that contain parameters trained by a neural network.
   printf("Loading Saved Neural Network Parameters ...\n");
   const std::string kTheta1FileName = "../../Theta1.txt";
   arma::mat theta1;
@@ -52,7 +52,7 @@ int main(void) {
     theta_stack_vec.push_back(as_scalar(theta_stack.row(unit_index)));
   }
 
-  // Run feedforward section of neural network.
+  // Runs feedforward section of neural network.
   printf("Feedforward Using Neural Network ...\n");
   double lambda = 0.0;
   neu_net.set_lambda(lambda);
@@ -64,7 +64,7 @@ int main(void) {
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Run feedforward section of neural network with regularization.
+  // Runs feedforward section of neural network with regularization.
   printf("Checking Cost Function (w/ Regularization) ...\n");
   lambda = 1.0;
   neu_net.set_lambda(lambda);
@@ -75,7 +75,7 @@ int main(void) {
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Compute gradient for sigmoid function.
+  // Computes gradient for sigmoid function.
   printf("Evaluating sigmoid gradient...\n");
   arma::rowvec sigmoid_gradient_vec = arma::ones<arma::rowvec>(5);
   sigmoid_gradient_vec(1) = -0.5;
@@ -91,7 +91,7 @@ int main(void) {
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Train neural network.
+  // Trains neural network.
   printf("Training Neural Network...\n");
   const int kReturnCode = neu_net.RandInitializeWeights();
   arma::vec theta1_init_stack = arma::vectorise(neu_net.theta().at(0));
@@ -114,7 +114,7 @@ int main(void) {
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Perform one-versus-all classification using trained parameters.
+  // Performs one-versus-all classification using trained parameters.
   const int kReturnCode2 = neu_net.LabelPrediction(digit_data);
   const arma::vec trainingPredict = neu_net.predictions();
   const arma::vec trainingLabels = digit_data.training_labels();
