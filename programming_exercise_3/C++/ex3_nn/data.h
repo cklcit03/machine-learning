@@ -45,7 +45,7 @@ class Data
   // Each row of this file is a training example.
   // Each column of this file is a training feature (except for the last 
   // column, which consists of training labels).
-  // For logistic regression, always includes a dummy feature (that is set to 
+  // For neural network, always includes a dummy feature (that is set to 
   // unity) for each training example.
   explicit Data(std::string file_name_arg) {
     arma::mat training_data;
