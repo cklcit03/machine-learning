@@ -54,7 +54,7 @@ int DataDebug::FeatureNormalize() {
   const int kNumValFeatures = validation_features_poly_.n_cols;
   assert(kNumValFeatures >= 1);
 
-  // Normalize training data.
+  // Normalizes training data.
   const arma::vec mu_vec = arma::mean(features_poly_).t();
   set_mu_vec(mu_vec);
   const arma::vec sigma_vec = arma::stddev(features_poly_).t();
@@ -70,7 +70,7 @@ int DataDebug::FeatureNormalize() {
       kTrainingFeaturesNoDummyNormalized);
   set_features_normalized(kTrainingFeaturesNormalized);
 
-  // Normalize testing data.
+  // Normalizes testing data.
   arma::mat kTestingFeaturesNoDummyNormalized = \
     arma::zeros<arma::mat>(num_test_ex_,kNumTestFeatures);
   for(int row_index=0; row_index<num_test_ex_;row_index++) {
@@ -82,7 +82,7 @@ int DataDebug::FeatureNormalize() {
       kTestingFeaturesNoDummyNormalized);
   set_testing_features_normalized(kTestingFeaturesNormalized);
 
-  // Normalize cross-validation data.
+  // Normalizes cross-validation data.
   arma::mat kValidationFeaturesNoDummyNormalized = \
     arma::zeros<arma::mat>(num_val_ex_,kNumValFeatures);
   for(int row_index=0; row_index<num_val_ex_;row_index++) {
