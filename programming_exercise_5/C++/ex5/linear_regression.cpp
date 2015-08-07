@@ -23,32 +23,33 @@
 // "grad" corresponds to the gradient.
 double LinearRegression::ComputeCost(const std::vector<double> &opt_param,
   std::vector<double> &grad,const DataDebug &data_debug) {
+  const int kNumTrainEx = data_debug.features().n_rows;
+  assert(kNumTrainEx >= 1);
   const int kNumFeatures = data_debug.features().n_cols;
+  assert(kNumFeatures >= 1);
   arma::vec nlopt_theta = arma::randu<arma::vec>(kNumFeatures,1);
 
-  // Use current value of "theta" from nlopt.
+  // Uses current value of "theta" from nlopt.
   for(int feature_index=0; feature_index<kNumFeatures; feature_index++)
   {
     nlopt_theta(feature_index) = opt_param[feature_index];
   }
   set_theta(nlopt_theta);
 
-  // Now compute cost function given current value of "theta".
+  // Computes cost function given current value of "theta".
   const arma::mat kTrainingFeatures = data_debug.features();
   const arma::vec kTrainingLabels = data_debug.labels();
   const arma::vec kDiffVec = kTrainingFeatures*theta_-kTrainingLabels;
   const arma::vec kDiffVecSq = kDiffVec % kDiffVec;
-  const int kNumTrainEx = data_debug.features().n_rows;
-  assert(kNumTrainEx > 0);
   const double kJTheta = arma::as_scalar(sum(kDiffVecSq))/(2.0*kNumTrainEx);
 
-  // Add regularization term.
+  // Adds regularization term.
   const arma::vec kThetaSquared = theta_%theta_;
   const double kRegTerm = (lambda_/(2*kNumTrainEx))*\
     (sum(kThetaSquared)-kThetaSquared(0));
   const double kJThetaReg = kJTheta+kRegTerm;
 
-  // Update "grad" for nlopt.
+  // Updates "grad" for nlopt.
   const int kReturnCode = this->ComputeGradient(data_debug);
   const arma::vec kCurrentGradient = gradient();
   for(int feature_index=0; feature_index<kNumFeatures; feature_index++)
@@ -62,10 +63,11 @@ double LinearRegression::ComputeCost(const std::vector<double> &opt_param,
 // The number of training examples should always be a positive integer.
 int LinearRegression::ComputeGradient(const DataDebug &data_debug) {
   const int kNumTrainEx = data_debug.features().n_rows;
-  assert(kNumTrainEx > 0);
-  const arma::mat kTrainingFeatures = data_debug.features();
+  assert(kNumTrainEx >= 1);
   const int kNumFeatures = data_debug.features().n_cols;
-  assert(kNumFeatures > 0);
+  assert(kNumFeatures >= 1);
+
+  const arma::mat kTrainingFeatures = data_debug.features();
   const arma::vec kTrainingLabels = data_debug.labels();
   const arma::vec kCurrentTheta = theta();
 

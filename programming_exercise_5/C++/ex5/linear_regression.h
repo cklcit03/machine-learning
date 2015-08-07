@@ -16,8 +16,8 @@
 // LinearRegression class 1) implements key functions for linear regression
 // and 2) stores relevant parameters.
 
-#ifndef LINEAR_REGRESSION_H_
-#define LINEAR_REGRESSION_H_
+#ifndef MACHINE_LEARNING_PROGRAMMING_EXERCISE_5_EX5_LINEAR_REGRESSION_H_
+#define MACHINE_LEARNING_PROGRAMMING_EXERCISE_5_EX5_LINEAR_REGRESSION_H_
 
 #include <assert.h>
 #include <string>
@@ -116,6 +116,7 @@ class LinearRegression
   // Current gradient.
   arma::vec gradient_;
 
+  // Regularization parameter for linear regression.
   double lambda_;
 
   DISALLOW_COPY_AND_ASSIGN(LinearRegression);
@@ -135,4 +136,4 @@ struct WrapperStruct {
 double ComputeCostWrapper(const std::vector<double> &opt_param,
   std::vector<double> &grad,void *void_data);
 
-#endif	// LINEAR_REGRESSION_H_
+#endif	// MACHINE_LEARNING_PROGRAMMING_EXERCISE_5_EX5_LINEAR_REGRESSION_H_

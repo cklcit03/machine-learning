@@ -18,9 +18,9 @@
 
 #include "data.h"
 
-// The input degree should always be a non-negative integer.
+// The input degree should always be a positive integer.
 int DataDebug::PolyFeatures(int degree_arg) {
-  assert(degree_arg >= 0);
+  assert(degree_arg >= 1);
   features_poly_ = arma::zeros<arma::mat>(features_.n_rows,degree_arg);
   testing_features_poly_ = \
     arma::zeros<arma::mat>(testing_features_.n_rows,degree_arg);
@@ -38,12 +38,21 @@ int DataDebug::PolyFeatures(int degree_arg) {
   return 0;
 }
 
-// The number of training examples should always be a positive integer.
+// The number of training, testing and cross-validation examples should always
+// be a positive integer.
+// The number of training, testing and cross-validation features should always
+// be a positive integer.
 int DataDebug::FeatureNormalize() {
-  const int kNumFeatures = features_poly_.n_cols;
-  assert(kNumFeatures > 0);
   const int kNumTrainEx = features_poly_.n_rows;
-  assert(kNumTrainEx > 0);
+  assert(kNumTrainEx >= 1);
+  assert(num_test_ex_ >= 1);
+  assert(num_val_ex_ >= 1);
+  const int kNumFeatures = features_poly_.n_cols;
+  assert(kNumFeatures >= 1);
+  const int kNumTestFeatures = testing_features_poly_.n_cols;
+  assert(kNumTestFeatures >= 1);
+  const int kNumValFeatures = validation_features_poly_.n_cols;
+  assert(kNumValFeatures >= 1);
 
   // Normalize training data.
   const arma::vec mu_vec = arma::mean(features_poly_).t();
@@ -63,7 +72,7 @@ int DataDebug::FeatureNormalize() {
 
   // Normalize testing data.
   arma::mat kTestingFeaturesNoDummyNormalized = \
-    arma::zeros<arma::mat>(num_test_ex_,testing_features_poly_.n_cols);
+    arma::zeros<arma::mat>(num_test_ex_,kNumTestFeatures);
   for(int row_index=0; row_index<num_test_ex_;row_index++) {
     kTestingFeaturesNoDummyNormalized.row(row_index) = \
       (testing_features_poly_.row(row_index)-mu_vec.t())/sigma_vec.t();
@@ -75,7 +84,7 @@ int DataDebug::FeatureNormalize() {
 
   // Normalize cross-validation data.
   arma::mat kValidationFeaturesNoDummyNormalized = \
-    arma::zeros<arma::mat>(num_val_ex_,validation_features_poly_.n_cols);
+    arma::zeros<arma::mat>(num_val_ex_,kNumValFeatures);
   for(int row_index=0; row_index<num_val_ex_;row_index++) {
     kValidationFeaturesNoDummyNormalized.row(row_index) = \
       (validation_features_poly_.row(row_index)-mu_vec.t())/sigma_vec.t();

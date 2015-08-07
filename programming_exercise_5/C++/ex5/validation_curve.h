@@ -15,8 +15,8 @@
 
 // Declares function that generates values for a cross-validation curve.
 
-#ifndef VALIDATION_CURVE_H_
-#define VALIDATION_CURVE_H_
+#ifndef MACHINE_LEARNING_PROGRAMMING_EXERCISE_5_EX5_VALIDATION_CURVE_H_
+#define MACHINE_LEARNING_PROGRAMMING_EXERCISE_5_EX5_VALIDATION_CURVE_H_
 
 #include "armadillo"
 

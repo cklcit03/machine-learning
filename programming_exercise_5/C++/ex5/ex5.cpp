@@ -38,7 +38,7 @@ int main(void) {
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Compute cost for regularized linear regression.
+  // Computes cost for regularized linear regression.
   std::vector<double> theta_stack_vec(kTotFeatures,1.0);
   std::vector<double> grad_vec(kTotFeatures,0.0);
   water_data.set_features(water_data.training_features());
@@ -50,7 +50,7 @@ int main(void) {
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Compute gradient for regularized linear regression.
+  // Computes gradient for regularized linear regression.
   const double kReturnCode = lin_reg.ComputeGradient(water_data);
   std::cout.setf(std::ios::fixed,std::ios::floatfield);
   std::cout.precision(6);
@@ -60,12 +60,12 @@ int main(void) {
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Train linear regression.
+  // Trains linear regression.
   const int kReturnCode2 = lin_reg.Train(water_data);
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Generate values for learning curve.
+  // Generates values for learning curve.
   const int kNumTrainEx = water_data.num_train_ex();
   double *error_train = (double *)calloc(kNumTrainEx,sizeof(double));
   double *error_val = (double *)calloc(kNumTrainEx,sizeof(double));
@@ -81,7 +81,7 @@ int main(void) {
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Perform feature mapping for polynomial regression.
+  // Performs feature mapping for polynomial regression.
   water_data.set_features(water_data.training_features());
   const int kNumPolyFeatures = 8;
   const int kReturnCode4 = water_data.PolyFeatures(kNumPolyFeatures);
@@ -92,13 +92,13 @@ int main(void) {
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Train polynomial regression.
+  // Trains polynomial regression.
   water_data.set_features(water_data.features_normalized());
   water_data.set_labels(water_data.training_labels());
   lin_reg.set_lambda(0.0);
   const int kReturnCode6 = lin_reg.Train(water_data);
 
-  // Generate values for learning curve for polynomial regression.
+  // Generates values for learning curve for polynomial regression.
   use_poly = 1;
   const int kReturnCode7 = \
     LearningCurve(water_data,lin_reg,error_train,error_val,use_poly);
@@ -113,8 +113,8 @@ int main(void) {
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Generate values for cross-validation curve for polynomial regression.
-  // Set up vector of regularization parameters.
+  // Generates values for cross-validation curve for polynomial regression.
+  // Sets up vector of regularization parameters.
   arma::rowvec lambda_vec = arma::ones<arma::rowvec>(10);
   lambda_vec(0) = 0.0;
   lambda_vec(1) = 0.001;
@@ -139,7 +139,7 @@ int main(void) {
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Free memory.
+  // Frees memory.
   free(error_train);
   free(error_val);
   free(xval_error_train);

@@ -21,18 +21,20 @@
 int LearningCurve(DataDebug &data_debug,LinearRegression &lin_reg,\
   double *error_train,double *error_val,int use_poly) {
   const int kNumTrainEx = data_debug.num_train_ex();
+  assert(kNumTrainEx >= 1);
   for(int ex_index=0; ex_index<kNumTrainEx; ex_index++)
   {
 
-    // Determine if we need to use mapped features.
+    // Determines if we need to use mapped features.
     if (use_poly == 0) {
       data_debug.set_features(data_debug.training_features().rows(0,ex_index));
     }
     else {
       data_debug.set_features(data_debug.features_normalized().rows(0,ex_index));
     }
-    data_debug.set_labels(data_debug.training_labels().rows(0,ex_index));
     const int kFeatures = data_debug.features().n_cols;
+    assert(kFeatures >= 1);
+    data_debug.set_labels(data_debug.training_labels().rows(0,ex_index));
     std::vector<double> theta_stack_vec(kFeatures,1.0);
     std::vector<double> grad_vec(kFeatures,0.0);
     lin_reg.set_lambda(1.0);
@@ -46,7 +48,7 @@ int LearningCurve(DataDebug &data_debug,LinearRegression &lin_reg,\
     error_train[ex_index] = \
       lin_reg.ComputeCost(theta_stack_vec,grad_vec,data_debug);
 
-    // Determine if we need to use mapped features.
+    // Determines if we need to use mapped features.
     if (use_poly == 0) {
       data_debug.set_features(data_debug.validation_features());
     }

@@ -17,8 +17,8 @@
 // DataDebug class inherits from Data class; it also stores cross-validation 
 // data and testing data.
 
-#ifndef DATA_H_
-#define DATA_H_
+#ifndef MACHINE_LEARNING_PROGRAMMING_EXERCISE_5_EX5_DATA_H_
+#define MACHINE_LEARNING_PROGRAMMING_EXERCISE_5_EX5_DATA_H_
 
 #include <assert.h>
 #include <string>
@@ -46,7 +46,7 @@ class Data
   // Each row of this file is a training example.
   // Each column of this file is a training feature (except for the last 
   // column, which consists of training labels).
-  // For linear regression, always include a dummy feature (that is set to 
+  // For linear regression, always includes a dummy feature (that is set to 
   // unity) for each training example.
   explicit Data(std::string file_name_arg) {
     arma::mat training_data;
@@ -102,9 +102,16 @@ class Data
   }
 
  private:
+  // Matrix of training features.
   arma::mat training_features_;
+
+  // Vector of training labels.
   arma::vec training_labels_;
+
+  // Number of training features.
   int num_features_;
+
+  // Number of training examples.
   int num_train_ex_;
 
   DISALLOW_COPY_AND_ASSIGN(Data);
@@ -363,4 +370,4 @@ class DataDebug: public Data
   DISALLOW_COPY_AND_ASSIGN(DataDebug);
 };
 
-#endif  // DATA_H_
+#endif  // MACHINE_LEARNING_PROGRAMMING_EXERCISE_5_EX5_DATA_H_
