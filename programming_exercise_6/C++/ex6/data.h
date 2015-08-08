@@ -17,8 +17,8 @@
 // DataDebug class inherits from Data class; it also stores cross-validation 
 // data and testing data.
 
-#ifndef DATA_H_
-#define DATA_H_
+#ifndef MACHINE_LEARNING_PROGRAMMING_EXERCISE_6_EX6_DATA_H_
+#define MACHINE_LEARNING_PROGRAMMING_EXERCISE_6_EX6_DATA_H_
 
 #include <assert.h>
 #include <string>
@@ -98,9 +98,16 @@ class Data
   }
 
  private:
+  // Matrix of training features.
   arma::mat training_features_;
+
+  // Vector of training labels.
   arma::vec training_labels_;
+
+  // Number of training features.
   int num_features_;
+
+  // Number of training examples.
   int num_train_ex_;
 
   DISALLOW_COPY_AND_ASSIGN(Data);
@@ -243,4 +250,4 @@ class DataDebug: public Data
   DISALLOW_COPY_AND_ASSIGN(DataDebug);
 };
 
-#endif  // DATA_H_
+#endif  // MACHINE_LEARNING_PROGRAMMING_EXERCISE_6_EX6_DATA_H_

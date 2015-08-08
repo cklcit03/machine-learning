@@ -26,11 +26,12 @@ int Dataset3Params(DataDebug &data_debug,arma::rowvec C_vec,\
   {
     for(int sigma_index=0; sigma_index<8; sigma_index++)
     {
-      const int kSvmType3 = C_SVC;
-      const int kKernelType3 = RBF;
       const double kCurrSigma = sigma_vec(sigma_index);
+      assert(kCurrSigma > 0.0);
       const double kGamma3 = 1.0/(2.0*kCurrSigma*kCurrSigma);
       const double kCurrC = C_vec(C_index);
+      const int kSvmType3 = C_SVC;
+      const int kKernelType3 = RBF;
       SupportVectorMachine svm_model_3(data_debug,kSvmType3,kKernelType3,\
         kGamma3,kCurrC);
       svm_model_3.Train();

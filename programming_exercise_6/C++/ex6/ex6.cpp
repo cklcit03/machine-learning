@@ -27,7 +27,7 @@ int main(void) {
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Train linear SVM on data.
+  // Trains linear SVM on data.
   printf("Training Linear SVM ...\n");
   const int kSvmType1 = C_SVC;
   const int kKernelType1 = LINEAR;
@@ -36,14 +36,14 @@ int main(void) {
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Load another dataset.
+  // Loads another dataset.
   printf("Loading Data ...\n");
   const std::string kExampleData2FileName = "../../exampleData2.txt";
   Data example_data_2(kExampleData2FileName);
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Train radial basis SVM on data.
+  // Trains radial basis SVM on data.
   printf("Training SVM with RBF Kernel (this may take 1 to 2 minutes) ...\n");
   const int kSvmType2 = C_SVC;
   const int kKernelType2 = RBF;
@@ -54,7 +54,7 @@ int main(void) {
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Load another dataset.
+  // Loads another dataset.
   printf("Loading Data ...\n");
   const std::string kExampleData3FileName = "../../exampleData3.txt";
   const std::string kExampleValData3FileName = "../../exampleValData3.txt";
@@ -63,8 +63,8 @@ int main(void) {
   DataDebug example_data_3(kExampleData3FileName,kExampleValData3FileName,\
     kExampleValData3FileName);
 
-  // Train radial basis SVM on data.
-  // Use cross-validation to select optimal C and gamma parameters.
+  // Trains radial basis SVM on data.
+  // Uses cross-validation to select optimal C and gamma parameters.
   arma::rowvec C_vec = arma::ones<arma::rowvec>(8);
   C_vec(0) = 0.01;
   C_vec(1) = 0.03;
@@ -87,6 +87,7 @@ int main(void) {
   double best_sigma = 0.0;
   const int kReturnCode = Dataset3Params(example_data_3,C_vec,sigma_vec,\
     &best_C,&best_sigma);
+  assert(best_sigma > 0.0);
   const int kSvmType3 = C_SVC;
   const int kKernelType3 = RBF;
   const double kGamma3 = 1.0/(2.0*best_sigma*best_sigma);

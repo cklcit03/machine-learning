@@ -16,8 +16,8 @@
 // Declares function that selects optimal learning parameters for a radial
 // basis SVM.
 
-#ifndef DATASET3_PARAMS_H_
-#define DATASET3_PARAMS_H_
+#ifndef MACHINE_LEARNING_PROGRAMMING_EXERCISE_6_EX6_DATASET3_PARAMS_H_
+#define MACHINE_LEARNING_PROGRAMMING_EXERCISE_6_EX6_DATASET3_PARAMS_H_
 
 #include "armadillo"
 
@@ -27,4 +27,4 @@
 int Dataset3Params(DataDebug &data_debug,arma::rowvec C_vec,\
   arma::rowvec sigma_vec,double *C_arg,double *sigma_arg);
 
-#endif  // DATASET3_PARAMS_H
+#endif  // MACHINE_LEARNING_PROGRAMMING_EXERCISE_6_EX6_DATASET3_PARAMS_H_
