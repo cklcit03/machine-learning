@@ -119,7 +119,7 @@ class Data
 class DataUnlabeled: public Data
 {
  public:
-  // Sets default values for training data.
+  // Sets default values for unlabeled training data.
   DataUnlabeled() {
     num_train_ex_ = 1;
     num_features_ = 2;
@@ -127,7 +127,7 @@ class DataUnlabeled: public Data
   }
 
   // Reads CSV file "file_name_arg".
-  // Sets values for training data based on contents of this file.
+  // Sets values for unlabeled training data based on contents of this file.
   // Each row of this file is a training example.
   // Each column of this file is a training feature.
   // This file contains no training labels.
