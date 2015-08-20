@@ -22,7 +22,8 @@
 int KMeansClustering::FindClosestCentroids(const DataUnlabeled \
   &data_unlabeled) {
   const int kNumTrainEx = data_unlabeled.num_train_ex();
-  assert(kNumTrainEx > 0);
+  assert(kNumTrainEx >= 1);
+  assert(num_centroids_ >= 2);
   for(int ex_index=0;ex_index<kNumTrainEx;ex_index++)
   {
     centroid_assignments_.at(ex_index) = 1;
@@ -49,8 +50,9 @@ int KMeansClustering::FindClosestCentroids(const DataUnlabeled \
 // Updates centroids based on centroid assignments.
 int KMeansClustering::ComputeCentroids(const DataUnlabeled \
   &data_unlabeled) {
+  assert(num_centroids_ >= 1);
   const int kNumTrainEx = data_unlabeled.num_train_ex();
-  assert(kNumTrainEx > 0);
+  assert(kNumTrainEx >= 1);
   for(int cent_index=0;cent_index<(num_centroids_);cent_index++)
   {
     arma::mat is_centroid_idx = arma::zeros<arma::mat>(kNumTrainEx,1);
@@ -71,7 +73,7 @@ int KMeansClustering::ComputeCentroids(const DataUnlabeled \
 // Runs full algorithm by iteratively calling FindClosestCentroids and 
 // ComputeCentroids.
 int KMeansClustering::Run(const DataUnlabeled &data_unlabeled,int max_iter) {
-  assert(max_iter > 0);
+  assert(max_iter >= 1);
   for(int iter_index=0;iter_index<(max_iter);iter_index++)
   {
     printf("K-Means iteration %d/%d...\n",iter_index+1,max_iter);
@@ -86,8 +88,11 @@ int KMeansClustering::Run(const DataUnlabeled &data_unlabeled,int max_iter) {
 // examples.
 int KMeansClustering::InitCentroids(const DataUnlabeled &data_unlabeled,\
   int num_centroids) {
+  const int kNumTrainEx = data_unlabeled.num_train_ex();
+  assert(kNumTrainEx >= 1);
+  assert(num_centroids >= 1);
   std::vector<int> vector_indices;
-  for(int index=0;index<data_unlabeled.num_train_ex();index++)
+  for(int index=0;index<kNumTrainEx;index++)
   {
     vector_indices.push_back(index);
   }

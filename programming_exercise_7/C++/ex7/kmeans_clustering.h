@@ -16,8 +16,8 @@
 // KMeansClustering class 1) implements key functions for k-means clustering
 // and 2) stores relevant parameters.
 
-#ifndef KMEANS_CLUSTERING_H_
-#define KMEANS_CLUSTERING_H_
+#ifndef MACHINE_LEARNING_PROGRAMMING_EXERCISE_7_EX7_KMEANS_CLUSTERING_H_
+#define MACHINE_LEARNING_PROGRAMMING_EXERCISE_7_EX7_KMEANS_CLUSTERING_H_
 
 #include <assert.h>
 #include <string>
@@ -42,6 +42,7 @@ class KMeansClustering
   // Sets values for algorithm parameters.
   // "data_unlabeled" corresponds to the unlabeled training data.
   // "num_centroids_arg" corresponds to the number of centroids.
+  // "centroids_arg" corresponds to the centroids.
   KMeansClustering(const DataUnlabeled &data_unlabeled,int num_centroids_arg,\
     arma::mat centroids_arg) {
 
@@ -114,4 +115,4 @@ class KMeansClustering
   DISALLOW_COPY_AND_ASSIGN(KMeansClustering);
 };
 
-#endif	// KMEANS_CLUSTERING_H_
+#endif	// MACHINE_LEARNING_PROGRAMMING_EXERCISE_7_EX7_KMEANS_CLUSTERING_H_

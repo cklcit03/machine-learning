@@ -24,7 +24,7 @@ int main(void) {
   const std::string kExercise7Data2FileName = "../../ex7data2.txt";
   DataUnlabeled exercise_7_data_2(kExercise7Data2FileName);
 
-  // Select an initial set of centroids.
+  // Selects an initial set of centroids.
   int num_centroids = 3;
   arma::mat initial_centroids = arma::zeros<arma::mat>(3,2);
   initial_centroids(0,0) = 3.0;
@@ -34,7 +34,7 @@ int main(void) {
   initial_centroids(2,0) = 8.0;
   initial_centroids(2,1) = 5.0;
 
-  // Find closest centroids for example data using initial centroids.
+  // Finds closest centroids for example data using initial centroids.
   KMeansClustering k_means_cluster(exercise_7_data_2,num_centroids,\
     initial_centroids);
   const int kReturnCode = k_means_cluster.FindClosestCentroids(exercise_7_data_2);
@@ -46,7 +46,7 @@ int main(void) {
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Update centroids for example data.
+  // Updates centroids for example data.
   printf("Computing centroids means.\n");
   const int kReturnCode2 = k_means_cluster.ComputeCentroids(exercise_7_data_2);
   std::cout.setf(std::ios::fixed,std::ios::floatfield);
@@ -61,11 +61,11 @@ int main(void) {
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Run K-Means Clustering on an example dataset.
+  // Runs K-Means Clustering on an example dataset.
   printf("Running K-Means clustering on example dataset.\n");
   const int kMaxIter = 10;
 
-  // Reset initial centroids.
+  // Resets initial centroids.
   k_means_cluster.set_centroids(initial_centroids);
   const int kReturnCode3 = k_means_cluster.Run(exercise_7_data_2,kMaxIter);
   printf("K-Means Done.\n");
