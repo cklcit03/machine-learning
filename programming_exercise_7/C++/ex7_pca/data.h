@@ -247,10 +247,10 @@ class DataUnlabeledNormalized: public DataUnlabeled
   // Matrix of normalized training features.
   arma::mat training_features_normalized_;
 
-  // Mean of each training feature
+  // Mean of each training feature.
   arma::vec mu_vec_;
 
-  // Standard deviation of each training feature
+  // Standard deviation of each training feature.
   arma::vec sigma_vec_;
 
   DISALLOW_COPY_AND_ASSIGN(DataUnlabeledNormalized);
