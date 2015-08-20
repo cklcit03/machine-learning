@@ -25,7 +25,7 @@
 // ARMA_BLAS_UNDERSCORE
 int PCA::Run(const DataUnlabeledNormalized &data_unlabeled_normalized) {
   const int kNumTrainEx = data_unlabeled_normalized.num_train_ex();
-  assert(kNumTrainEx > 0);
+  assert(kNumTrainEx >= 1);
   const arma::mat kTrainingFeatures = \
     data_unlabeled_normalized.training_features_normalized();
   const arma::mat kCovMat = \
@@ -41,10 +41,10 @@ int PCA::Run(const DataUnlabeledNormalized &data_unlabeled_normalized) {
   return 0;
 }
 
-// Projects input data onto reduced-dimensional space.
+// The number of dimensions should be a positive integer.
 int PCA::ProjectData(const DataUnlabeledNormalized &data_unlabeled_normalized,\
   int num_dim) {
-  assert(num_dim > 0);
+  assert(num_dim >= 1);
   const arma::mat kTrainingFeatures = \
     data_unlabeled_normalized.training_features_normalized();
   const arma::mat kReducedSingVec = left_sing_vec_.cols(0,num_dim-1);
@@ -54,10 +54,10 @@ int PCA::ProjectData(const DataUnlabeledNormalized &data_unlabeled_normalized,\
   return 0;
 }
 
-// Projects input data onto original space.
+// The number of dimensions should be a positive integer.
 int PCA::RecoverData(const DataUnlabeledNormalized &data_unlabeled_normalized,\
   int num_dim) {
-  assert(num_dim > 0);
+  assert(num_dim >= 1);
   const arma::mat kReducedSingVec = left_sing_vec_.cols(0,num_dim-1);
   const arma::mat kRecoveredData = mapped_data_*kReducedSingVec.t();
   this->set_recovered_data(kRecoveredData);

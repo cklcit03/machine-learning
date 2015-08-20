@@ -23,7 +23,7 @@ int main(void) {
   const std::string kExercise7Data1FileName = "../../ex7data1.txt";
   DataUnlabeledNormalized exercise_7_data_1(kExercise7Data1FileName);
 
-  // Run PCA on input data.
+  // Runs PCA on input data.
   printf("Running PCA on example dataset.\n");
   const int kReturnCode1 = exercise_7_data_1.FeatureNormalize();
   PCA prin_comp_anal;
@@ -35,7 +35,7 @@ int main(void) {
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Project data onto reduced-dimensional space.
+  // Projects data onto reduced-dimensional space.
   printf("Dimension reduction on example dataset.\n");
   const int kNumDim = 1;
   const int kReturnCode2 = prin_comp_anal.ProjectData(exercise_7_data_1,\

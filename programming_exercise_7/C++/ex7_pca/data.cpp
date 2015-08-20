@@ -17,12 +17,13 @@
 
 #include "data.h"
 
+// The number of training features should always be a positive integer.
 // The number of training examples should always be a positive integer.
 int DataUnlabeledNormalized::FeatureNormalize() {
   const int kNumFeatures = num_features();
-  assert(kNumFeatures > 0);
+  assert(kNumFeatures >= 1);
   const int kNumTrainEx = num_train_ex();
-  assert(kNumTrainEx > 0);
+  assert(kNumTrainEx >= 1);
 
   const arma::vec mu_vec = \
     arma::mean(training_features().cols(0,kNumFeatures-1)).t();

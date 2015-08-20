@@ -16,8 +16,8 @@
 // PCA class 1) implements key functions for principal component analysis
 // and 2) stores relevant parameters.
 
-#ifndef PCA_H_
-#define PCA_H_
+#ifndef MACHINE_LEARNING_PROGRAMMING_EXERCISE_7_EX7_PCA_PCA_H_
+#define MACHINE_LEARNING_PROGRAMMING_EXERCISE_7_EX7_PCA_PCA_H_
 
 #include <assert.h>
 #include <string>
@@ -109,4 +109,4 @@ class PCA
   DISALLOW_COPY_AND_ASSIGN(PCA);
 };
 
-#endif	// PCA_H_
+#endif	// MACHINE_LEARNING_PROGRAMMING_EXERCISE_7_EX7_PCA_PCA_H_
