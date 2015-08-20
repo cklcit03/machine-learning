@@ -19,8 +19,8 @@
 // DataUnlabeledNormalized class inherits from DataUnlabeled class; it includes
 // a method for normalizing unlabeled training data.
 
-#ifndef DATA_H_
-#define DATA_H_
+#ifndef MACHINE_LEARNING_PROGRAMMING_EXERCISE_7_EX7_PCA_DATA_H_
+#define MACHINE_LEARNING_PROGRAMMING_EXERCISE_7_EX7_PCA_DATA_H_
 
 #include <assert.h>
 #include <string>
@@ -100,9 +100,16 @@ class Data
   }
 
  private:
+  // Matrix of training features.
   arma::mat training_features_;
+
+  // Vector of training labels.
   arma::vec training_labels_;
+
+  // Number of training features.
   int num_features_;
+
+  // Number of training examples.
   int num_train_ex_;
 
   DISALLOW_COPY_AND_ASSIGN(Data);
@@ -114,7 +121,7 @@ class Data
 class DataUnlabeled: public Data
 {
  public:
-  // Sets default values for training data.
+  // Sets default values for unlabeled training data.
   DataUnlabeled() {
     num_train_ex_ = 1;
     num_features_ = 2;
@@ -122,7 +129,7 @@ class DataUnlabeled: public Data
   }
 
   // Reads CSV file "file_name_arg".
-  // Sets values for training data based on contents of this file.
+  // Sets values for unlabeled training data based on contents of this file.
   // Each row of this file is a training example.
   // Each column of this file is a training feature.
   // This file contains no training labels.
@@ -167,21 +174,26 @@ class DataUnlabeled: public Data
   }
 
  private:
+  // Matrix of training features.
   arma::mat training_features_;
+
+  // Number of training features.
   int num_features_;
+
+  // Number of training examples.
   int num_train_ex_;
 
   DISALLOW_COPY_AND_ASSIGN(DataUnlabeled);
 };
 
-// Stores normalized training data, including features.  
+// Stores normalized unlabeled training data, including features.  
 // Sample usage:
 // const std::string kDataFileName = "trainingData.txt";
 // DataUnlabeledNormalized training_data_unlabeled_normalized(kDataFileName);
 class DataUnlabeledNormalized: public DataUnlabeled
 {
  public:
-  // Sets default values for normalized training data.
+  // Sets default values for normalized unlabeled training data.
   DataUnlabeledNormalized() : DataUnlabeled() {
     training_features_normalized_.ones(1,3);
     mu_vec_.ones(1,2);
@@ -189,8 +201,8 @@ class DataUnlabeledNormalized: public DataUnlabeled
   }
 
   // Reads CSV file "file_name_arg".
-  // Use constructor for DataUnlabeled based on contents of this file.
-  // Defer initialization of member variables to FeatureNormalize()
+  // Uses constructor for DataUnlabeled based on contents of this file.
+  // Defers initialization of member variables to FeatureNormalize()
   explicit DataUnlabeledNormalized(std::string fileNameArg) : \
     DataUnlabeled(fileNameArg) {}
 
@@ -232,6 +244,7 @@ class DataUnlabeledNormalized: public DataUnlabeled
   }
 
  private:
+  // Matrix of normalized training features.
   arma::mat training_features_normalized_;
 
   // Mean of each training feature
@@ -243,4 +256,4 @@ class DataUnlabeledNormalized: public DataUnlabeled
   DISALLOW_COPY_AND_ASSIGN(DataUnlabeledNormalized);
 };
 
-#endif  // DATA_H_
+#endif  // MACHINE_LEARNING_PROGRAMMING_EXERCISE_7_EX7_PCA_DATA_H_
