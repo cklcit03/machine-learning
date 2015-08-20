@@ -18,7 +18,7 @@
 
 #include "kmeans_clustering.h"
 
-// Finds closest centroid to each training example.
+// The number of training examples should be a positive integer.
 int KMeansClustering::FindClosestCentroids(const DataUnlabeled \
   &data_unlabeled) {
   const int kNumTrainEx = data_unlabeled.num_train_ex();
@@ -47,7 +47,7 @@ int KMeansClustering::FindClosestCentroids(const DataUnlabeled \
   return 0;
 }
 
-// Updates centroids based on centroid assignments.
+// The number of training examples should be a positive integer.
 int KMeansClustering::ComputeCentroids(const DataUnlabeled \
   &data_unlabeled) {
   assert(num_centroids_ >= 1);
@@ -70,8 +70,7 @@ int KMeansClustering::ComputeCentroids(const DataUnlabeled \
   return 0;
 }
 
-// Runs full algorithm by iteratively calling FindClosestCentroids and 
-// ComputeCentroids.
+// The number of iterations should be a positive integer.
 int KMeansClustering::Run(const DataUnlabeled &data_unlabeled,int max_iter) {
   assert(max_iter >= 1);
   for(int iter_index=0;iter_index<(max_iter);iter_index++)
