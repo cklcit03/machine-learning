@@ -16,8 +16,8 @@
 // AnomalyDetection class 1) implements key functions for anomaly detection
 // and 2) stores relevant parameters.
 
-#ifndef ANOMALY_DETECTION_H_
-#define ANOMALY_DETECTION_H_
+#ifndef MACHINE_LEARNING_PROGRAMMING_EXERCISE_8_EX8_ANOMALY_DETECTION_H_
+#define MACHINE_LEARNING_PROGRAMMING_EXERCISE_8_EX8_ANOMALY_DETECTION_H_
 
 #include <assert.h>
 #include <math.h>
@@ -160,4 +160,4 @@ class AnomalyDetection
   DISALLOW_COPY_AND_ASSIGN(AnomalyDetection);
 };
 
-#endif	// ANOMALY_DETECTION_H_
+#endif	// MACHINE_LEARNING_PROGRAMMING_EXERCISE_8_EX8_ANOMALY_DETECTION_H_

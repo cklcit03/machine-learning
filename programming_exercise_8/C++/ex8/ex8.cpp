@@ -25,7 +25,7 @@ int main(void) {
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Estimate (Gaussian) statistics of this dataset.
+  // Estimates (Gaussian) statistics of this dataset.
   const std::string kServerValData1FileName = "../../serverValData1.txt";
   Data server_val_data_1(kServerValData1FileName);
   AnomalyDetection anom_detect(server_data_1,server_val_data_1);
@@ -34,7 +34,7 @@ int main(void) {
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Use a cross-validation set to find outliers.
+  // Uses a cross-validation set to find outliers.
   const int kReturnCode3 = \
     anom_detect.MultivariateGaussian(server_val_data_1,1);
   const int kReturnCode4 = anom_detect.SelectThreshold(server_val_data_1);
@@ -45,18 +45,18 @@ int main(void) {
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Detect anomalies in another dataset.
+  // Detects anomalies in another dataset.
   const std::string kServerData2FileName = "../../serverData2.txt";
   DataUnlabeled server_data_2(kServerData2FileName);
 
-  // Estimate (Gaussian) statistics of this dataset.
+  // Estimates (Gaussian) statistics of this dataset.
   const std::string kServerValData2FileName = "../../serverValData2.txt";
   Data server_val_data_2(kServerValData2FileName);
   AnomalyDetection anom_detect_2(server_data_2,server_val_data_2);
   const int kReturnCode5 = anom_detect_2.EstimateGaussian(server_data_2);
   const int kReturnCode6 = anom_detect_2.MultivariateGaussian(server_data_2,0);
 
-  // Use a cross-validation set to find outliers in this dataset.
+  // Uses a cross-validation set to find outliers in this dataset.
   const int kReturnCode7 = \
     anom_detect_2.MultivariateGaussian(server_val_data_2,1);
   const int kReturnCode8 = anom_detect_2.SelectThreshold(server_val_data_2);

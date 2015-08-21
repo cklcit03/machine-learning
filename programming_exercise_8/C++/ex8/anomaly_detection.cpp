@@ -18,10 +18,10 @@
 
 #include "anomaly_detection.h"
 
-// Computes sample mean and variance of training features.
+// The number of training features should be a positive integer.
 int AnomalyDetection::EstimateGaussian(const DataUnlabeled &data_unlabeled) {
   const int kNumTrainFeatures = data_unlabeled.num_features();
-  assert(kNumTrainFeatures > 0);
+  assert(kNumTrainFeatures >= 1);
   data_mean_ = arma::mean(data_unlabeled.training_features()).t();
   data_variance_ = arma::var(data_unlabeled.training_features()).t();
 
@@ -34,10 +34,10 @@ int AnomalyDetection::EstimateGaussian(const DataUnlabeled &data_unlabeled) {
 // of unlabeled data.
 int AnomalyDetection::MultivariateGaussian(const Data &data,\
   int cross_val_flag) {
-  const int kNumTrainFeat = data.num_features();
-  assert(kNumTrainFeat > 0);
   const int kNumTrainEx = data.num_train_ex();
-  assert(kNumTrainEx > 0);
+  assert(kNumTrainEx >= 1);
+  const int kNumTrainFeat = data.num_features();
+  assert(kNumTrainFeat >= 1);
   arma::mat kVarianceMat = arma::diagmat(data_variance_);
   arma::mat kTrainFeat = data.training_features();
   for(int ex_index=0;ex_index<kNumTrainEx;ex_index++)
@@ -61,11 +61,12 @@ int AnomalyDetection::MultivariateGaussian(const Data &data,\
 // Computes the best threshold for detecting anomalies by maximizing the
 // F-score over all thresholds.
 int AnomalyDetection::SelectThreshold(const Data &data) {
+  const int kNumTrainEx = data.num_train_ex();
+  assert(kNumTrainEx >= 1);
   double curr_f_score = 0.0;
   double kStepSize = \
     0.001*(data_cross_val_probs_.max()-data_cross_val_probs_.min());
   double curr_epsilon = data_cross_val_probs_.min();
-  const int kNumTrainEx = data.num_train_ex();
   arma::vec predictions_vec = arma::zeros<arma::vec>(kNumTrainEx);
   arma::vec kTrainLabels = data.training_labels();
   for(int epsilon_index=0;epsilon_index<1000;epsilon_index++)

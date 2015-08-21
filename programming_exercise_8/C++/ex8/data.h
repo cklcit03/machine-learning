@@ -17,8 +17,8 @@
 // DataUnlabeled class inherits from Data class; it treats each training 
 // example as being unlabeled.
 
-#ifndef DATA_H_
-#define DATA_H_
+#ifndef MACHINE_LEARNING_PROGRAMMING_EXERCISE_8_EX8_DATA_H_
+#define MACHINE_LEARNING_PROGRAMMING_EXERCISE_8_EX8_DATA_H_
 
 #include <assert.h>
 #include <string>
@@ -98,9 +98,16 @@ class Data
   }
 
  private:
+  // Matrix of training features.
   arma::mat training_features_;
+
+  // Vector of training labels.
   arma::vec training_labels_;
+
+  // Number of training features.
   int num_features_;
+
+  // Number of training examples.
   int num_train_ex_;
 
   DISALLOW_COPY_AND_ASSIGN(Data);
@@ -112,7 +119,7 @@ class Data
 class DataUnlabeled: public Data
 {
  public:
-  // Sets default values for training data.
+  // Sets default values for unlabeled training data.
   DataUnlabeled() {
     num_train_ex_ = 1;
     num_features_ = 2;
@@ -120,7 +127,7 @@ class DataUnlabeled: public Data
   }
 
   // Reads CSV file "file_name_arg".
-  // Sets values for training data based on contents of this file.
+  // Sets values for unlabeled training data based on contents of this file.
   // Each row of this file is a training example.
   // Each column of this file is a training feature.
   // This file contains no training labels.
@@ -165,11 +172,16 @@ class DataUnlabeled: public Data
   }
 
  private:
+  // Matrix of training features.
   arma::mat training_features_;
+
+  // Number of training features.
   int num_features_;
+
+  // Number of training examples.
   int num_train_ex_;
 
   DISALLOW_COPY_AND_ASSIGN(DataUnlabeled);
 };
 
-#endif  // DATA_H_
+#endif  // MACHINE_LEARNING_PROGRAMMING_EXERCISE_8_EX8_DATA_H_
