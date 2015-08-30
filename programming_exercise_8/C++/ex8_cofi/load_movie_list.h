@@ -15,8 +15,8 @@
 
 // Declares function that loads a list of movies.
 
-#ifndef LOAD_MOVIE_LIST_H_
-#define LOAD_MOVIE_LIST_H_
+#ifndef MACHINE_LEARNING_PROGRAMMING_EXERCISE_8_EX8_COFI_LOAD_MOVIE_LIST_H_
+#define MACHINE_LEARNING_PROGRAMMING_EXERCISE_8_EX8_COFI_LOAD_MOVIE_LIST_H_
 
 #include <assert.h>
 #include <cstring>
@@ -26,4 +26,4 @@
 
 int LoadMovieList(std::vector<std::string> *movie_list);
 
-#endif  // LOAD_MOVIE_LIST_H
+#endif  // MACHINE_LEARNING_PROGRAMMING_EXERCISE_8_EX8_COFI_LOAD_MOVIE_LIST_H_

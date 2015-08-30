@@ -33,7 +33,7 @@ int main(void) {
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Compute cost function for a subset of users, movies and features.
+  // Computes cost function for a subset of users, movies and features.
   const std::string kFeaturesDataFileName = "../../featuresMat.txt";
   DataUnlabeled features_data(kFeaturesDataFileName);
   const int kNumFeatures = features_data.num_features();
@@ -72,7 +72,7 @@ int main(void) {
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Compute regularized cost function for a subset of users, movies and 
+  // Computes regularized cost function for a subset of users, movies and 
   // features.
   collab_filt.set_lambda(1.5);
   const double kInitCost2 = collab_filt.ComputeCost(theta_stack_vec,grad_vec,\
@@ -82,10 +82,11 @@ int main(void) {
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Add ratings that correspond to a new user.
+  // Adds ratings that correspond to a new user.
   std::vector<std::string> movie_list;
   const int kReturnCode = LoadMovieList(&movie_list);
   const int kNumMovies = ratings_data.num_train_ex();
+  assert(kNumMovies >= 355);
   arma::vec my_ratings = arma::zeros<arma::vec>(kNumMovies,1);
   arma::vec my_indicators = arma::zeros<arma::vec>(kNumMovies,1);
   my_ratings(0) = 4;
@@ -121,7 +122,7 @@ int main(void) {
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Train collaborative filtering model.
+  // Trains collaborative filtering model.
   printf("Training collaborative filtering...\n");
   const arma::mat newRatingsMat = \
     arma::join_horiz(my_ratings,ratings_data.training_features());
@@ -142,6 +143,7 @@ int main(void) {
   wrap_struct.num_users = kNumUsers;
   wrap_struct.num_features = kNumFeatures;
   const int kTotalNumFeatures = kNumFeatures*(kNumUsers+kNumMovies);
+  assert(kTotalNumFeatures >= 1);
   nlopt::opt opt(nlopt::LD_LBFGS,kTotalNumFeatures);
   opt.set_min_objective(ComputeCostWrapper,&wrap_struct);
   opt.set_ftol_abs(1e-6);
@@ -171,7 +173,7 @@ int main(void) {
   printf("Program paused. Press enter to continue.\n");
   std::cin.ignore();
 
-  // Make recommendations.
+  // Makes recommendations.
   const arma::mat kFinalParametersMat = \
     arma::reshape(final_parameters_vec,kNumUsers,kNumFeatures);
   const arma::mat kFinalFeaturesMat = \

@@ -19,7 +19,7 @@
 
 // The file that this function reads consists of a list of movies.
 // Each line in this file has the format: "movieID movie".
-// This function should ignore the "movieID" field.
+// This function ignores the "movieID" field.
 int LoadMovieList(std::vector<std::string> *movie_list)
 {
   std::string curr_line;

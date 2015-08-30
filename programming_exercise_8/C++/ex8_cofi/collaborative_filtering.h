@@ -16,8 +16,8 @@
 // CollaborativeFiltering class 1) implements key functions for collaborative
 // filtering and 2) stores relevant parameters.
 
-#ifndef COLLABORATIVE_FILTERING_H_
-#define COLLABORATIVE_FILTERING_H_
+#ifndef MACHINE_LEARNING_PROGRAMMING_EXERCISE_8_EX8_COFI_COLLABORATIVE_FILTERING_H_
+#define MACHINE_LEARNING_PROGRAMMING_EXERCISE_8_EX8_COFI_COLLABORATIVE_FILTERING_H_
 
 #include <assert.h>
 #include <string>
@@ -61,7 +61,7 @@ class CollaborativeFiltering
   // all movies; theta_ is obtained by vectorizing all of these vectors.
   // Cost function is a sum over all (movie i, user j) pairs where user j has
   // rated movie i.
-  // The (i,j)-th term in this sum is (w/o regularization): 
+  // The (i, j)-th term in this sum is (w/o regularization): 
   // (1/2) * ((inner product between parameter vector for user j and feature
   // vector for movie i) - (rating for movie i by user j))^2
   // Sums all of these terms to obtain cost function.
@@ -137,6 +137,7 @@ class CollaborativeFiltering
   // Current gradient.
   arma::vec gradient_;
 
+  // Regularization parameter for linear regression.
   double lambda_;
 
   DISALLOW_COPY_AND_ASSIGN(CollaborativeFiltering);
@@ -161,4 +162,4 @@ struct WrapperStruct {
 double ComputeCostWrapper(const std::vector<double> &opt_param,
   std::vector<double> &grad,void *void_data);
 
-#endif	// COLLABORATIVE_FILTERING_H_
+#endif	// MACHINE_LEARNING_PROGRAMMING_EXERCISE_8_EX8_COFI_COLLABORATIVE_FILTERING_H_

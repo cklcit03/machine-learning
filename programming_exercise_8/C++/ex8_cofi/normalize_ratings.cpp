@@ -17,11 +17,12 @@
 
 #include "normalize_ratings.h"
 
-// For each movie, ignore those users who did not rate it.
+// For each movie, ignores those users who did not rate it.
 arma::vec NormalizeRatings(const DataUnlabeled &ratings_data,
   const DataUnlabeled &indicator_data)
 {
   const int kNumMovies = ratings_data.num_train_ex();
+  assert(kNumMovies >= 1);
   arma::vec ratings_mean = arma::zeros<arma::vec>(kNumMovies,1);
   const arma::mat kRatingsMat = ratings_data.training_features();
   const arma::mat kIndicatorMat = indicator_data.training_features();

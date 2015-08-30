@@ -15,8 +15,8 @@
 
 // Declares function that normalizes a list of movie ratings.
 
-#ifndef NORMALIZE_RATINGS_H_
-#define NORMALIZE_RATINGS_H_
+#ifndef MACHINE_LEARNING_PROGRAMMING_EXERCISE_8_EX8_COFI_NORMALIZE_RATINGS_H_
+#define MACHINE_LEARNING_PROGRAMMING_EXERCISE_8_EX8_COFI_NORMALIZE_RATINGS_H_
 
 #include "armadillo"
 
@@ -25,4 +25,4 @@
 arma::vec NormalizeRatings(const DataUnlabeled &ratings_data,
   const DataUnlabeled &indicator_data);
 
-#endif  // NORMALIZE_RATINGS_H
+#endif  // MACHINE_LEARNING_PROGRAMMING_EXERCISE_8_EX8_COFI_NORMALIZE_RATINGS_H_

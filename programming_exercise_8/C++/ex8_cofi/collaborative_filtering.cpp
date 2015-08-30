@@ -25,13 +25,15 @@ double CollaborativeFiltering::ComputeCost(
   const std::vector<double> &opt_param,std::vector<double> &grad,
   const DataUnlabeled &ratings_data,const DataUnlabeled &indicator_data,
   int num_users,int num_movies,int num_features) {
+  assert(num_users >= 1);
+  assert(num_movies >= 1);
+  assert(num_features >= 1);
   const int kTotalNumFeatures = num_features*(num_users+num_movies);
-  assert(kTotalNumFeatures > 0);
   arma::vec nlopt_theta = arma::zeros<arma::vec>(kTotalNumFeatures,1);
   arma::mat features_cvec = arma::zeros<arma::mat>(num_movies*num_features,1);
   arma::mat params_cvec = arma::zeros<arma::mat>(num_users*num_features,1);
 
-  // Use current value of "theta" from nlopt.
+  // Uses current value of "theta" from nlopt.
   for(int feature_index=0; feature_index<kTotalNumFeatures; feature_index++)
   {
     nlopt_theta(feature_index) = opt_param[feature_index];
@@ -50,7 +52,7 @@ double CollaborativeFiltering::ComputeCost(
   arma::mat features_mat = \
     arma::reshape(features_cvec,num_movies,num_features);
 
-  // Now compute cost function given current value of "theta".
+  // Computes cost function given current value of "theta".
   const arma::mat kSubsetIndicatorMat = \
     indicator_data.training_features().submat(0,0,num_movies-1,num_users-1);
   const arma::mat kSubsetRatingsMat = \
@@ -62,13 +64,13 @@ double CollaborativeFiltering::ComputeCost(
   const arma::vec kCostFunctionVec = arma::vectorise(kCostFunctionMat);
   const double kJTheta = 0.5*arma::as_scalar(sum(square(kCostFunctionVec)));
 
-  // Add regularization term.
+  // Adds regularization term.
   const double kRegTerm = 0.5*lambda_*\
     (as_scalar(sum(params_cvec_squared))+\
     as_scalar(sum(features_cvec_squared)));
   const double kJThetaReg = kJTheta+kRegTerm;
 
-  // Update "grad" for nlopt.
+  // Updates "grad" for nlopt.
   const int kReturnCode = this->ComputeGradient(ratings_data,indicator_data,\
     num_users,num_movies,num_features);
   const arma::vec kCurrentGradient = gradient();
@@ -80,12 +82,16 @@ double CollaborativeFiltering::ComputeCost(
   return kJThetaReg;
 }
 
-// The number of training examples should always be a positive integer.
+// The number of users should always be a positive integer.
+// The number of movies should always be a positive integer.
+// The number of features should always be a positive integer.
 int CollaborativeFiltering::ComputeGradient(const DataUnlabeled &ratings_data,
   const DataUnlabeled &indicator_data,int num_users,int num_movies,
   int num_features) {
+  assert(num_users >= 1);
+  assert(num_movies >= 1);
+  assert(num_features >= 1);
   const int kTotalNumFeatures = num_features*(num_users+num_movies);
-  assert(kTotalNumFeatures > 0);
   const arma::vec kCurrentTheta = theta();
   arma::mat features_cvec = arma::zeros<arma::mat>(num_movies*num_features,1);
   arma::mat params_cvec = arma::zeros<arma::mat>(num_users*num_features,1);
