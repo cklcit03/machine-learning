@@ -16,8 +16,8 @@
 // SupportVectorMachine class 1) provides an interface to LibSVM and 2) stores
 // relevant parameters.
 
-#ifndef SUPPORT_VECTOR_MACHINE_H_
-#define SUPPORT_VECTOR_MACHINE_H_
+#ifndef MACHINE_LEARNING_PROGRAMMING_EXERCISE_6_EX6_SPAM_SUPPORT_VECTOR_MACHINE_H_
+#define MACHINE_LEARNING_PROGRAMMING_EXERCISE_6_EX6_SPAM_SUPPORT_VECTOR_MACHINE_H_
 
 #include <assert.h>
 #include <string>
@@ -178,4 +178,4 @@ class SupportVectorMachine
   DISALLOW_COPY_AND_ASSIGN(SupportVectorMachine);
 };
 
-#endif	// SUPPORT_VECTOR_MACHINE_H_
+#endif	// MACHINE_LEARNING_PROGRAMMING_EXERCISE_6_EX6_SPAM_SUPPORT_VECTOR_MACHINE_H_

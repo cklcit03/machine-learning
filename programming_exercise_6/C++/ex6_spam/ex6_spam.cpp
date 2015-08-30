@@ -30,6 +30,7 @@ int main(void) {
   printf("Preprocessing sample email (emailSample1.txt)\n");
   const std::string kEmailSample1FileName = "../../emailSample1.txt";
   DataEmail email_sample_1(kEmailSample1FileName);
+  assert(email_sample_1.word_indices().size() >= 1);
   printf("Word Indices: \n");
   for(int word_idx=0; word_idx<(int)email_sample_1.word_indices().size(); \
     word_idx++)
@@ -49,6 +50,8 @@ int main(void) {
   const std::string kSpamTrainFileName = "../../spamTrain.txt";
   DataDebug spam_train(kSpamTrainFileName,kSpamTrainFileName,\
     kSpamTrainFileName);
+  assert(spam_train.num_test_ex() >= 1);
+  assert(spam_train.num_features() >= 1);
   printf("Training Linear SVM (Spam Classification)\n");
   printf("(this may take 1 to 2 minutes) ...\n");
   const int kSvmType = C_SVC;
@@ -67,6 +70,7 @@ int main(void) {
   const std::string kSpamTestFileName = "../../spamTest.txt";
   DataDebug spam_test(kSpamTestFileName,kSpamTestFileName,\
     kSpamTestFileName);
+  assert(spam_test.num_test_ex() >= 1);
   printf("Evaluating the trained Linear SVM on a test set ...\n");
   int *spam_test_pred_result = new int[spam_test.num_test_ex()];
   curr_pred_err = svm_model.Predict(spam_test,spam_test_pred_result);
@@ -84,6 +88,7 @@ int main(void) {
   {
     curr_weight[feat_idx] = 0.0;
   }
+  assert(svm_model.svm_model().l >= 1);
   for(int sv_idx=0; sv_idx<svm_model.svm_model().l; sv_idx++)
   {
     double curr_coef = svm_model.svm_model().sv_coef[0][sv_idx];
@@ -124,6 +129,7 @@ int main(void) {
   // Tests this linear spam classifier on another e-mail.
   const std::string kSpamSample1FileName = "../../spamSample1.txt";
   DataEmail spam_sample_1(kSpamSample1FileName);
+  assert(spam_sample_1.num_features() >= 1);
 
   // Writes e-mail features into a file so that our linear classifier can
   // predict whether or not it is spam.
@@ -138,6 +144,7 @@ int main(void) {
   fclose(spam_file_pointer);
   DataDebug spam_features(kSpamFeatures1FileName,kSpamFeatures1FileName,\
     kSpamFeatures1FileName);
+  assert(spam_features.num_test_ex() >= 1);
   int *spam_pred_result = new int[spam_features.num_test_ex()];
   int spam_pred_err = svm_model.Predict(spam_features,spam_pred_result);
   printf("Processed spamSample1.txt\n");

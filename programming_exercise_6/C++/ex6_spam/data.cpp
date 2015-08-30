@@ -31,8 +31,10 @@ DataEmail::DataEmail(std::string email_file_name_arg) {
   fclose(train_file_pointer);
 
   // Extracts features from file.
+  assert(file_contents.size() >= 1);
   std::vector<std::string> vocab_list;
   const int kReturnCode = GetVocabList(&vocab_list);
+  assert(vocab_list.size() >= 1);
   std::vector<char> file_contents_lower;
   std::string file_contents_lower_string = "";
   for(int vec_idx=0; vec_idx<(int)file_contents.size(); vec_idx++)
@@ -83,6 +85,7 @@ DataEmail::DataEmail(std::string email_file_name_arg) {
   std::copy(std::istream_iterator<std::string>(no_punct_stream),\
     std::istream_iterator<std::string>(),\
     std::back_inserter(words_mod_file_contents));
+  assert(words_mod_file_contents.size() >= 1);
   std::regex strip_non_alphanumerics("[^ ]+@[^ ]+");
   for(int word_idx=0; word_idx<(int)words_mod_file_contents.size(); \
     word_idx++)
@@ -112,6 +115,7 @@ DataEmail::DataEmail(std::string email_file_name_arg) {
   printf("=========================\n");
 
   // Processes list of word indices and sets features.
+  assert(word_indices_.size() >= 1);
   const int kNumDictionaryWords = 1899;
   features_.zeros(1,kNumDictionaryWords);
   for(int word_idx=0; word_idx<(int)word_indices_.size(); word_idx++)

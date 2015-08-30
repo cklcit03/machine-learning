@@ -33,6 +33,8 @@ int SupportVectorMachine::Train() {
 // Calls LibSVM function svm_predict for simplicity.
 int SupportVectorMachine::Predict(const DataDebug &data_debug,\
   int *pred_result) {
+  assert(data_debug.num_test_ex() >= 1);
+  assert(data_debug.num_features() >= 1);
 
   // Calls svm_predict to perform prediction for the trained SVM model.
   // svm_predict works on one test case at a time.
